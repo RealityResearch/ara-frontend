@@ -192,6 +192,11 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] **GENERIC TOOLS** - Trading tools accept token_address parameter
 - [x] **DISCOVERY SCANNER** - DexScreener scan every 2 min for opportunities
 - [x] **RISK MANAGEMENT** - 15% max/trade, 2 max positions, 5% slippage
+- [x] **JUPITER OPTIMIZED** - lite-api, dynamicComputeUnitLimit, veryHigh priority fees
+- [x] **TOKEN-2022 HANDLING** - check_token_tradable tool, pre-trade validation
+- [x] **FIRST REAL TRADE** - Successfully bought BONK via Jupiter (TX: 5CfFjrmQvY...)
+- [x] **TECHNICAL ANALYSIS** - analyze_technicals tool with RSI, SMA, volume spikes
+- [x] **LAYOUT UPDATE** - Treasury at top (180px), Trade History below terminal (● LIVE)
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -388,6 +393,24 @@ The agent uses DexScreener to find opportunities. Current filters:
 
 Scanner runs every 2 minutes via `setInterval`.
 
+## Technical Analysis Tools
+
+The agent now has data-driven trading signals via `analyze_technicals`:
+
+| Indicator | Description | Signal |
+|-----------|-------------|--------|
+| RSI | Relative Strength Index (14-period) | <30 = oversold (buy), >70 = overbought (sell) |
+| SMA20 | 20-period Simple Moving Average | Price above = bullish, below = bearish |
+| Volume Spike | Current vs average volume | >2x = significant activity |
+| Momentum | Derived from price vs SMA | bullish / neutral / bearish |
+
+**Recommendation Output:**
+- `strong_buy` / `buy` / `hold` / `sell` / `strong_sell`
+- Confidence score (0-100%)
+- Analysis summary string
+
+**Usage:** Agent runs `analyze_technicals(token_address)` before trading decisions.
+
 ## Phase 3: Future Enhancements
 1. **On-chain logs** — Store reasoning hashes on-chain
 2. **Jupiter Ultra API** — Better routing, more token support
@@ -433,4 +456,4 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
 ---
-*Last updated: Autonomous memecoin trading live - agent hunts ANY token with 15% max risk, 2 position limit, 5% slippage*
+*Last updated: Technical Analysis tools live (RSI, SMA, volume spikes). First real trade executed (BONK). Jupiter optimized with tradability pre-checks. Token-2022 issues documented.*
