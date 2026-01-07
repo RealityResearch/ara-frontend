@@ -164,18 +164,20 @@ export default function Home() {
           {/* Hero Section */}
           <Hero />
 
+          {/* Treasury Balance - Full Width at Top */}
+          <div style={{ marginBottom: '16px' }}>
+            <PortfolioChart />
+          </div>
+
           {/* Agent Terminal */}
           <AgentTerminal />
 
-          {/* Voting Panel & Portfolio Chart - Side by Side on Desktop */}
-          <div id="voting" style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '16px',
-            marginBottom: '16px'
-          }}>
+          {/* Trade History - Right Below Terminal for Live Updates */}
+          <TradeHistory trades={tradeHistory} />
+
+          {/* Voting Panel */}
+          <div id="voting" style={{ marginBottom: '16px' }}>
             <VotingPanel />
-            <PortfolioChart />
           </div>
 
           {/* Discovery Panel - Token Scanner */}
@@ -186,9 +188,6 @@ export default function Home() {
 
           {/* Bot Evolution */}
           <BotEvolution data={evolution} />
-
-          {/* Trade History */}
-          <TradeHistory trades={tradeHistory} />
 
           {/* Live Chart */}
           <ChartEmbed contractAddress={CONTRACT_ADDRESS} height={400} />
