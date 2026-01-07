@@ -1,40 +1,50 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { mockTickerData } from '@/lib/mockData';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { mockTickerData, type TickerItem } from '@/lib/mockData';
 
 export function Ticker() {
-  const [prices, setPrices] = useState(mockTickerData);
+  const [prices, setPrices] = useState<TickerItem[]>(mockTickerData);
   const [flash, setFlash] = useState<Record<string, 'up' | 'down' | null>>({});
+  const [isLive, setIsLive] = useState(false);
+  const prevPrices = useRef<Record<string, number>>({});
 
-  // Simulate live price updates
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setPrices(prev => prev.map(item => {
-        const changeAmount = (Math.random() - 0.5) * 0.1;
-        const newPrice = Math.max(0.001, item.price * (1 + changeAmount / 100));
-        const newChange = item.change + changeAmount;
+  // Fetch live prices from API
+  const fetchPrices = useCallback(async () => {
+    try {
+      const response = await fetch('/api/ticker');
+      if (!response.ok) throw new Error('API error');
 
-        // Flash effect
-        if (changeAmount > 0) {
-          setFlash(f => ({ ...f, [item.symbol]: 'up' }));
-        } else {
-          setFlash(f => ({ ...f, [item.symbol]: 'down' }));
-        }
-        setTimeout(() => {
-          setFlash(f => ({ ...f, [item.symbol]: null }));
-        }, 300);
+      const data: TickerItem[] = await response.json();
+      if (Array.isArray(data) && data.length > 0) {
+        // Check for price changes and trigger flash
+        data.forEach(item => {
+          const prevPrice = prevPrices.current[item.symbol];
+          if (prevPrice !== undefined && prevPrice !== item.price) {
+            const direction = item.price > prevPrice ? 'up' : 'down';
+            setFlash(f => ({ ...f, [item.symbol]: direction }));
+            setTimeout(() => {
+              setFlash(f => ({ ...f, [item.symbol]: null }));
+            }, 300);
+          }
+          prevPrices.current[item.symbol] = item.price;
+        });
 
-        return {
-          ...item,
-          price: Number(newPrice.toFixed(item.price < 1 ? 6 : 2)),
-          change: Number(newChange.toFixed(2))
-        };
-      }));
-    }, 3000);
-
-    return () => clearInterval(interval);
+        setPrices(data);
+        setIsLive(true);
+      }
+    } catch (error) {
+      console.error('Failed to fetch ticker prices:', error);
+      // Keep using mock data as fallback
+    }
   }, []);
+
+  // Fetch on mount and every 15 seconds
+  useEffect(() => {
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 15000);
+    return () => clearInterval(interval);
+  }, [fetchPrices]);
 
   const tickerItems = [...prices, ...prices];
 
@@ -46,15 +56,15 @@ export function Ticker() {
         left: '8px',
         top: '50%',
         transform: 'translateY(-50%)',
-        background: '#FF0000',
+        background: isLive ? '#FF0000' : '#666666',
         color: '#FFFFFF',
         fontSize: '9px',
         fontWeight: 'bold',
         padding: '2px 6px',
         zIndex: 10,
-        border: '1px solid #CC0000'
+        border: `1px solid ${isLive ? '#CC0000' : '#444444'}`
       }}>
-        <span className="blink">●</span> LIVE
+        <span className="blink">●</span> {isLive ? 'LIVE' : 'DEMO'}
       </div>
 
       <div className="ticker-y2k-scroll" style={{ display: 'flex', paddingLeft: '60px' }}>

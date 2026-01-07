@@ -27,7 +27,7 @@ A memecoin on Solana launched via pump.fun featuring a landing page that display
 - **Styling:** Tailwind CSS v4
 - **Animations:** Framer Motion
 - **Fonts:** Playfair Display (serif/trust) + Courier Prime (terminal) + Tahoma (UI)
-- **Live Data:** WebSocket-ready (mocked for Phase 1)
+- **Live Data:** DexScreener + CoinGecko APIs (free, no key), WebSocket for agent
 - **Deployment:** Vercel
 
 ## File Structure
@@ -46,7 +46,9 @@ cc/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout with fonts
 │   │   ├── page.tsx            # Main landing page
-│   │   └── globals.css         # Y2K design system
+│   │   ├── globals.css         # Y2K design system
+│   │   └── api/
+│   │       └── ticker/route.ts # Live price ticker API (DexScreener + CoinGecko)
 │   ├── components/
 │   │   ├── Ticker.tsx          # Scrolling price ticker
 │   │   ├── Hero.tsx            # Hero section with logo/CTA
@@ -159,7 +161,7 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] Real contract address set
 - [x] Social links updated (@ClaudeCapital)
 - [x] Pump.fun API integration (real price/volume data)
-- [ ] Real Solana price feeds (Jupiter/Birdeye APIs) - using pump.fun for now
+- [x] **LIVE DATA FEEDS** - DexScreener + CoinGecko APIs for real prices
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -237,8 +239,19 @@ npm run dev
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+## Data Feed APIs (Free, No Key Required)
+
+| API | Usage | Rate Limit |
+|-----|-------|------------|
+| DexScreener | SOL, $ARA, BONK, WIF, JUP, PYTH prices | 300 req/min |
+| CoinGecko | BTC, ETH prices | 30 req/min |
+| Pump.fun | $ARA bonding curve data, volume | ~60 req/min |
+| Solana RPC | Wallet balances | Varies |
+
+**Caching:** 15-30s TTL to stay within limits.
+
 ## Phase 2: Real Trading (Future)
-1. **Real price feeds** — Jupiter/Birdeye API integration
+1. ~~**Real price feeds**~~ — ✅ Done (DexScreener + CoinGecko)
 2. **Solana wallet** — @solana/web3.js for dev wallet control
 3. **Trade execution** — Jupiter swap API
 4. **Creator fee monitoring** — Watch for pump.fun fees
