@@ -165,7 +165,7 @@ export function AgentTerminal() {
                     {/* Currently typing */}
                     {isTyping && (
                       <div>
-                        <span style={{ color: '#666666' }}>
+                        <span style={{ color: '#666666' }} suppressHydrationWarning>
                           [{new Date().toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
                         </span>
                         {' '}

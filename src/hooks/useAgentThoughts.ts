@@ -47,15 +47,12 @@ function formatTimestamp(timestamp?: number): string {
 }
 
 export function useAgentThoughts() {
+  // Use static initial state to avoid hydration mismatch
   const [thoughts, setThoughts] = useState<EnhancedThought[]>(() => {
-    return mockThoughts.slice(0, 3).map((thought, i) => {
-      const now = new Date();
-      now.setSeconds(now.getSeconds() - (3 - i) * 15);
-      return {
-        ...thought,
-        timestamp: formatTimestamp(now.getTime()),
-      };
-    });
+    return mockThoughts.slice(0, 3).map((thought) => ({
+      ...thought,
+      timestamp: '--:--:--', // Static placeholder until client hydrates
+    }));
   });
   const [isTyping, setIsTyping] = useState(false);
   const [currentText, setCurrentText] = useState('');
@@ -64,6 +61,22 @@ export function useAgentThoughts() {
   const [model, setModel] = useState<string | null>(null);
   const [lastLatency, setLastLatency] = useState<number | null>(null);
   const [questionStatus, setQuestionStatus] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
+
+  // Hydrate timestamps on client
+  useEffect(() => {
+    if (!hydrated) {
+      setHydrated(true);
+      setThoughts(prev => prev.map((thought, i) => {
+        const now = new Date();
+        now.setSeconds(now.getSeconds() - (prev.length - i) * 15);
+        return {
+          ...thought,
+          timestamp: formatTimestamp(now.getTime()),
+        };
+      }));
+    }
+  }, [hydrated]);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
