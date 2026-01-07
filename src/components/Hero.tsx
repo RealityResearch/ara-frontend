@@ -9,13 +9,12 @@ export function Hero() {
       <table width="100%" cellPadding={8} cellSpacing={0} style={{ border: '1px solid #CCCCCC' }}>
         <tbody>
           <tr>
-            <td colSpan={2} style={{ background: 'linear-gradient(to bottom, #003399 0%, #001166 100%)', padding: '12px', textAlign: 'center' }}>
+            <td colSpan={2} style={{ background: '#FFFFFF', padding: '24px 12px', textAlign: 'center', borderBottom: '1px solid #CCCCCC' }}>
               <Image
                 src="/logos/claude-investments.png"
                 alt="Claude Investments"
-                width={380}
-                height={100}
-                style={{ filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.5))' }}
+                width={420}
+                height={110}
                 priority
               />
             </td>
