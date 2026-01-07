@@ -92,6 +92,9 @@ export function useAgentThoughts() {
     if (typeof window === 'undefined') return;
 
     const addThought = (thought: EnhancedThought) => {
+      // Safety check - skip if no message
+      if (!thought?.message) return;
+
       if (typingIntervalRef.current) {
         clearInterval(typingIntervalRef.current);
       }
@@ -99,10 +102,11 @@ export function useAgentThoughts() {
       setIsTyping(true);
       setCurrentText('');
 
+      const message = thought.message || '';
       let charIndex = 0;
       typingIntervalRef.current = setInterval(() => {
-        if (charIndex < thought.message.length) {
-          setCurrentText(thought.message.slice(0, charIndex + 1));
+        if (charIndex < message.length) {
+          setCurrentText(message.slice(0, charIndex + 1));
           charIndex++;
         } else {
           if (typingIntervalRef.current) {

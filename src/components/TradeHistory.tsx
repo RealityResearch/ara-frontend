@@ -126,22 +126,22 @@ export function TradeHistory({ trades = mockTradeHistory, maxRows = 10 }: Props)
                     </span>
                   </td>
                   <td style={{ padding: '6px 8px', textAlign: 'right', fontSize: '10px', fontFamily: 'Courier New' }}>
-                    {trade.amountSol.toFixed(2)} SOL
+                    {(trade.amountSol ?? 0).toFixed(2)} SOL
                   </td>
                   <td style={{ padding: '6px 8px', textAlign: 'right' }}>
                     <div style={{
                       fontSize: '10px',
                       fontFamily: 'Courier New',
                       fontWeight: 'bold',
-                      color: trade.pnlSol >= 0 ? '#008800' : '#CC0000'
+                      color: (trade.pnlSol ?? 0) >= 0 ? '#008800' : '#CC0000'
                     }}>
-                      {trade.pnlSol >= 0 ? '+' : ''}{trade.pnlSol.toFixed(3)} SOL
+                      {(trade.pnlSol ?? 0) >= 0 ? '+' : ''}{(trade.pnlSol ?? 0).toFixed(3)} SOL
                     </div>
                     <div style={{
                       fontSize: '9px',
-                      color: trade.pnlPercent >= 0 ? '#008800' : '#CC0000'
+                      color: (trade.pnlPercent ?? 0) >= 0 ? '#008800' : '#CC0000'
                     }}>
-                      ({trade.pnlPercent >= 0 ? '+' : ''}{trade.pnlPercent.toFixed(1)}%)
+                      ({(trade.pnlPercent ?? 0) >= 0 ? '+' : ''}{(trade.pnlPercent ?? 0).toFixed(1)}%)
                     </div>
                   </td>
                   <td style={{ padding: '6px 8px', textAlign: 'center', fontSize: '10px', fontFamily: 'Courier New', color: '#666666' }}>
@@ -195,12 +195,12 @@ export function TradeHistory({ trades = mockTradeHistory, maxRows = 10 }: Props)
                       <tbody>
                         <tr>
                           <td style={{ color: '#666666' }}>Entry Price:</td>
-                          <td style={{ fontFamily: 'Courier New' }}>${selectedTrade.entryPrice.toFixed(6)}</td>
+                          <td style={{ fontFamily: 'Courier New' }}>${(selectedTrade.entryPrice ?? 0).toFixed(6)}</td>
                         </tr>
-                        {selectedTrade.exitPrice && (
+                        {selectedTrade.exitPrice != null && (
                           <tr>
                             <td style={{ color: '#666666' }}>Exit Price:</td>
-                            <td style={{ fontFamily: 'Courier New' }}>${selectedTrade.exitPrice.toFixed(6)}</td>
+                            <td style={{ fontFamily: 'Courier New' }}>${(selectedTrade.exitPrice ?? 0).toFixed(6)}</td>
                           </tr>
                         )}
                         <tr>

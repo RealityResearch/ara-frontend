@@ -27,7 +27,8 @@ function getTypePrefix(type: EnhancedThought['type'], isUserQuestion?: boolean):
   }
 }
 
-function formatUSD(value: number): string {
+function formatUSD(value: number | undefined | null): string {
+  if (value == null) return '$0.00';
   if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
   if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
   return `$${value.toFixed(2)}`;
@@ -249,8 +250,8 @@ export function AgentTerminal() {
                       </tr>
                       <tr>
                         <td style={{ color: '#666666' }}>24h:</td>
-                        <td style={{ color: marketData.change24h >= 0 ? '#008800' : '#CC0000', fontWeight: 'bold' }}>
-                          {marketData.change24h >= 0 ? '+' : ''}{marketData.change24h.toFixed(1)}%
+                        <td style={{ color: (marketData.change24h ?? 0) >= 0 ? '#008800' : '#CC0000', fontWeight: 'bold' }}>
+                          {(marketData.change24h ?? 0) >= 0 ? '+' : ''}{(marketData.change24h ?? 0).toFixed(1)}%
                         </td>
                       </tr>
                       <tr>
@@ -263,7 +264,7 @@ export function AgentTerminal() {
                       </tr>
                       <tr>
                         <td style={{ color: '#666666' }}>Holders:</td>
-                        <td>{marketData.holders.toLocaleString()}</td>
+                        <td>{(marketData.holders ?? 0).toLocaleString()}</td>
                       </tr>
                     </tbody>
                   </table>
