@@ -14,8 +14,10 @@ import { Footer } from '@/components/Footer';
 import { LiveClock } from '@/components/LiveClock';
 import { StickyCA } from '@/components/StickyCA';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
+import { useAgentStats } from '@/hooks/useAgentStats';
 
 export default function Home() {
+  const { performance, evolution, tradeHistory, isLive } = useAgentStats();
   return (
     <div style={{ background: '#FFFEF5', minHeight: '100vh' }}>
 
@@ -157,13 +159,13 @@ export default function Home() {
           <AgentTerminal />
 
           {/* Performance Metrics */}
-          <PerformanceMetrics />
+          <PerformanceMetrics data={performance} />
 
           {/* Bot Evolution */}
-          <BotEvolution />
+          <BotEvolution data={evolution} />
 
           {/* Trade History */}
-          <TradeHistory />
+          <TradeHistory trades={tradeHistory} />
 
           {/* Live Chart */}
           <ChartEmbed contractAddress={CONTRACT_ADDRESS} height={400} />
