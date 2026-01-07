@@ -1016,6 +1016,51 @@ a:hover {
   .grid-2col {
     grid-template-columns: 1fr;
   }
+
+  /* Performance metrics - stack cards */
+  #performance table td {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  #performance table tr {
+    display: block;
+  }
+
+  /* Evolution - stack columns */
+  #evolution > div > div > table > tbody > tr > td {
+    display: block;
+    width: 100%;
+    padding-right: 0 !important;
+    margin-bottom: 12px;
+  }
+
+  /* Trade history - horizontal scroll */
+  #trades table {
+    display: table;
+  }
+
+  #trades table td,
+  #trades table th {
+    display: table-cell;
+    width: auto;
+  }
+
+  #trades > div > div {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Smaller text in trade table on mobile */
+  #trades table {
+    font-size: 9px;
+  }
+
+  #trades table td,
+  #trades table th {
+    padding: 4px 6px;
+  }
 }
 
 /* Small phones */
