@@ -1,26 +1,1180 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Authentic Y2K Web Colors */
+  --web-blue: #003399;
+  --link-blue: #0000FF;
+  --visited-purple: #800080;
+  --hover-blue: #0066CC;
+
+  /* Classic Financial Site Palette */
+  --header-navy: #000033;
+  --header-gradient-end: #003366;
+  --sidebar-tan: #F5F5DC;
+  --content-cream: #FFFEF5;
+  --highlight-yellow: #FFFFCC;
+  --money-green: #006600;
+  --alert-red: #CC0000;
+  --border-gray: #CCCCCC;
+  --text-dark: #333333;
+  --text-gray: #666666;
+
+  /* XP-era Grays */
+  --xp-face: #ECE9D8;
+  --xp-highlight: #FFFFFF;
+  --xp-shadow: #ACA899;
+  --xp-dark-shadow: #716F64;
+
+  /* Status Colors */
+  --positive-green: #008800;
+  --negative-red: #CC0000;
+  --neutral-gray: #666666;
+
+  /* Terminal (stays dark) */
+  --terminal-bg: #000000;
+  --terminal-green: #00FF00;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ============================================
+   BASE STYLES - Authentic Y2K Typography
+   ============================================ */
+
+body {
+  background: var(--content-cream);
+  color: var(--text-dark);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 11px;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Classic blue underlined links */
+a {
+  color: var(--link-blue);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--visited-purple);
+}
+
+a:hover {
+  color: var(--hover-blue);
+}
+
+/* ============================================
+   Y2K STRUCTURAL ELEMENTS
+   ============================================ */
+
+/* Classic HR with bevel */
+.hr-bevel {
+  height: 2px;
+  border: none;
+  background: linear-gradient(to bottom, var(--xp-shadow) 0%, var(--xp-highlight) 100%);
+  margin: 8px 0;
+}
+
+/* Dotted separator */
+.hr-dotted {
+  border: none;
+  border-top: 1px dotted var(--border-gray);
+  margin: 8px 0;
+}
+
+/* Double line separator */
+.hr-double {
+  height: 3px;
+  border: none;
+  border-top: 1px solid var(--border-gray);
+  border-bottom: 1px solid var(--border-gray);
+  background: transparent;
+  margin: 10px 0;
+}
+
+/* ============================================
+   AUTHENTIC Y2K BUTTONS
+   ============================================ */
+
+/* Classic form button */
+.btn-y2k {
+  background: linear-gradient(to bottom, #F5F5F5 0%, #E1E1E1 45%, #D4D4D4 50%, #C1C1C1 100%);
+  border: 1px solid;
+  border-color: #FFFFFF #666666 #666666 #FFFFFF;
+  color: #000000;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 11px;
+  padding: 3px 12px;
+  cursor: pointer;
+  outline: 1px solid #000000;
+  outline-offset: -2px;
+}
+
+.btn-y2k:hover {
+  background: linear-gradient(to bottom, #FFFFFF 0%, #EEEEEE 45%, #E1E1E1 50%, #D4D4D4 100%);
+}
+
+.btn-y2k:active {
+  background: linear-gradient(to bottom, #C1C1C1 0%, #D4D4D4 50%, #E1E1E1 55%, #F5F5F5 100%);
+  border-color: #666666 #FFFFFF #FFFFFF #666666;
+}
+
+/* GO button (tiny) */
+.btn-go {
+  background: linear-gradient(to bottom, #F0F0F0 0%, #D0D0D0 100%);
+  border: 1px solid #666666;
+  color: #000000;
+  font-family: Verdana, sans-serif;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+/* Big action button */
+.btn-action {
+  background: linear-gradient(to bottom, #FFCC00 0%, #FF9900 100%);
+  border: 2px outset #FFCC00;
+  color: #000000;
+  font-family: Arial Black, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 6px 20px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-action:hover {
+  background: linear-gradient(to bottom, #FFDD33 0%, #FFAA00 100%);
+}
+
+/* Green buy button */
+.btn-buy-y2k {
+  background: linear-gradient(to bottom, #66CC66 0%, #339933 50%, #228822 100%);
+  border: 2px outset #66CC66;
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 8px 24px;
+  cursor: pointer;
+  text-shadow: 1px 1px 1px #004400;
+}
+
+.btn-buy-y2k:hover {
+  background: linear-gradient(to bottom, #77DD77 0%, #44AA44 50%, #339933 100%);
+}
+
+/* ============================================
+   Y2K PANELS & BOXES
+   ============================================ */
+
+/* Classic inset panel */
+.panel-inset-y2k {
+  background: #FFFFFF;
+  border: 2px inset var(--border-gray);
+  padding: 8px;
+}
+
+/* Outset panel */
+.panel-outset-y2k {
+  background: var(--xp-face);
+  border: 2px outset var(--border-gray);
+  padding: 8px;
+}
+
+/* Fieldset style box */
+.fieldset-y2k {
+  border: 1px solid var(--border-gray);
+  background: #FFFFFF;
+  padding: 12px;
+  margin: 8px 0;
+}
+
+.fieldset-y2k-legend {
+  background: var(--content-cream);
+  padding: 0 8px;
+  font-weight: bold;
+  font-size: 11px;
+  color: var(--text-dark);
+}
+
+/* Highlight box (yellow) */
+.box-highlight {
+  background: var(--highlight-yellow);
+  border: 1px solid #CCCC99;
+  padding: 8px;
+  font-size: 11px;
+}
+
+/* Alert box (red border) */
+.box-alert {
+  background: #FFF0F0;
+  border: 2px solid var(--alert-red);
+  padding: 8px;
+  font-size: 11px;
+}
+
+/* ============================================
+   Y2K HEADER GRADIENT BAR
+   ============================================ */
+
+.header-gradient {
+  background: linear-gradient(to bottom,
+    #003366 0%,
+    #004488 30%,
+    #003366 70%,
+    #002244 100%
+  );
+  border-bottom: 2px solid #000033;
+  padding: 8px 12px;
+  color: #FFFFFF;
+}
+
+.header-gradient-title {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-shadow: 1px 1px 2px #000000;
+  letter-spacing: 0.5px;
+}
+
+/* Section header bar */
+.section-header {
+  background: linear-gradient(to right, var(--web-blue) 0%, #0055AA 100%);
+  color: #FFFFFF;
+  font-family: Verdana, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border: 1px solid #002266;
+  margin-bottom: 1px;
+}
+
+/* ============================================
+   Y2K TABLE STYLES
+   ============================================ */
+
+.table-y2k {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  border: 1px solid var(--border-gray);
+}
+
+.table-y2k th {
+  background: linear-gradient(to bottom, #E8E8E8 0%, #D0D0D0 100%);
+  border: 1px solid var(--border-gray);
+  padding: 4px 8px;
+  text-align: left;
+  font-weight: bold;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.table-y2k td {
+  border: 1px solid #DDDDDD;
+  padding: 4px 8px;
+  background: #FFFFFF;
+}
+
+.table-y2k tr:nth-child(even) td {
+  background: #F8F8F8;
+}
+
+.table-y2k tr:hover td {
+  background: var(--highlight-yellow);
+}
+
+/* ============================================
+   Y2K FORM ELEMENTS
+   ============================================ */
+
+.input-y2k {
+  background: #FFFFFF;
+  border: 2px inset var(--border-gray);
+  font-family: Verdana, sans-serif;
+  font-size: 11px;
+  padding: 3px 6px;
+}
+
+.input-y2k:focus {
+  background: var(--highlight-yellow);
+}
+
+.select-y2k {
+  background: #FFFFFF;
+  border: 2px inset var(--border-gray);
+  font-family: Verdana, sans-serif;
+  font-size: 11px;
+  padding: 2px;
+}
+
+/* ============================================
+   Y2K BADGES & ICONS
+   ============================================ */
+
+.badge-new {
+  background: #FF0000;
+  color: #FFFF00;
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 4px;
+  animation: blink-badge 1s infinite;
+  display: inline-block;
+  vertical-align: top;
+}
+
+@keyframes blink-badge {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.5; }
+}
+
+.badge-hot {
+  background: linear-gradient(to bottom, #FF6600 0%, #CC3300 100%);
+  color: #FFFFFF;
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  font-weight: bold;
+  padding: 1px 4px;
+  border: 1px solid #990000;
+}
+
+.badge-secure {
+  background: linear-gradient(to bottom, #FFFFCC 0%, #FFFF99 100%);
+  border: 1px solid #999966;
+  color: #333300;
+  font-family: Verdana, sans-serif;
+  font-size: 9px;
+  padding: 2px 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Star rating */
+.stars {
+  color: #FF9900;
+  font-size: 12px;
+  letter-spacing: -1px;
+}
+
+/* ============================================
+   SCROLLING TICKER (Marquee style)
+   ============================================ */
+
+@keyframes scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-y2k {
+  background: #000033;
+  border-top: 2px solid #000066;
+  border-bottom: 2px solid #000000;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ticker-y2k-scroll {
+  animation: scroll-left 40s linear infinite;
+  display: inline-block;
+}
+
+.ticker-y2k-item {
+  display: inline-block;
+  padding: 4px 20px;
+  font-family: "Courier New", monospace;
+  font-size: 11px;
+  border-right: 1px solid #003366;
+}
+
+/* ============================================
+   SIDEBAR NAVIGATION (Y2K Style)
+   ============================================ */
+
+.sidebar-nav {
+  background: var(--sidebar-tan);
+  border: 1px solid var(--border-gray);
+  padding: 0;
+  font-size: 11px;
+}
+
+.sidebar-nav-header {
+  background: linear-gradient(to bottom, var(--web-blue) 0%, #002266 100%);
+  color: #FFFFFF;
+  font-weight: bold;
+  padding: 6px 10px;
+  font-size: 11px;
+  border-bottom: 1px solid #001133;
+}
+
+.sidebar-nav-item {
+  display: block;
+  padding: 5px 10px;
+  border-bottom: 1px dotted var(--border-gray);
+  color: var(--link-blue);
+  text-decoration: none;
+  background: url("data:image/gif;base64,R0lGODlhBQAJAIAAAP///wAAACH5BAAAAAAALAAAAAAFAAkAAAIHjI+py+0PAAA7") no-repeat 4px center;
+  padding-left: 16px;
+}
+
+.sidebar-nav-item:hover {
+  background-color: var(--highlight-yellow);
+  color: var(--hover-blue);
+}
+
+/* ============================================
+   TERMINAL STYLES (Stays Dark)
+   ============================================ */
+
+.terminal {
+  background: var(--terminal-bg);
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
+  color: var(--terminal-green);
+  border: 3px inset #333333;
+  position: relative;
+  overflow: hidden;
+}
+
+.terminal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s infinite;
+}
+
+/* ============================================
+   Y2K FOOTER STYLES
+   ============================================ */
+
+.footer-y2k {
+  background: linear-gradient(to bottom, #E8E8E8 0%, #D0D0D0 100%);
+  border-top: 2px groove var(--border-gray);
+  padding: 12px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.footer-links {
+  font-size: 10px;
+}
+
+.footer-links a {
+  color: var(--link-blue);
+  padding: 0 8px;
+  border-right: 1px solid var(--border-gray);
+}
+
+.footer-links a:last-child {
+  border-right: none;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Tiny text */
+.text-tiny {
+  font-size: 9px;
+}
+
+/* Small caps */
+.small-caps {
+  font-variant: small-caps;
+  letter-spacing: 1px;
+}
+
+/* ALL CAPS header */
+.caps-header {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: var(--header-navy);
+  letter-spacing: 1px;
+}
+
+/* Pipe separator */
+.pipe-separator > *:not(:last-child)::after {
+  content: " | ";
+  color: var(--border-gray);
+}
+
+/* Last updated text */
+.last-updated {
+  font-size: 9px;
+  color: var(--text-gray);
+  font-style: italic;
+}
+
+/* More link */
+.more-link {
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.more-link::after {
+  content: " »";
+}
+
+/* Click here link */
+.click-here {
+  color: var(--link-blue);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* Positive/Negative colors */
+.text-positive { color: var(--positive-green); font-weight: bold; }
+.text-negative { color: var(--negative-red); font-weight: bold; }
+
+/* Selection */
+::selection {
+  background: var(--web-blue);
+  color: #FFFFFF;
+}
+
+/* Focus visible */
+:focus-visible {
+  outline: 1px dotted #000000;
+  outline-offset: 1px;
+}
+
+/* ============================================
+   🔥 CHAOS MODE ANIMATIONS 🔥
+   ============================================ */
+
+/* Classic blink (the forbidden tag) */
+@keyframes blink-hard {
+  0%, 49% { visibility: visible; }
+  50%, 100% { visibility: hidden; }
+}
+
+.blink {
+  animation: blink-hard 1s step-end infinite;
+}
+
+/* Pulsing glow */
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 5px currentColor; }
+  50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+.pulse-glow {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+/* Rainbow text */
+@keyframes rainbow {
+  0% { color: #ff0000; }
+  14% { color: #ff7f00; }
+  28% { color: #ffff00; }
+  42% { color: #00ff00; }
+  57% { color: #0000ff; }
+  71% { color: #4b0082; }
+  85% { color: #8b00ff; }
+  100% { color: #ff0000; }
+}
+
+.rainbow-text {
+  animation: rainbow 3s linear infinite;
+  font-weight: bold;
+}
+
+/* Rainbow background */
+@keyframes rainbow-bg {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.rainbow-bg {
+  background: linear-gradient(90deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff, #ff0000);
+  background-size: 200% 100%;
+  animation: rainbow-bg 3s linear infinite;
+}
+
+/* Fire animation */
+@keyframes fire {
+  0%, 100% {
+    background-position: 0% 100%;
+    filter: brightness(1);
+  }
+  25% {
+    background-position: 25% 90%;
+    filter: brightness(1.2);
+  }
+  50% {
+    background-position: 50% 100%;
+    filter: brightness(0.9);
+  }
+  75% {
+    background-position: 75% 95%;
+    filter: brightness(1.1);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.fire-divider {
+  height: 20px;
+  background: linear-gradient(to top,
+    #ff0000 0%,
+    #ff4400 20%,
+    #ff8800 40%,
+    #ffcc00 60%,
+    #ffff00 80%,
+    transparent 100%
+  );
+  background-size: 100px 100%;
+  animation: fire 0.5s ease-in-out infinite;
+  position: relative;
+}
+
+.fire-divider::after {
+  content: '🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥';
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  font-size: 16px;
+  text-align: center;
+  animation: fire 0.3s ease-in-out infinite alternate;
+  filter: drop-shadow(0 2px 4px rgba(255, 100, 0, 0.8));
+}
+
+/* Spinning element */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 2s linear infinite;
+  display: inline-block;
+}
+
+.spin-slow {
+  animation: spin 4s linear infinite;
+  display: inline-block;
+}
+
+/* Bounce */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.bounce {
+  animation: bounce 0.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* Shake */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.shake {
+  animation: shake 0.3s ease-in-out infinite;
+}
+
+/* Sparkle */
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.sparkle {
+  animation: sparkle 0.8s ease-in-out infinite;
+}
+
+/* Marquee (vertical) */
+@keyframes scroll-up {
+  0% { transform: translateY(100%); }
+  100% { transform: translateY(-100%); }
+}
+
+.marquee-vertical {
+  animation: scroll-up 10s linear infinite;
+}
+
+/* Under Construction banner */
+.under-construction {
+  background: repeating-linear-gradient(
+    45deg,
+    #ffcc00,
+    #ffcc00 10px,
+    #000000 10px,
+    #000000 20px
+  );
+  padding: 8px 16px;
+  text-align: center;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  color: #ff0000;
+  text-shadow: 1px 1px 0 #ffffff;
+  border: 3px solid #000000;
+}
+
+/* Starburst badge */
+@keyframes starburst-pulse {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(5deg); }
+}
+
+.starburst {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff0000 0%, #ff6600 50%, #ffcc00 100%);
+  color: #ffffff;
+  font-family: Arial Black, sans-serif;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 12px 8px;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  animation: starburst-pulse 1s ease-in-out infinite;
+  text-shadow: 1px 1px 2px #000000;
+}
+
+/* Glowing border */
+@keyframes glow-border {
+  0%, 100% { box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00; }
+  50% { box-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00; }
+}
+
+.glow-border {
+  animation: glow-border 2s ease-in-out infinite;
+}
+
+/* Hit counter style */
+.hit-counter {
+  background: #000000;
+  border: 2px inset #333333;
+  padding: 4px 8px;
+  display: inline-block;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: #00ff00;
+  letter-spacing: 2px;
+}
+
+.hit-counter-digit {
+  background: #001100;
+  border: 1px solid #003300;
+  padding: 2px 4px;
+  margin: 0 1px;
+  display: inline-block;
+}
+
+/* Webring style box */
+.webring {
+  background: linear-gradient(to bottom, #ffffcc 0%, #ffff99 100%);
+  border: 2px ridge #999966;
+  padding: 8px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.webring-nav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* Animated email icon */
+@keyframes email-bounce {
+  0%, 100% { transform: translateY(0) rotate(-10deg); }
+  50% { transform: translateY(-3px) rotate(10deg); }
+}
+
+.email-icon {
+  animation: email-bounce 0.6s ease-in-out infinite;
+  display: inline-block;
+}
+
+/* "Click Here" button with hand cursor GIF aesthetic */
+.click-here-btn {
+  background: linear-gradient(to bottom, #ffff00 0%, #ffcc00 100%);
+  border: 2px outset #ffcc00;
+  padding: 6px 16px;
+  font-family: "Comic Sans MS", cursive;
+  font-size: 12px;
+  font-weight: bold;
+  color: #ff0000;
+  cursor: pointer;
+  animation: bounce 0.5s ease-in-out infinite;
+}
+
+.click-here-btn:hover {
+  background: linear-gradient(to bottom, #ffff66 0%, #ffdd00 100%);
+}
+
+/* 3D rotating cube effect for icons */
+@keyframes rotate3d {
+  0% { transform: perspective(100px) rotateY(0deg); }
+  100% { transform: perspective(100px) rotateY(360deg); }
+}
+
+.rotate-3d {
+  animation: rotate3d 3s linear infinite;
+  display: inline-block;
+}
+
+/* Neon flicker */
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 20px #ff00de,
+      0 0 40px #ff00de,
+      0 0 80px #ff00de;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+  }
+}
+
+.neon-text {
+  animation: neon-flicker 1.5s infinite alternate;
+  color: #fff;
+}
+
+/* Scanlines overlay */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.15) 0px,
+    rgba(0, 0, 0, 0.15) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* CRT screen effect */
+@keyframes crt-flicker {
+  0% { opacity: 0.97; }
+  5% { opacity: 0.95; }
+  10% { opacity: 0.98; }
+  15% { opacity: 0.96; }
+  20% { opacity: 0.99; }
+  100% { opacity: 0.97; }
+}
+
+.crt-effect {
+  animation: crt-flicker 0.15s infinite;
+  position: relative;
+}
+
+.crt-effect::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+  pointer-events: none;
+}
+
+/* ============================================
+   📱 MOBILE RESPONSIVE CHAOS 📱
+   ============================================ */
+
+/* Mobile base adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Stack tables vertically */
+  table {
+    width: 100% !important;
+  }
+
+  table td, table th {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* Larger touch targets */
+  .btn-y2k, .btn-action, .btn-buy-y2k, .btn-go {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  /* Readable text */
+  .text-tiny {
+    font-size: 11px;
+  }
+
+  /* Full width panels */
+  .panel-inset-y2k, .panel-outset-y2k, .fieldset-y2k {
+    margin: 8px 0;
+  }
+
+  /* Header adjustments */
+  .header-gradient {
+    padding: 12px 8px;
+  }
+
+  .header-gradient-title {
+    font-size: 14px;
+  }
+
+  /* Ticker scroll faster on mobile */
+  .ticker-y2k-scroll {
+    animation-duration: 20s;
+  }
+
+  /* Stack footer links */
+  .footer-links a {
+    display: block;
+    padding: 8px 0;
+    border-right: none;
+    border-bottom: 1px dotted var(--border-gray);
+  }
+
+  /* Fire divider smaller */
+  .fire-divider {
+    height: 16px;
+  }
+
+  .fire-divider::after {
+    font-size: 12px;
+  }
+
+  /* Under construction readable */
+  .under-construction {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+
+  /* Starburst smaller */
+  .starburst {
+    font-size: 9px;
+    padding: 10px 6px;
+  }
+
+  /* Terminal scrollable */
+  .terminal {
+    overflow-x: auto;
+    font-size: 11px;
+  }
+
+  /* Sidebar becomes top nav */
+  .sidebar-nav {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  /* Hit counter */
+  .hit-counter {
+    font-size: 12px;
+  }
+
+  /* Two column grid becomes single */
+  .grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
+  .header-gradient-title {
+    font-size: 12px;
+  }
+
+  .badge-secure {
+    display: none;
+  }
+
+  .section-header {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+
+  /* Hide some chaos on very small screens */
+  .hide-mobile {
+    display: none;
+  }
+
+  /* Simplify fire */
+  .fire-divider::after {
+    content: '🔥🔥🔥🔥🔥';
+  }
+
+  /* Stack buttons */
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-group > * {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Tablet / landscape */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    font-size: 12px;
+  }
+
+  .container-y2k {
+    padding: 0 16px;
+  }
+}
+
+/* Desktop enhancements */
+@media (min-width: 1025px) {
+  /* Two column layout */
+  .layout-sidebar {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 12px;
+  }
+
+  .main-content {
+    min-width: 0;
+  }
+}
+
+/* ============================================
+   🎨 EXTRA CHAOS UTILITY CLASSES
+   ============================================ */
+
+/* Marquee container */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* Comic Sans for extra Y2K energy */
+.comic-sans {
+  font-family: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+}
+
+/* Times New Roman (the other Y2K font) */
+.times {
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* Papyrus (if you dare) */
+.papyrus {
+  font-family: Papyrus, fantasy, serif;
+}
+
+/* Impact headers */
+.impact {
+  font-family: Impact, Haettenschweiler, sans-serif;
+  text-transform: uppercase;
+}
+
+/* Beveled text effect */
+.text-bevel {
+  text-shadow:
+    1px 1px 0 #ffffff,
+    -1px -1px 0 #666666;
+}
+
+/* Embossed text */
+.text-emboss {
+  text-shadow:
+    -1px -1px 0 #ffffff,
+    1px 1px 0 #666666;
+}
+
+/* Drop shadow (90s style) */
+.drop-shadow {
+  filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.5));
+}
+
+/* Grid helpers */
+.grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.grid-3col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Flex helpers */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Print styles (very Y2K) */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  a {
+    color: black;
+    text-decoration: underline;
+  }
+  .blink, .spin, .bounce, .shake, .rainbow-text {
+    animation: none;
+  }
+  .fire-divider, .under-construction {
+    display: none;
+  }
 }

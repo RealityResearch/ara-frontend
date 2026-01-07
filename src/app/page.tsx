@@ -1,65 +1,173 @@
-import Image from "next/image";
+'use client';
+
+import { Ticker } from '@/components/Ticker';
+import { Hero } from '@/components/Hero';
+import { AgentTerminal } from '@/components/AgentTerminal';
+import { ChartEmbed } from '@/components/ChartEmbed';
+import { HowItWorks } from '@/components/HowItWorks';
+import { TokenInfo } from '@/components/TokenInfo';
+import { ComingSoon } from '@/components/ComingSoon';
+import { Footer } from '@/components/Footer';
+import { LiveClock } from '@/components/LiveClock';
+import { StickyCA } from '@/components/StickyCA';
+import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+    <div style={{ background: '#FFFEF5', minHeight: '100vh' }}>
+
+      {/* Y2K Header Bar */}
+      <div className="header-gradient">
+        <table width="100%" cellPadding={0} cellSpacing={0}>
+          <tbody>
+            <tr>
+              <td>
+                <span className="header-gradient-title">
+                  CLAUDE INVESTMENTS
+                </span>
+                <span style={{ color: '#FFCC00', fontSize: '10px', marginLeft: '8px' }}>®</span>
+                <span className="hide-mobile" style={{ marginLeft: '12px', fontSize: '10px', color: '#99CCFF' }}>
+                  — Automated Retirement Account
+                </span>
+              </td>
+              <td align="right" style={{ fontSize: '10px', color: '#99CCFF' }}>
+                <span className="hide-mobile" style={{ marginRight: '12px' }}>
+                  <LiveClock />
+                </span>
+                <span className="badge-secure">
+                  🔒 128-bit SSL
+                </span>
+                {' '}
+                <span style={{ color: '#00FF00' }}>● ONLINE</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Alert Bar */}
+      <div style={{
+        background: '#003366',
+        padding: '3px 0',
+        textAlign: 'center',
+        fontSize: '10px',
+        fontWeight: 'bold',
+        color: '#FFFFFF',
+      }}>
+        AI Trading Agent is LIVE — Creator Fees Now Funding Trading Wallet —{' '}
+        <span style={{ color: '#00FF00' }}>● ACTIVE</span>
+      </div>
+
+      {/* Scrolling Ticker */}
+      <Ticker />
+
+      {/* Navigation Bar */}
+      <div style={{
+        background: 'linear-gradient(to bottom, #F5F5F5 0%, #E0E0E0 100%)',
+        borderBottom: '1px solid #999999',
+        padding: '4px 12px',
+        fontSize: '11px'
+      }}>
+        <table width="100%" cellPadding={0} cellSpacing={0}>
+          <tbody>
+            <tr>
+              <td>
+                <a href="#" style={{ marginRight: '12px' }}>Home</a>
+                <a href="#terminal" style={{ marginRight: '12px' }}>
+                  Live Terminal
+                  <span style={{ fontSize: '8px', marginLeft: '4px', color: '#008800' }}>● LIVE</span>
+                </a>
+                <a href="#how-it-works" style={{ marginRight: '12px' }}>How It Works</a>
+                <a href="#chart" style={{ marginRight: '12px' }}>Chart</a>
+                <a href="#token" style={{ marginRight: '12px' }}>Token</a>
+                <a href="#roadmap" className="hide-mobile">Roadmap</a>
+              </td>
+              <td align="right" className="hide-mobile">
+                <span style={{ color: '#666666', fontSize: '10px' }}>
+                  <span style={{ color: '#008800' }}>●</span> Agent Active |{' '}
+                  Last Trade: <span style={{ fontFamily: 'Courier New' }}>2m ago</span>
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Main Content Area with Sidebar */}
+      <div className="layout-sidebar" style={{ padding: '12px' }}>
+        {/* Sidebar - Desktop Only */}
+        <div className="sidebar-nav hide-mobile" style={{ alignSelf: 'start' }}>
+          <div className="sidebar-nav-header">Navigation</div>
+          <a href="#" className="sidebar-nav-item">Home</a>
+          <a href="#terminal" className="sidebar-nav-item">
+            Terminal <span style={{ fontSize: '7px', color: '#008800' }}>● LIVE</span>
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+          <a href="#how-it-works" className="sidebar-nav-item">How It Works</a>
+          <a href="#chart" className="sidebar-nav-item">
+            Chart <span style={{ fontSize: '7px', color: '#00FF00' }}>● LIVE</span>
           </a>
+          <a href="#token" className="sidebar-nav-item">Token Info</a>
+          <a href="#roadmap" className="sidebar-nav-item">Roadmap</a>
+
+          <div className="hr-dotted" style={{ margin: '4px 8px' }} />
+
+          <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer" className="sidebar-nav-item">Twitter/X</a>
+          <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="sidebar-nav-item">DEXScreener</a>
+
+          {/* Sidebar Promo Box */}
+          <div style={{ padding: '8px', background: '#003366' }}>
+            <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center' }}>
+              BUY $ARA
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '6px' }}>
+              <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer">
+                <button className="btn-buy-y2k" style={{ fontSize: '10px', padding: '6px 12px' }}>
+                  PUMP.FUN
+                </button>
+              </a>
+            </div>
+          </div>
+
+          {/* Visitor Counter */}
+          <div style={{ padding: '8px', textAlign: 'center', background: '#E8E8E8', borderTop: '1px solid #CCCCCC' }}>
+            <div style={{ fontSize: '8px', color: '#666666' }}>You are visitor:</div>
+            <div className="hit-counter" style={{ fontSize: '10px', marginTop: '4px' }}>
+              <span className="hit-counter-digit">0</span>
+              <span className="hit-counter-digit">8</span>
+              <span className="hit-counter-digit">4</span>
+              <span className="hit-counter-digit">2</span>
+              <span className="hit-counter-digit">0</span>
+            </div>
+          </div>
         </div>
-      </main>
+
+        {/* Main Content */}
+        <div className="main-content">
+          {/* Hero Section */}
+          <Hero />
+
+          {/* Agent Terminal */}
+          <AgentTerminal />
+
+          {/* Live Chart - Right under the terminal */}
+          <ChartEmbed contractAddress={CONTRACT_ADDRESS} height={400} />
+
+          {/* How It Works */}
+          <HowItWorks />
+
+          {/* Token Info */}
+          <TokenInfo />
+
+          {/* Coming Soon / Roadmap */}
+          <ComingSoon />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <Footer />
+
+      {/* Sticky CA Button */}
+      <StickyCA />
     </div>
   );
 }
