@@ -205,6 +205,8 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] **JUPITER VERIFICATION** - discover_tokens now verifies Jupiter tradability
 - [x] **HELIUS RPC SUPPORT** - Optional premium RPC to avoid rate limits
 - [x] **PORTFOLIO CHART FIX** - WebSocket caches market data for instant load
+- [x] **HYDRATION FIX** - Fixed React #418 error (static initial state, client-side timestamp hydration)
+- [x] **NULL SAFETY** - Added null checks for all toFixed/toLocaleString calls across components
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -489,4 +491,4 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
 ---
-*Last updated: Token whitelist (20+ verified tradable tokens), Position tracking with stop loss/take profit automation, Jupiter tradability verification in discovery, Helius RPC support, Portfolio chart WebSocket fix.*
+*Last updated: Session 2 - Token whitelist, position tracking (SL/TP), Jupiter verification, Helius RPC, portfolio chart WebSocket fix, React hydration fix (#418), null safety for all numeric displays.*
