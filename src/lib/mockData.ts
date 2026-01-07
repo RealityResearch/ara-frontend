@@ -94,3 +94,292 @@ export const SOCIAL_LINKS = {
   raydium: `https://raydium.io/swap/?inputCurrency=SOL&outputCurrency=${CONTRACT_ADDRESS}`,
   dexscreener: `https://dexscreener.com/solana/${CONTRACT_ADDRESS}`,
 };
+
+// ============================================
+// PERFORMANCE METRICS
+// ============================================
+
+export interface PerformanceData {
+  winRate: number;
+  totalTrades: number;
+  wins: number;
+  losses: number;
+  even: number;
+  totalPnlSol: number;
+  totalPnlUsd: number;
+  walletBalanceSol: number;
+  walletBalanceUsd: number;
+  openPositions: number;
+  maxPositions: number;
+  avgHoldTime: string;
+  bestTrade: number;
+  worstTrade: number;
+  currentStreak: number;
+  streakType: 'win' | 'loss' | 'none';
+}
+
+export const mockPerformance: PerformanceData = {
+  winRate: 67.6,
+  totalTrades: 142,
+  wins: 96,
+  losses: 38,
+  even: 8,
+  totalPnlSol: 4.82,
+  totalPnlUsd: 678.42,
+  walletBalanceSol: 13.34,
+  walletBalanceUsd: 1876.52,
+  openPositions: 1,
+  maxPositions: 3,
+  avgHoldTime: '24m',
+  bestTrade: 34.2,
+  worstTrade: -18.7,
+  currentStreak: 3,
+  streakType: 'win',
+};
+
+// ============================================
+// BOT EVOLUTION / GAMIFICATION
+// ============================================
+
+export interface BotLevel {
+  name: string;
+  minXp: number;
+  maxXp: number;
+  icon: string;
+  color: string;
+}
+
+export const BOT_LEVELS: BotLevel[] = [
+  { name: 'Intern', minXp: 0, maxXp: 100, icon: '👶', color: '#999999' },
+  { name: 'Junior Analyst', minXp: 100, maxXp: 500, icon: '📊', color: '#66BB66' },
+  { name: 'Associate', minXp: 500, maxXp: 1500, icon: '💼', color: '#4488CC' },
+  { name: 'Senior Trader', minXp: 1500, maxXp: 4000, icon: '📈', color: '#9966CC' },
+  { name: 'VP of Trading', minXp: 4000, maxXp: 10000, icon: '🎯', color: '#CC8833' },
+  { name: 'Managing Director', minXp: 10000, maxXp: 25000, icon: '👔', color: '#CC6666' },
+  { name: 'Partner', minXp: 25000, maxXp: 50000, icon: '🏆', color: '#FFD700' },
+  { name: 'Legend', minXp: 50000, maxXp: 999999, icon: '👑', color: '#FF6600' },
+];
+
+export interface BotStats {
+  experience: number;
+  accuracy: number;
+  analysis: number;
+  adaptation: number;
+  riskMgmt: number;
+}
+
+export interface EvolutionData {
+  currentXp: number;
+  totalXpEarned: number;
+  stats: BotStats;
+  recentGains: BotStats;
+  cyclesCompleted: number;
+  uptime: string;
+}
+
+export const mockEvolution: EvolutionData = {
+  currentXp: 847,
+  totalXpEarned: 1247,
+  stats: {
+    experience: 42,
+    accuracy: 68,
+    analysis: 55,
+    adaptation: 31,
+    riskMgmt: 47,
+  },
+  recentGains: {
+    experience: 12,
+    accuracy: 5,
+    analysis: 8,
+    adaptation: 3,
+    riskMgmt: 6,
+  },
+  cyclesCompleted: 284,
+  uptime: '4d 12h 33m',
+};
+
+export function getCurrentLevel(xp: number): BotLevel {
+  for (let i = BOT_LEVELS.length - 1; i >= 0; i--) {
+    if (xp >= BOT_LEVELS[i].minXp) {
+      return BOT_LEVELS[i];
+    }
+  }
+  return BOT_LEVELS[0];
+}
+
+export function getLevelProgress(xp: number): number {
+  const level = getCurrentLevel(xp);
+  const progressInLevel = xp - level.minXp;
+  const levelRange = level.maxXp - level.minXp;
+  return Math.min((progressInLevel / levelRange) * 100, 100);
+}
+
+// ============================================
+// DETAILED TRADE HISTORY
+// ============================================
+
+export interface DetailedTrade {
+  id: string;
+  timestamp: string;
+  date: string;
+  token: string;
+  tokenSymbol: string;
+  direction: 'BUY' | 'SELL';
+  entryPrice: number;
+  exitPrice: number | null;
+  amountSol: number;
+  pnlSol: number;
+  pnlPercent: number;
+  holdTime: string;
+  status: 'open' | 'closed' | 'pending';
+  result: 'win' | 'loss' | 'even' | 'open';
+  txHash: string;
+  reasoning: string;
+}
+
+export const mockTradeHistory: DetailedTrade[] = [
+  {
+    id: 't1',
+    timestamp: '14:32:01',
+    date: '2025-01-06',
+    token: 'SOL',
+    tokenSymbol: 'SOL',
+    direction: 'BUY',
+    entryPrice: 140.25,
+    exitPrice: null,
+    amountSol: 0.5,
+    pnlSol: 0.02,
+    pnlPercent: 4.2,
+    holdTime: '—',
+    status: 'open',
+    result: 'open',
+    txHash: '4xKj...9mNp',
+    reasoning: 'RSI oversold, whale accumulation detected',
+  },
+  {
+    id: 't2',
+    timestamp: '12:15:33',
+    date: '2025-01-06',
+    token: 'BONK',
+    tokenSymbol: 'BONK',
+    direction: 'SELL',
+    entryPrice: 0.0000115,
+    exitPrice: 0.0000132,
+    amountSol: 0.8,
+    pnlSol: 0.12,
+    pnlPercent: 14.8,
+    holdTime: '2h 15m',
+    status: 'closed',
+    result: 'win',
+    txHash: '7yHm...3kLp',
+    reasoning: 'Target hit, taking profits',
+  },
+  {
+    id: 't3',
+    timestamp: '09:45:22',
+    date: '2025-01-06',
+    token: 'WIF',
+    tokenSymbol: 'WIF',
+    direction: 'BUY',
+    entryPrice: 0.42,
+    exitPrice: 0.39,
+    amountSol: 1.2,
+    pnlSol: -0.086,
+    pnlPercent: -7.1,
+    holdTime: '45m',
+    status: 'closed',
+    result: 'loss',
+    txHash: '2nBx...8qRt',
+    reasoning: 'Stop loss triggered',
+  },
+  {
+    id: 't4',
+    timestamp: '08:20:11',
+    date: '2025-01-06',
+    token: 'JUP',
+    tokenSymbol: 'JUP',
+    direction: 'BUY',
+    entryPrice: 0.225,
+    exitPrice: 0.241,
+    amountSol: 2.0,
+    pnlSol: 0.14,
+    pnlPercent: 7.1,
+    holdTime: '1h 30m',
+    status: 'closed',
+    result: 'win',
+    txHash: '9pLm...1vNx',
+    reasoning: 'Breakout pattern confirmed',
+  },
+  {
+    id: 't5',
+    timestamp: '22:10:45',
+    date: '2025-01-05',
+    token: 'PYTH',
+    tokenSymbol: 'PYTH',
+    direction: 'SELL',
+    entryPrice: 0.072,
+    exitPrice: 0.071,
+    amountSol: 0.6,
+    pnlSol: -0.008,
+    pnlPercent: -1.4,
+    holdTime: '3h 20m',
+    status: 'closed',
+    result: 'loss',
+    txHash: '5kWr...4sTq',
+    reasoning: 'Market reversal, cut losses early',
+  },
+  {
+    id: 't6',
+    timestamp: '18:33:29',
+    date: '2025-01-05',
+    token: 'SOL',
+    tokenSymbol: 'SOL',
+    direction: 'BUY',
+    entryPrice: 138.50,
+    exitPrice: 142.20,
+    amountSol: 1.5,
+    pnlSol: 0.04,
+    pnlPercent: 2.7,
+    holdTime: '4h 10m',
+    status: 'closed',
+    result: 'win',
+    txHash: '3mKp...7yLn',
+    reasoning: 'Trend continuation, scaling in',
+  },
+  {
+    id: 't7',
+    timestamp: '14:05:18',
+    date: '2025-01-05',
+    token: 'BONK',
+    tokenSymbol: 'BONK',
+    direction: 'BUY',
+    entryPrice: 0.0000108,
+    exitPrice: 0.0000115,
+    amountSol: 0.4,
+    pnlSol: 0.026,
+    pnlPercent: 6.5,
+    holdTime: '55m',
+    status: 'closed',
+    result: 'win',
+    txHash: '8rTx...2pMn',
+    reasoning: 'Volume spike, momentum entry',
+  },
+  {
+    id: 't8',
+    timestamp: '10:22:55',
+    date: '2025-01-05',
+    token: 'WIF',
+    tokenSymbol: 'WIF',
+    direction: 'SELL',
+    entryPrice: 0.445,
+    exitPrice: 0.445,
+    amountSol: 0.3,
+    pnlSol: 0.0,
+    pnlPercent: 0.0,
+    holdTime: '20m',
+    status: 'closed',
+    result: 'even',
+    txHash: '1nVq...6xKm',
+    reasoning: 'Breakeven exit, uncertain conditions',
+  },
+];

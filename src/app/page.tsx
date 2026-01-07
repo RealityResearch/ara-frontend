@@ -3,6 +3,9 @@
 import { Ticker } from '@/components/Ticker';
 import { Hero } from '@/components/Hero';
 import { AgentTerminal } from '@/components/AgentTerminal';
+import { PerformanceMetrics } from '@/components/PerformanceMetrics';
+import { BotEvolution } from '@/components/BotEvolution';
+import { TradeHistory } from '@/components/TradeHistory';
 import { ChartEmbed } from '@/components/ChartEmbed';
 import { HowItWorks } from '@/components/HowItWorks';
 import { TokenInfo } from '@/components/TokenInfo';
@@ -74,12 +77,13 @@ export default function Home() {
               <td>
                 <a href="#" style={{ marginRight: '12px' }}>Home</a>
                 <a href="#terminal" style={{ marginRight: '12px' }}>
-                  Live Terminal
+                  Terminal
                   <span style={{ fontSize: '8px', marginLeft: '4px', color: '#008800' }}>● LIVE</span>
                 </a>
-                <a href="#how-it-works" style={{ marginRight: '12px' }}>How It Works</a>
+                <a href="#performance" style={{ marginRight: '12px' }}>Stats</a>
+                <a href="#trades" style={{ marginRight: '12px' }}>Trades</a>
                 <a href="#chart" style={{ marginRight: '12px' }}>Chart</a>
-                <a href="#token" style={{ marginRight: '12px' }}>Token</a>
+                <a href="#token" className="hide-mobile" style={{ marginRight: '12px' }}>Token</a>
                 <a href="#roadmap" className="hide-mobile">Roadmap</a>
               </td>
               <td align="right" className="hide-mobile">
@@ -102,10 +106,13 @@ export default function Home() {
           <a href="#terminal" className="sidebar-nav-item">
             Terminal <span style={{ fontSize: '7px', color: '#008800' }}>● LIVE</span>
           </a>
-          <a href="#how-it-works" className="sidebar-nav-item">How It Works</a>
+          <a href="#performance" className="sidebar-nav-item">Performance</a>
+          <a href="#evolution" className="sidebar-nav-item">Evolution</a>
+          <a href="#trades" className="sidebar-nav-item">Trade History</a>
           <a href="#chart" className="sidebar-nav-item">
             Chart <span style={{ fontSize: '7px', color: '#00FF00' }}>● LIVE</span>
           </a>
+          <a href="#how-it-works" className="sidebar-nav-item">How It Works</a>
           <a href="#token" className="sidebar-nav-item">Token Info</a>
           <a href="#roadmap" className="sidebar-nav-item">Roadmap</a>
 
@@ -149,7 +156,16 @@ export default function Home() {
           {/* Agent Terminal */}
           <AgentTerminal />
 
-          {/* Live Chart - Right under the terminal */}
+          {/* Performance Metrics */}
+          <PerformanceMetrics />
+
+          {/* Bot Evolution */}
+          <BotEvolution />
+
+          {/* Trade History */}
+          <TradeHistory />
+
+          {/* Live Chart */}
           <ChartEmbed contractAddress={CONTRACT_ADDRESS} height={400} />
 
           {/* How It Works */}
