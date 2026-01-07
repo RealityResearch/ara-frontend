@@ -10,7 +10,7 @@ interface MetricCardProps {
   icon?: string;
 }
 
-function MetricCard({ label, value, subValue, color = '#003366', icon }: MetricCardProps) {
+function MetricCard({ label, value, subValue, color = '#b86b4a', icon }: MetricCardProps) {
   return (
     <div className="fieldset-y2k" style={{ height: '100%', margin: 0 }}>
       <div style={{

@@ -51,7 +51,7 @@ export function HowItWorks() {
       <div style={{ border: '1px solid #CCCCCC', borderTop: 'none', background: '#FFFFFF' }}>
         {/* Intro */}
         <div style={{
-          background: 'linear-gradient(to right, #003366 0%, #004488 100%)',
+          background: 'linear-gradient(to right, #d98d6c 0%, #b86b4a 100%)',
           padding: '12px',
           color: '#FFFFFF',
           textAlign: 'center'
@@ -74,8 +74,8 @@ export function HowItWorks() {
                     <div style={{
                       width: '36px',
                       height: '36px',
-                      background: 'linear-gradient(to bottom, #003399 0%, #001166 100%)',
-                      border: '2px outset #003399',
+                      background: 'linear-gradient(to bottom, #d98d6c 0%, #8b4d32 100%)',
+                      border: '2px outset #d98d6c',
                       borderRadius: '4px',
                       display: 'flex',
                       alignItems: 'center',
@@ -89,7 +89,7 @@ export function HowItWorks() {
                     </div>
                   </td>
                   <td valign="top" style={{ padding: '8px 0 8px 8px' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '12px', color: '#003366', marginBottom: '2px' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '12px', color: '#b86b4a', marginBottom: '2px' }}>
                       <span style={{ marginRight: '6px' }}>{step.icon}</span>
                       {step.title}
                     </div>
@@ -114,7 +114,7 @@ export function HowItWorks() {
             marginBottom: '220px',
             width: '2px',
             height: '200px',
-            background: 'repeating-linear-gradient(to bottom, #003399 0px, #003399 4px, transparent 4px, transparent 8px)',
+            background: 'repeating-linear-gradient(to bottom, #d98d6c 0px, #d98d6c 4px, transparent 4px, transparent 8px)',
             display: 'none' // hidden for now, can enable for visual effect
           }} />
         </div>
@@ -131,7 +131,7 @@ export function HowItWorks() {
                 <td width="33%" valign="top" style={{ borderRight: '1px dotted #CCCCCC' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', marginBottom: '4px' }}>🔐</div>
-                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#003366' }}>Trustless</div>
+                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#b86b4a' }}>Trustless</div>
                     <div style={{ fontSize: '9px', color: '#666666' }}>
                       Agent wallet is public. Verify every transaction on-chain.
                     </div>
@@ -140,7 +140,7 @@ export function HowItWorks() {
                 <td width="33%" valign="top" style={{ borderRight: '1px dotted #CCCCCC' }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', marginBottom: '4px' }}>🧠</div>
-                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#003366' }}>Real AI</div>
+                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#b86b4a' }}>Real AI</div>
                     <div style={{ fontSize: '9px', color: '#666666' }}>
                       Powered by Claude. See actual reasoning, not canned responses.
                     </div>
@@ -149,7 +149,7 @@ export function HowItWorks() {
                 <td width="33%" valign="top">
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: '20px', marginBottom: '4px' }}>⏱️</div>
-                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#003366' }}>24/7</div>
+                    <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#b86b4a' }}>24/7</div>
                     <div style={{ fontSize: '9px', color: '#666666' }}>
                       Never sleeps. Monitors markets around the clock.
                     </div>

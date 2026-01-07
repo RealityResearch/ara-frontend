@@ -64,7 +64,7 @@ export function Footer() {
 
               {/* Quick Links */}
               <td width="35%" valign="top">
-                <strong style={{ fontSize: '11px', color: '#003366' }}>Quick Links</strong>
+                <strong style={{ fontSize: '11px', color: '#b86b4a' }}>Quick Links</strong>
                 <div className="hr-dotted" style={{ margin: '4px 0' }} />
                 <div style={{ fontSize: '10px', lineHeight: '1.8' }}>
                   • <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer">Buy on pump.fun</a><br />
@@ -77,7 +77,7 @@ export function Footer() {
 
               {/* Connect */}
               <td width="35%" valign="top">
-                <strong style={{ fontSize: '11px', color: '#003366' }}>Connect With Us</strong>
+                <strong style={{ fontSize: '11px', color: '#b86b4a' }}>Connect With Us</strong>
                 <div className="hr-dotted" style={{ margin: '4px 0' }} />
                 <table cellPadding={4} cellSpacing={0}>
                   <tbody>
@@ -134,9 +134,9 @@ export function Footer() {
                 </td>
                 <td>
                   <div style={{
-                    background: '#003399',
+                    background: '#b86b4a',
                     color: '#FFFFFF',
-                    border: '1px solid #001166',
+                    border: '1px solid #8b4d32',
                     padding: '2px 8px',
                     fontSize: '9px'
                   }}>

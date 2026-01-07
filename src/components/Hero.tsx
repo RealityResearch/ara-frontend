@@ -20,7 +20,7 @@ export function Hero() {
             </td>
           </tr>
           <tr>
-            <td colSpan={2} style={{ background: '#003366', textAlign: 'center', padding: '8px', borderBottom: '1px solid #002244' }}>
+            <td colSpan={2} style={{ background: '#b86b4a', textAlign: 'center', padding: '8px', borderBottom: '1px solid #8b4d32' }}>
               <span style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#FFFFFF', fontStyle: 'italic' }}>
                 &ldquo;The Future of Investing is Here&rdquo;
               </span>
@@ -48,7 +48,7 @@ export function Hero() {
                           padding: '8px',
                           margin: '8px 0'
                         }}>
-                          <span style={{ color: '#003366', fontWeight: 'bold' }}>Key Features:</span>
+                          <span style={{ color: '#b86b4a', fontWeight: 'bold' }}>Key Features:</span>
                           <br />
                           <span style={{ color: '#006600' }}>✓</span> AI-Powered Trading 24/7<br />
                           <span style={{ color: '#006600' }}>✓</span> 100% Transparent Operations<br />
@@ -56,7 +56,7 @@ export function Hero() {
                           <span style={{ color: '#006600' }}>✓</span> Real-Time Performance Tracking
                         </div>
                         <p style={{ margin: '0', textAlign: 'center' }}>
-                          <a href="#terminal" style={{ color: '#003399', fontWeight: 'bold' }}>
+                          <a href="#terminal" style={{ color: '#b86b4a', fontWeight: 'bold' }}>
                             View Live Agent Terminal ↓
                           </a>
                         </p>

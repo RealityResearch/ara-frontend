@@ -28,8 +28,8 @@ export function StickyCA() {
     }}>
       {/* CA Copy Box */}
       <div style={{
-        background: 'linear-gradient(to bottom, #003366 0%, #001133 100%)',
-        border: '2px outset #003366',
+        background: 'linear-gradient(to bottom, #d98d6c 0%, #8b4d32 100%)',
+        border: '2px outset #d98d6c',
         borderRadius: '4px',
         padding: '8px 12px',
         boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
