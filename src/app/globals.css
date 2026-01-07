@@ -1,25 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  /* Claude Coral Palette - Primary Brand */
-  --coral: #d98d6c;
-  --coral-dark: #b86b4a;
-  --coral-darker: #8b4d32;
-  --coral-light: #e8a989;
-  --coral-lighter: #f5cbb8;
-
   /* Authentic Y2K Web Colors */
   --web-blue: #003399;
-  --link-coral: #c47a5a;
-  --visited-purple: #996666;
-  --hover-coral: #e8a989;
+  --link-blue: #0000FF;
+  --visited-purple: #800080;
+  --hover-blue: #0066CC;
 
   /* Classic Financial Site Palette */
-  --header-coral: #c47a5a;
-  --header-gradient-end: #b86b4a;
+  --header-navy: #000033;
+  --header-gradient-end: #003366;
   --sidebar-tan: #F5F5DC;
   --content-cream: #FFFEF5;
-  --highlight-coral: #fff0e8;
+  --highlight-yellow: #FFFFCC;
   --money-green: #006600;
   --alert-red: #CC0000;
   --border-gray: #CCCCCC;
@@ -56,9 +49,9 @@ body {
   padding: 0;
 }
 
-/* Coral links for better visibility */
+/* Classic blue underlined links */
 a {
-  color: var(--coral-dark);
+  color: var(--link-blue);
   text-decoration: underline;
 }
 
@@ -67,7 +60,7 @@ a:visited {
 }
 
 a:hover {
-  color: var(--coral);
+  color: var(--hover-blue);
 }
 
 /* ============================================
@@ -229,11 +222,12 @@ a:hover {
 
 .header-gradient {
   background: linear-gradient(to bottom,
-    var(--coral) 0%,
-    var(--coral-dark) 50%,
-    var(--coral-darker) 100%
+    #003366 0%,
+    #004488 30%,
+    #003366 70%,
+    #002244 100%
   );
-  border-bottom: 2px solid var(--coral-darker);
+  border-bottom: 2px solid #000033;
   padding: 8px 12px;
   color: #FFFFFF;
 }
@@ -249,13 +243,13 @@ a:hover {
 
 /* Section header bar */
 .section-header {
-  background: linear-gradient(to right, var(--coral) 0%, var(--coral-dark) 100%);
+  background: linear-gradient(to right, var(--web-blue) 0%, #0055AA 100%);
   color: #FFFFFF;
   font-family: Verdana, sans-serif;
   font-size: 11px;
   font-weight: bold;
   padding: 4px 8px;
-  border: 1px solid var(--coral-darker);
+  border: 1px solid #002266;
   margin-bottom: 1px;
 }
 
@@ -378,8 +372,8 @@ a:hover {
 }
 
 .ticker-y2k {
-  background: var(--coral-darker);
-  border-top: 2px solid var(--coral-dark);
+  background: #000033;
+  border-top: 2px solid #000066;
   border-bottom: 2px solid #000000;
   overflow: hidden;
   white-space: nowrap;
@@ -395,7 +389,7 @@ a:hover {
   padding: 4px 20px;
   font-family: "Courier New", monospace;
   font-size: 11px;
-  border-right: 1px solid var(--coral-dark);
+  border-right: 1px solid #003366;
 }
 
 /* ============================================
@@ -410,12 +404,12 @@ a:hover {
 }
 
 .sidebar-nav-header {
-  background: linear-gradient(to bottom, var(--coral) 0%, var(--coral-darker) 100%);
+  background: linear-gradient(to bottom, var(--web-blue) 0%, #002266 100%);
   color: #FFFFFF;
   font-weight: bold;
   padding: 6px 10px;
   font-size: 11px;
-  border-bottom: 1px solid var(--coral-darker);
+  border-bottom: 1px solid #001133;
 }
 
 .sidebar-nav-item {

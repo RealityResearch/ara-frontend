@@ -50,7 +50,7 @@ export default function Home() {
 
       {/* Alert Bar */}
       <div style={{
-        background: '#b86b4a',
+        background: '#003366',
         padding: '3px 0',
         textAlign: 'center',
         fontSize: '10px',
@@ -122,7 +122,7 @@ export default function Home() {
           <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="sidebar-nav-item">DEXScreener</a>
 
           {/* Sidebar Promo Box */}
-          <div style={{ padding: '8px', background: '#b86b4a' }}>
+          <div style={{ padding: '8px', background: '#003366' }}>
             <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center' }}>
               BUY $ARA
             </div>

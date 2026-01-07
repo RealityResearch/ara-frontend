@@ -88,7 +88,7 @@ export function AgentTerminal() {
               <div style={{ border: '2px outset #CCCCCC', background: '#C0C0C0', padding: '2px' }}>
                 {/* Title Bar */}
                 <div style={{
-                  background: 'linear-gradient(to right, #b86b4a 0%, #d98d6c 100%)',
+                  background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
                   padding: '2px 4px',
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -200,7 +200,7 @@ export function AgentTerminal() {
                     {isConnected ? ' Connected' : ' Demo Mode'}
                   </span>
                   <span>
-                    {model && <span style={{ color: '#b86b4a' }}>{model.replace('claude-', '').replace('-20250514', '')}</span>}
+                    {model && <span style={{ color: '#003366' }}>{model.replace('claude-', '').replace('-20250514', '')}</span>}
                     {lastLatency && <span> | {lastLatency}ms</span>}
                   </span>
                 </div>
@@ -211,7 +211,7 @@ export function AgentTerminal() {
             <td width="30%" valign="top" style={{ background: '#F5F5F5', padding: '8px' }}>
               {/* Proof of AI Badge */}
               <div style={{
-                background: '#b86b4a',
+                background: '#003366',
                 color: '#FFFFFF',
                 padding: '6px',
                 textAlign: 'center',
@@ -224,7 +224,7 @@ export function AgentTerminal() {
 
               {/* Model Info */}
               <div className="fieldset-y2k" style={{ marginBottom: '8px', padding: '6px' }}>
-                <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#b86b4a' }}>Model</div>
+                <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>Model</div>
                 <div style={{ fontSize: '10px', fontFamily: 'Courier New', color: isConnected ? '#006600' : '#666666' }}>
                   {isConnected && model ? model : 'Not connected'}
                 </div>
@@ -238,7 +238,7 @@ export function AgentTerminal() {
               {/* Live Market Data */}
               {marketData && (
                 <div className="fieldset-y2k" style={{ marginBottom: '8px', padding: '6px' }}>
-                  <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#b86b4a' }}>
+                  <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>
                     Agent Input Data
                   </div>
                   <table style={{ fontSize: '9px', width: '100%' }}>
@@ -275,7 +275,7 @@ export function AgentTerminal() {
 
               {/* Question Form */}
               <div className="fieldset-y2k" style={{ padding: '6px' }}>
-                <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#b86b4a' }}>
+                <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>
                   Ask the Branch Manager
                 </div>
                 <input
