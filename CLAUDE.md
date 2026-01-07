@@ -53,24 +53,40 @@ cc/
 │   │   ├── Ticker.tsx          # Scrolling price ticker
 │   │   ├── Hero.tsx            # Hero section with logo/CTA
 │   │   ├── AgentTerminal.tsx   # Live AI thoughts terminal
-│   │   ├── WalletDisplay.tsx   # Portfolio & trades display
+│   │   ├── VotingPanel.tsx     # Community voting UI (NEW)
+│   │   ├── PortfolioChart.tsx  # Real-time balance chart (NEW)
+│   │   ├── PerformanceMetrics.tsx # Win rate, PnL stats
+│   │   ├── BotEvolution.tsx    # Agent personality evolution
+│   │   ├── TradeHistory.tsx    # Recent trades table
 │   │   ├── TokenInfo.tsx       # Contract address, buy links
 │   │   ├── ComingSoon.tsx      # Roadmap features
 │   │   └── Footer.tsx          # Socials & disclaimer
 │   ├── hooks/
-│   │   └── useAgentThoughts.ts # WebSocket + mock fallback hook
+│   │   ├── useAgentThoughts.ts # WebSocket + mock fallback hook
+│   │   └── useAgentStats.ts    # Performance/evolution stats hook
 │   └── lib/
 │       └── mockData.ts         # Mock data for demo
 ├── agent-service/               # Trading agent backend
 │   ├── package.json
 │   ├── tsconfig.json
 │   ├── .env.example            # Agent env vars (API key)
+│   ├── data/
+│   │   └── agent-memory.json   # Persistent agent memory
 │   └── src/
 │       ├── index.ts            # Entry point + WebSocket server
 │       ├── agent.ts            # Claude-powered trading agent
-│       ├── websocket.ts        # Thought broadcast server
+│       ├── websocket.ts        # Thought broadcast + voting
+│       ├── voting.ts           # Community voting system (NEW)
+│       ├── state.ts            # Performance/evolution tracking
+│       ├── memory/             # Agent learning system (NEW)
+│       │   ├── index.ts
+│       │   ├── manager.ts
+│       │   └── types.ts
 │       └── tools/
-│           └── market.ts       # Price/wallet/trade tools
+│           ├── market.ts       # Price/wallet/trade tools
+│           ├── wallet.ts       # Solana wallet management
+│           ├── trading.ts      # Jupiter swap execution
+│           └── research.ts     # Firecrawl web research
 ```
 
 ## Design System
@@ -128,6 +144,11 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 | Ticker | Complete | Live price updates with flash effects, LIVE badge |
 | Hero | Complete | Under construction banner, spinning stars, fire divider, webring |
 | AgentTerminal | Complete | ASCII art, rainbow status, CRT effects, control panel |
+| VotingPanel | Complete | Community voting for trading styles (APE/DIAMOND/PAPER/RESEARCH/DEGEN) |
+| PortfolioChart | Complete | Real-time canvas chart of SOL balance with CRT aesthetic |
+| PerformanceMetrics | Complete | Win rate, PnL, total trades, wallet balance, streak |
+| BotEvolution | Complete | Agent personality traits and evolution over time |
+| TradeHistory | Complete | Recent trades table with reasoning |
 | HowItWorks | Complete | 5-step explainer of agent flow |
 | ChartEmbed | Complete | DEXScreener iframe with Y2K styling |
 | StickyCA | Complete | Floating copy CA button (bottom-right) |
@@ -162,6 +183,11 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] Social links updated (@ClaudeCapital)
 - [x] Pump.fun API integration (real price/volume data)
 - [x] **LIVE DATA FEEDS** - DexScreener + CoinGecko APIs for real prices
+- [x] **REAL TRADING** - Jupiter swap integration, agent can execute trades
+- [x] **COMMUNITY VOTING** - 5 trading styles, 30-min voting rounds
+- [x] **MEMORY SYSTEM** - Agent learns from trades, forms hypotheses
+- [x] **RESEARCH TOOLS** - Firecrawl web search for market intel
+- [x] **PORTFOLIO CHART** - Real-time canvas chart of treasury balance
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -250,12 +276,82 @@ npm run dev
 
 **Caching:** 15-30s TTL to stay within limits.
 
-## Phase 2: Real Trading (Future)
-1. ~~**Real price feeds**~~ — ✅ Done (DexScreener + CoinGecko)
-2. **Solana wallet** — @solana/web3.js for dev wallet control
-3. **Trade execution** — Jupiter swap API
-4. **Creator fee monitoring** — Watch for pump.fun fees
-5. **On-chain logs** — Store reasoning hashes on-chain
+## Community Voting System
+
+The community controls the agent's trading personality via real-time voting.
+
+### Trading Styles
+| Style | Emoji | Description |
+|-------|-------|-------------|
+| APE MODE | 🦍 | Aggressive, FOMO-driven, ape into pumps |
+| DIAMOND HANDS | 💎 | Never sell, accumulate, HODL forever |
+| PAPER HANDS | 📄 | Quick profits, risk-averse, secure gains |
+| RESEARCH MODE | 🔬 | Data-driven, web search before trading |
+| FULL DEGEN | 🎰 | Max risk, YOLO, this is a casino |
+
+### How It Works
+1. Votes reset every 30 minutes
+2. Winning style becomes the agent's personality
+3. Style prompt is injected into Claude's system prompt
+4. One vote per browser (localStorage visitor ID)
+5. Real-time vote counts broadcast via WebSocket
+
+### WebSocket Messages
+```typescript
+// Vote status (sent on connect + after votes)
+{ type: 'vote_status', currentStyle, styleConfig, voteCounts, timeRemaining, totalVotes }
+
+// Cast a vote
+{ type: 'vote', visitorId: string, style: 'APE' | 'DIAMOND' | 'PAPER' | 'RESEARCH' | 'DEGEN' }
+
+// Vote confirmation
+{ type: 'vote_confirmed', success: boolean, message: string }
+```
+
+## Real Trading System
+
+The agent can execute real trades on Solana via Jupiter.
+
+### Trading Tools
+| Tool | Description |
+|------|-------------|
+| `check_balance` | Get wallet SOL and token balances |
+| `get_price` | Get current $ARA price from DexScreener |
+| `get_swap_quote` | Get Jupiter quote before trading |
+| `execute_trade` | Execute swap via Jupiter (real!) |
+| `check_can_trade` | Verify trading is enabled |
+
+### Safety Features
+- `TRADING_ENABLED=true` required to execute trades
+- Max 0.5 SOL per trade
+- Agent must check balance and get quote before trading
+- All trades logged to memory for learning
+
+### Research Tools (Firecrawl)
+| Tool | Description |
+|------|-------------|
+| `web_search` | Search web for crypto news/sentiment |
+| `scrape_page` | Read content from any webpage |
+| `search_crypto_twitter` | Find crypto sentiment on Twitter/X |
+
+## Agent Memory System
+
+The agent learns from experience and persists knowledge across restarts.
+
+### Memory Features
+- **Trade History**: Records all trades with reasoning and outcomes
+- **Hypotheses**: Agent forms and tests trading theories
+- **Market Snapshots**: Historical price/volume data
+- **Reflections**: Periodic self-analysis (every 10 cycles)
+
+### Memory File
+Stored in `agent-service/data/agent-memory.json`
+
+## Phase 3: Future Enhancements
+1. **On-chain logs** — Store reasoning hashes on-chain
+2. **Multi-token support** — Trade other Solana tokens
+3. **Advanced charting** — More detailed portfolio analytics
+4. **Social features** — Chat between viewers
 
 ## Live Deployment
 
@@ -279,6 +375,11 @@ npm run dev
 | `CONTRACT_ADDRESS` | `5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump` |
 | `CREATOR_WALLET` | `FPrWHsHS2SVqSpCZrsdqfiND2un8d4rQN1tNQJ8febNs` |
 | `AGENT_ENABLED` | `true` (set to `false` to pause agent) |
+| `TRADING_ENABLED` | `true` (enables real trade execution) |
+| `MEMORY_ENABLED` | `true` (enables learning system) |
+| `FIRECRAWL_API_KEY` | Your Firecrawl key (for research tools) |
+| `SOLANA_PRIVATE_KEY` | Base58 wallet private key |
+| `SOLANA_RPC_URL` | Solana RPC endpoint (default: mainnet) |
 
 ### Pausing the Agent
 To stop burning API tokens, set `AGENT_ENABLED=false` on Railway. Health check stays up but no Claude calls are made.
@@ -291,4 +392,4 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
 ---
-*Last updated: Full deployment complete — Vercel + Railway live, agent pausable via env var*
+*Last updated: Community voting, real trading, memory system, and portfolio chart all live*

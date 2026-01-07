@@ -3,6 +3,8 @@
 import { Ticker } from '@/components/Ticker';
 import { Hero } from '@/components/Hero';
 import { AgentTerminal } from '@/components/AgentTerminal';
+import { VotingPanel } from '@/components/VotingPanel';
+import { PortfolioChart } from '@/components/PortfolioChart';
 import { PerformanceMetrics } from '@/components/PerformanceMetrics';
 import { BotEvolution } from '@/components/BotEvolution';
 import { TradeHistory } from '@/components/TradeHistory';
@@ -108,6 +110,9 @@ export default function Home() {
           <a href="#terminal" className="sidebar-nav-item">
             Terminal <span style={{ fontSize: '7px', color: '#008800' }}>● LIVE</span>
           </a>
+          <a href="#voting" className="sidebar-nav-item">
+            Voting <span style={{ fontSize: '7px', color: '#FF6B35' }}>● VOTE</span>
+          </a>
           <a href="#performance" className="sidebar-nav-item">Performance</a>
           <a href="#evolution" className="sidebar-nav-item">Evolution</a>
           <a href="#trades" className="sidebar-nav-item">Trade History</a>
@@ -157,6 +162,17 @@ export default function Home() {
 
           {/* Agent Terminal */}
           <AgentTerminal />
+
+          {/* Voting Panel & Portfolio Chart - Side by Side on Desktop */}
+          <div id="voting" style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '16px',
+            marginBottom: '16px'
+          }}>
+            <VotingPanel />
+            <PortfolioChart />
+          </div>
 
           {/* Performance Metrics */}
           <PerformanceMetrics data={performance} />
