@@ -5,6 +5,7 @@ import { Hero } from '@/components/Hero';
 import { AgentTerminal } from '@/components/AgentTerminal';
 import { VotingPanel } from '@/components/VotingPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
+import { DiscoveryPanel } from '@/components/DiscoveryPanel';
 import { PerformanceMetrics } from '@/components/PerformanceMetrics';
 import { BotEvolution } from '@/components/BotEvolution';
 import { TradeHistory } from '@/components/TradeHistory';
@@ -113,6 +114,9 @@ export default function Home() {
           <a href="#voting" className="sidebar-nav-item">
             Voting <span style={{ fontSize: '7px', color: '#FF6B35' }}>● VOTE</span>
           </a>
+          <a href="#discovery" className="sidebar-nav-item">
+            Discovery <span style={{ fontSize: '7px', color: '#00CCFF' }}>● SCAN</span>
+          </a>
           <a href="#performance" className="sidebar-nav-item">Performance</a>
           <a href="#evolution" className="sidebar-nav-item">Evolution</a>
           <a href="#trades" className="sidebar-nav-item">Trade History</a>
@@ -173,6 +177,9 @@ export default function Home() {
             <VotingPanel />
             <PortfolioChart />
           </div>
+
+          {/* Discovery Panel - Token Scanner */}
+          <DiscoveryPanel />
 
           {/* Performance Metrics */}
           <PerformanceMetrics data={performance} />
