@@ -46,8 +46,31 @@ interface Props {
 }
 
 export function PerformanceMetrics({ data = mockPerformance }: Props) {
-  const pnlColor = data.totalPnlSol >= 0 ? '#008800' : '#CC0000';
-  const streakColor = data.streakType === 'win' ? '#008800' : data.streakType === 'loss' ? '#CC0000' : '#666666';
+  // Safely handle potentially undefined values
+  const safeData = {
+    ...mockPerformance,
+    ...data,
+    winRate: data?.winRate ?? mockPerformance.winRate,
+    totalPnlSol: data?.totalPnlSol ?? mockPerformance.totalPnlSol,
+    totalPnlUsd: data?.totalPnlUsd ?? mockPerformance.totalPnlUsd,
+    walletBalanceSol: data?.walletBalanceSol ?? mockPerformance.walletBalanceSol,
+    walletBalanceUsd: data?.walletBalanceUsd ?? mockPerformance.walletBalanceUsd,
+    bestTrade: data?.bestTrade ?? mockPerformance.bestTrade,
+    worstTrade: data?.worstTrade ?? mockPerformance.worstTrade,
+    wins: data?.wins ?? mockPerformance.wins,
+    losses: data?.losses ?? mockPerformance.losses,
+    even: data?.even ?? mockPerformance.even,
+    totalTrades: data?.totalTrades ?? mockPerformance.totalTrades,
+    currentStreak: data?.currentStreak ?? mockPerformance.currentStreak,
+    streakType: data?.streakType ?? mockPerformance.streakType,
+    openPositions: data?.openPositions ?? mockPerformance.openPositions,
+    maxPositions: data?.maxPositions ?? mockPerformance.maxPositions,
+    avgHoldTime: data?.avgHoldTime ?? mockPerformance.avgHoldTime,
+  };
+
+  const pnlColor = safeData.totalPnlSol >= 0 ? '#008800' : '#CC0000';
+  const streakColor = safeData.streakType === 'win' ? '#008800' : safeData.streakType === 'loss' ? '#CC0000' : '#666666';
+  const totalWinLoss = safeData.wins + safeData.losses || 1; // Prevent division by zero
 
   return (
     <div id="performance" style={{ marginBottom: '16px' }}>
@@ -72,17 +95,17 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
               <td width="20%" valign="top">
                 <MetricCard
                   label="Win Rate"
-                  value={`${data.winRate.toFixed(1)}%`}
-                  subValue={`${data.wins}W / ${data.losses}L / ${data.even}E`}
-                  color={data.winRate >= 50 ? '#008800' : '#CC0000'}
+                  value={`${safeData.winRate.toFixed(1)}%`}
+                  subValue={`${safeData.wins}W / ${safeData.losses}L / ${safeData.even}E`}
+                  color={safeData.winRate >= 50 ? '#008800' : '#CC0000'}
                   icon="🎯"
                 />
               </td>
               <td width="20%" valign="top">
                 <MetricCard
                   label="Total PnL"
-                  value={`${data.totalPnlSol >= 0 ? '+' : ''}${data.totalPnlSol.toFixed(2)} SOL`}
-                  subValue={`$${data.totalPnlUsd.toFixed(2)}`}
+                  value={`${safeData.totalPnlSol >= 0 ? '+' : ''}${safeData.totalPnlSol.toFixed(2)} SOL`}
+                  subValue={`$${safeData.totalPnlUsd.toFixed(2)}`}
                   color={pnlColor}
                   icon="💰"
                 />
@@ -90,23 +113,23 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
               <td width="20%" valign="top">
                 <MetricCard
                   label="Total Trades"
-                  value={data.totalTrades}
-                  subValue={`Avg hold: ${data.avgHoldTime}`}
+                  value={safeData.totalTrades}
+                  subValue={`Avg hold: ${safeData.avgHoldTime}`}
                   icon="📊"
                 />
               </td>
               <td width="20%" valign="top">
                 <MetricCard
                   label="Treasury"
-                  value={`${data.walletBalanceSol.toFixed(4)} SOL`}
-                  subValue={data.walletAddress
-                    ? `${data.walletAddress.slice(0, 4)}...${data.walletAddress.slice(-4)}`
-                    : `$${data.walletBalanceUsd.toFixed(2)}`}
+                  value={`${safeData.walletBalanceSol.toFixed(4)} SOL`}
+                  subValue={safeData.walletAddress
+                    ? `${safeData.walletAddress.slice(0, 4)}...${safeData.walletAddress.slice(-4)}`
+                    : `$${safeData.walletBalanceUsd.toFixed(2)}`}
                   icon="👛"
                 />
-                {data.walletAddress && (
+                {safeData.walletAddress && (
                   <a
-                    href={`https://solscan.io/account/${data.walletAddress}`}
+                    href={`https://solscan.io/account/${safeData.walletAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -124,8 +147,8 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
               <td width="20%" valign="top">
                 <MetricCard
                   label="Current Streak"
-                  value={`${data.currentStreak} ${data.streakType === 'win' ? 'W' : data.streakType === 'loss' ? 'L' : '—'}`}
-                  subValue={data.streakType === 'win' ? 'On fire!' : data.streakType === 'loss' ? 'Rough patch' : 'Fresh start'}
+                  value={`${safeData.currentStreak} ${safeData.streakType === 'win' ? 'W' : safeData.streakType === 'loss' ? 'L' : '—'}`}
+                  subValue={safeData.streakType === 'win' ? 'On fire!' : safeData.streakType === 'loss' ? 'Rough patch' : 'Fresh start'}
                   color={streakColor}
                   icon="🔥"
                 />
@@ -150,14 +173,14 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
                 }}>
                   <div style={{ fontSize: '9px', color: '#666666', marginBottom: '4px' }}>OPEN POSITIONS</div>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
-                    {Array.from({ length: data.maxPositions }).map((_, i) => (
+                    {Array.from({ length: safeData.maxPositions }).map((_, i) => (
                       <div
                         key={i}
                         style={{
                           width: '24px',
                           height: '24px',
                           border: '2px inset #CCCCCC',
-                          background: i < data.openPositions
+                          background: i < safeData.openPositions
                             ? 'linear-gradient(to bottom, #66CC66 0%, #339933 100%)'
                             : '#E0E0E0',
                           display: 'flex',
@@ -165,7 +188,7 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
                           justifyContent: 'center',
                           fontSize: '10px',
                           fontWeight: 'bold',
-                          color: i < data.openPositions ? '#FFFFFF' : '#999999'
+                          color: i < safeData.openPositions ? '#FFFFFF' : '#999999'
                         }}
                       >
                         {i + 1}
@@ -173,7 +196,7 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
                     ))}
                   </div>
                   <div style={{ fontSize: '9px', color: '#666666', marginTop: '4px' }}>
-                    {data.openPositions} / {data.maxPositions} slots used
+                    {safeData.openPositions} / {safeData.maxPositions} slots used
                   </div>
                 </div>
               </td>
@@ -188,13 +211,13 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
                     <div>
                       <span style={{ color: '#008800', fontWeight: 'bold', fontSize: '14px' }}>
-                        +{data.bestTrade.toFixed(1)}%
+                        +{safeData.bestTrade.toFixed(1)}%
                       </span>
                       <div style={{ fontSize: '8px', color: '#666666' }}>Best</div>
                     </div>
                     <div style={{ borderLeft: '1px dotted #CCCCCC', paddingLeft: '16px' }}>
                       <span style={{ color: '#CC0000', fontWeight: 'bold', fontSize: '14px' }}>
-                        {data.worstTrade.toFixed(1)}%
+                        {safeData.worstTrade.toFixed(1)}%
                       </span>
                       <div style={{ fontSize: '8px', color: '#666666' }}>Worst</div>
                     </div>
@@ -218,23 +241,23 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
                   }}>
                     <div style={{
                       background: 'linear-gradient(to bottom, #66CC66 0%, #339933 100%)',
-                      width: `${(data.wins / (data.wins + data.losses)) * 100}%`,
+                      width: `${(safeData.wins / totalWinLoss) * 100}%`,
                       height: '100%',
                       position: 'absolute',
                       left: 0
                     }} />
                     <div style={{
                       background: 'linear-gradient(to bottom, #CC6666 0%, #993333 100%)',
-                      width: `${(data.losses / (data.wins + data.losses)) * 100}%`,
+                      width: `${(safeData.losses / totalWinLoss) * 100}%`,
                       height: '100%',
                       position: 'absolute',
                       right: 0
                     }} />
                   </div>
                   <div style={{ fontSize: '8px', color: '#666666', marginTop: '4px' }}>
-                    <span style={{ color: '#008800' }}>{data.wins} wins</span>
+                    <span style={{ color: '#008800' }}>{safeData.wins} wins</span>
                     {' vs '}
-                    <span style={{ color: '#CC0000' }}>{data.losses} losses</span>
+                    <span style={{ color: '#CC0000' }}>{safeData.losses} losses</span>
                   </div>
                 </div>
               </td>

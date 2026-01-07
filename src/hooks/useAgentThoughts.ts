@@ -161,6 +161,9 @@ export function useAgentThoughts() {
               return;
             }
 
+            // Skip if no content
+            if (!message.content) return;
+
             const thought: EnhancedThought = {
               timestamp: formatTimestamp(message.timestamp),
               message: message.content,
