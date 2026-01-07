@@ -90,7 +90,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     // Get actual dimensions
     const rect = container.getBoundingClientRect();
     const width = rect.width - 4; // Account for border
-    const height = 120;
+    const height = 180; // Taller chart for more visibility
 
     // Set canvas size
     canvas.width = width;
@@ -250,7 +250,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         >
           {balanceHistory.length < 2 ? (
             <div style={{
-              height: '120px',
+              height: '180px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -262,7 +262,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
               <span className="cursor-blink">█</span>
             </div>
           ) : (
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '120px' }} />
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '180px' }} />
           )}
         </div>
 

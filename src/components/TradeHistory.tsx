@@ -49,6 +49,9 @@ export function TradeHistory({ trades = mockTradeHistory, maxRows = 10 }: Props)
           <tr>
             <td className="section-header">
               <span style={{ marginRight: '8px' }}>TRADE HISTORY</span>
+              <span style={{ fontSize: '9px', color: '#008800', marginRight: '8px' }}>
+                ● LIVE
+              </span>
               <span style={{ fontSize: '10px', color: '#666666', fontWeight: 'normal' }}>
                 ({trades.length} trades)
               </span>
