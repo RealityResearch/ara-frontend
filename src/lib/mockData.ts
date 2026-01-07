@@ -109,6 +109,7 @@ export interface PerformanceData {
   totalPnlUsd: number;
   walletBalanceSol: number;
   walletBalanceUsd: number;
+  walletAddress: string | null;  // Agent's trading wallet address
   openPositions: number;
   maxPositions: number;
   avgHoldTime: string;
@@ -128,6 +129,7 @@ export const mockPerformance: PerformanceData = {
   totalPnlUsd: 678.42,
   walletBalanceSol: 13.34,
   walletBalanceUsd: 1876.52,
+  walletAddress: null, // Set by live agent
   openPositions: 1,
   maxPositions: 3,
   avgHoldTime: '24m',

@@ -97,11 +97,29 @@ export function PerformanceMetrics({ data = mockPerformance }: Props) {
               </td>
               <td width="20%" valign="top">
                 <MetricCard
-                  label="Wallet Balance"
-                  value={`${data.walletBalanceSol} SOL`}
-                  subValue={`$${data.walletBalanceUsd.toFixed(2)}`}
+                  label="Treasury"
+                  value={`${data.walletBalanceSol.toFixed(4)} SOL`}
+                  subValue={data.walletAddress
+                    ? `${data.walletAddress.slice(0, 4)}...${data.walletAddress.slice(-4)}`
+                    : `$${data.walletBalanceUsd.toFixed(2)}`}
                   icon="👛"
                 />
+                {data.walletAddress && (
+                  <a
+                    href={`https://solscan.io/account/${data.walletAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontSize: '8px',
+                      color: '#0066CC',
+                      textDecoration: 'underline',
+                      display: 'block',
+                      marginTop: '2px'
+                    }}
+                  >
+                    View on Solscan
+                  </a>
+                )}
               </td>
               <td width="20%" valign="top">
                 <MetricCard
