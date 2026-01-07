@@ -85,7 +85,10 @@ cc/
 │       └── tools/
 │           ├── market.ts       # Price/wallet/trade tools
 │           ├── wallet.ts       # Solana wallet management
-│           ├── trading.ts      # Jupiter swap execution
+│           ├── trading.ts      # Jupiter swap execution + position mgmt
+│           ├── tokens.ts       # Token whitelist + PositionManager
+│           ├── discovery.ts    # DexScreener token discovery
+│           ├── technical.ts    # RSI, SMA, momentum analysis
 │           └── research.ts     # Firecrawl web research
 ```
 
@@ -197,6 +200,11 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] **FIRST REAL TRADE** - Successfully bought BONK via Jupiter (TX: 5CfFjrmQvY...)
 - [x] **TECHNICAL ANALYSIS** - analyze_technicals tool with RSI, SMA, volume spikes
 - [x] **LAYOUT UPDATE** - Treasury at top (180px), Trade History below terminal (● LIVE)
+- [x] **TOKEN WHITELIST** - Hardcoded 20+ verified tradable tokens (BONK, WIF, JUP, etc.)
+- [x] **POSITION TRACKING** - Stop loss (15%) + take profit (50%) automation
+- [x] **JUPITER VERIFICATION** - discover_tokens now verifies Jupiter tradability
+- [x] **HELIUS RPC SUPPORT** - Optional premium RPC to avoid rate limits
+- [x] **PORTFOLIO CHART FIX** - WebSocket caches market data for instant load
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -333,17 +341,33 @@ The agent is an **autonomous memecoin hunter** - it discovers, analyzes, and tra
 | `get_swap_quote(token_address, direction, amount)` | Jupiter quote for any token |
 | `execute_trade(token_address, direction, amount, reasoning)` | Trade any token via Jupiter |
 | `check_can_trade` | Verify trading is allowed |
+| `check_token_tradable` | Pre-check if token has Jupiter route |
+
+### Position Management Tools
+| Tool | Description |
+|------|-------------|
+| `get_positions` | View all open positions with P&L, SL/TP levels |
+| `check_stop_loss_take_profit` | Check if any positions hit SL/TP triggers |
+| `set_stop_loss(token, percent)` | Update stop loss % for a position |
+| `set_take_profit(token, percent)` | Update take profit % for a position |
 
 ### Discovery Tools
 | Tool | Description |
 |------|-------------|
-| `discover_tokens` | Scan DexScreener for trending/boosted tokens |
+| `get_known_tokens` | **START HERE!** Get verified tradable tokens with live prices |
+| `discover_tokens` | Scan DexScreener for trending/boosted tokens (auto-verifies Jupiter) |
 | `search_tokens(query)` | Search tokens by name, symbol, or theme |
 
+### Known Tradable Tokens (src/tools/tokens.ts)
+Hardcoded tokens verified to work on Jupiter:
+- **Memecoins:** BONK, WIF, POPCAT, MEW, PNUT, FARTCOIN, GOAT, CHILLGUY, MOODENG
+- **DeFi:** JUP, RAY, ORCA, PYTH, JTO
+- **AI/Agent:** AI16Z, GRIFFAIN, ZEREBRO
+
 ### Trading Philosophy
-- Agent gathers 3-5 candidates, analyzes, picks TOP one
-- Only trades with HIGH conviction (quality over quantity)
-- OK to pass if nothing looks good
+- Call `get_known_tokens` FIRST for verified tradable tokens
+- Agent analyzes candidates, picks TOP one with high conviction
+- Quality over quantity - OK to pass if nothing looks good
 
 ### Risk Management
 | Rule | Value |
@@ -353,9 +377,18 @@ The agent is an **autonomous memecoin hunter** - it discovers, analyzes, and tra
 | Slippage | 5% (for memecoins) |
 | Daily loss limit | 1 SOL |
 | Cooldown | 1 min between trades |
+| **Stop Loss** | 15% below entry (auto-set) |
+| **Take Profit** | 50% above entry (auto-set) |
 
 ### Token Tradability Note
-**Pump.fun tokens must "graduate"** (complete bonding curve) before Jupiter can trade them. The agent will get "TOKEN_NOT_TRADABLE" errors for tokens still on pump.fun's bonding curve. Discovery filters prioritize tokens with $10k+ liquidity which are more likely to be graduated/tradable.
+**Pump.fun tokens must "graduate"** (complete bonding curve) before Jupiter can trade them. The agent now verifies Jupiter tradability before reporting tokens in `discover_tokens`. The `get_known_tokens` tool provides guaranteed-tradable tokens.
+
+### Position Tracking
+When the agent buys a token:
+1. Position is tracked with entry price and cost basis
+2. Stop loss (15% below) and take profit (50% above) are auto-set
+3. Agent calls `check_stop_loss_take_profit` each cycle
+4. When SL/TP triggers, agent is alerted to sell
 
 ### Research Tools (Firecrawl)
 | Tool | Description |
@@ -456,4 +489,4 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
 ---
-*Last updated: Technical Analysis tools live (RSI, SMA, volume spikes). First real trade executed (BONK). Jupiter optimized with tradability pre-checks. Token-2022 issues documented.*
+*Last updated: Token whitelist (20+ verified tradable tokens), Position tracking with stop loss/take profit automation, Jupiter tradability verification in discovery, Helius RPC support, Portfolio chart WebSocket fix.*
