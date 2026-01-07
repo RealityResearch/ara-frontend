@@ -11,7 +11,7 @@ export function Hero() {
           <tr>
             <td colSpan={2} style={{ background: 'linear-gradient(to bottom, #003399 0%, #001166 100%)', padding: '12px', textAlign: 'center' }}>
               <Image
-                src="/logos/claude-investements.png"
+                src="/logos/claude-investments.png"
                 alt="Claude Investments"
                 width={380}
                 height={100}
@@ -94,7 +94,7 @@ export function Hero() {
 
                 <div style={{ textAlign: 'center' }}>
                   <a
-                    href="https://pump.fun/ARA"
+                    href="https://pump.fun/coin/5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump"
                     target="_blank"
                     rel="noopener noreferrer"
                   >

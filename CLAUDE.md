@@ -41,7 +41,7 @@ cc/
 ├── public/
 │   └── logos/
 │       ├── Claude Circle 4x.png
-│       └── claude-investements.png
+│       └── claude-investments.png
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout with fonts

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/logos/claude-investements.png",
+        url: "/logos/claude-investments.png",
         width: 1200,
         height: 630,
         alt: "Claude Investments - $ARA",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     creator: "@ClaudeCapital",
     title: "Claude Investments | $ARA",
     description: "Watch an AI manage a treasury in real-time. Every thought, every trade, fully transparent.",
-    images: ["/logos/claude-investements.png"],
+    images: ["/logos/claude-investments.png"],
   },
   robots: {
     index: true,

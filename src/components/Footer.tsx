@@ -45,7 +45,7 @@ export function Footer() {
               {/* Logo Column */}
               <td width="30%" valign="top" align="left">
                 <Image
-                  src="/logos/claude-investements.png"
+                  src="/logos/claude-investments.png"
                   alt="Claude Investments"
                   width={160}
                   height={42}

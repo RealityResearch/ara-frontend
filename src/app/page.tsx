@@ -85,7 +85,7 @@ export default function Home() {
               <td align="right" className="hide-mobile">
                 <span style={{ color: '#666666', fontSize: '10px' }}>
                   <span style={{ color: '#008800' }}>●</span> Agent Active |{' '}
-                  Last Trade: <span style={{ fontFamily: 'Courier New' }}>2m ago</span>
+                  Analyzing: <span style={{ fontFamily: 'Courier New' }}>$ARA</span>
                 </span>
               </td>
             </tr>
