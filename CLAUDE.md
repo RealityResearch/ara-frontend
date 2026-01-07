@@ -188,6 +188,10 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 - [x] **MEMORY SYSTEM** - Agent learns from trades, forms hypotheses
 - [x] **RESEARCH TOOLS** - Firecrawl web search for market intel
 - [x] **PORTFOLIO CHART** - Real-time canvas chart of treasury balance
+- [x] **AUTONOMOUS TRADING** - Agent trades ANY memecoin, not just $ARA
+- [x] **GENERIC TOOLS** - Trading tools accept token_address parameter
+- [x] **DISCOVERY SCANNER** - DexScreener scan every 2 min for opportunities
+- [x] **RISK MANAGEMENT** - 15% max/trade, 2 max positions, 5% slippage
 
 ## Chaos Mode Animations (globals.css)
 ```css
@@ -308,24 +312,45 @@ The community controls the agent's trading personality via real-time voting.
 { type: 'vote_confirmed', success: boolean, message: string }
 ```
 
-## Real Trading System
+## Autonomous Trading System
 
-The agent can execute real trades on Solana via Jupiter.
+The agent is an **autonomous memecoin hunter** - it discovers, analyzes, and trades ANY Solana token via Jupiter (not just $ARA).
 
-### Trading Tools
+### Agent Wallet
+- **Address:** `4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q`
+- **Solscan:** https://solscan.io/account/4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q
+
+### Trading Tools (Generic - Any Token)
 | Tool | Description |
 |------|-------------|
-| `check_balance` | Get wallet SOL and token balances |
-| `get_price` | Get current $ARA price from DexScreener |
-| `get_swap_quote` | Get Jupiter quote before trading |
-| `execute_trade` | Execute swap via Jupiter (real!) |
-| `check_can_trade` | Verify trading is enabled |
+| `check_balance` | Get SOL balance + all token positions |
+| `get_price(token_address)` | Get any token's price from DexScreener |
+| `get_swap_quote(token_address, direction, amount)` | Jupiter quote for any token |
+| `execute_trade(token_address, direction, amount, reasoning)` | Trade any token via Jupiter |
+| `check_can_trade` | Verify trading is allowed |
 
-### Safety Features
-- `TRADING_ENABLED=true` required to execute trades
-- Max 0.5 SOL per trade
-- Agent must check balance and get quote before trading
-- All trades logged to memory for learning
+### Discovery Tools
+| Tool | Description |
+|------|-------------|
+| `discover_tokens` | Scan DexScreener for trending/boosted tokens |
+| `search_tokens(query)` | Search tokens by name, symbol, or theme |
+
+### Trading Philosophy
+- Agent gathers 3-5 candidates, analyzes, picks TOP one
+- Only trades with HIGH conviction (quality over quantity)
+- OK to pass if nothing looks good
+
+### Risk Management
+| Rule | Value |
+|------|-------|
+| Max per trade | 15% of portfolio |
+| Max positions | 2 open at once |
+| Slippage | 5% (for memecoins) |
+| Daily loss limit | 1 SOL |
+| Cooldown | 1 min between trades |
+
+### Token Tradability Note
+**Pump.fun tokens must "graduate"** (complete bonding curve) before Jupiter can trade them. The agent will get "TOKEN_NOT_TRADABLE" errors for tokens still on pump.fun's bonding curve. Discovery filters prioritize tokens with $10k+ liquidity which are more likely to be graduated/tradable.
 
 ### Research Tools (Firecrawl)
 | Tool | Description |
@@ -347,9 +372,25 @@ The agent learns from experience and persists knowledge across restarts.
 ### Memory File
 Stored in `agent-service/data/agent-memory.json`
 
+## Discovery Filters
+
+The agent uses DexScreener to find opportunities. Current filters:
+
+| Filter | Value | Purpose |
+|--------|-------|---------|
+| Min Liquidity | $10,000 | Tradeable on Jupiter |
+| Min Volume 24h | $20,000 | Shows activity |
+| Max Age | 7 days | Catch newer plays |
+| Min Buys 24h | 50 | Some interest |
+| Min Score | 50 | Let agent evaluate |
+| Buy Ratio | >40% | Not dumping |
+| Chain | Solana only | Focus |
+
+Scanner runs every 2 minutes via `setInterval`.
+
 ## Phase 3: Future Enhancements
 1. **On-chain logs** — Store reasoning hashes on-chain
-2. **Multi-token support** — Trade other Solana tokens
+2. **Jupiter Ultra API** — Better routing, more token support
 3. **Advanced charting** — More detailed portfolio analytics
 4. **Social features** — Chat between viewers
 
@@ -392,4 +433,4 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
 ---
-*Last updated: Community voting, real trading, memory system, and portfolio chart all live*
+*Last updated: Autonomous memecoin trading live - agent hunts ANY token with 15% max risk, 2 position limit, 5% slippage*
