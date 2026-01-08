@@ -107,19 +107,22 @@ export function DiscoveryPanel() {
     }
   }, [thoughts]);
 
-  const formatPrice = (price: number): string => {
+  const formatPrice = (price: number | undefined | null): string => {
+    if (price == null || isNaN(price)) return '$0.00';
     if (price < 0.00001) return price.toExponential(2);
     if (price < 0.001) return price.toFixed(8);
     return price.toFixed(6);
   };
 
-  const formatK = (num: number): string => {
+  const formatK = (num: number | undefined | null): string => {
+    if (num == null || isNaN(num)) return '$0';
     if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `$${(num / 1000).toFixed(0)}K`;
     return `$${num.toFixed(0)}`;
   };
 
-  const getScoreColor = (score: number): string => {
+  const getScoreColor = (score: number | undefined | null): string => {
+    if (score == null) return '#999999';
     if (score >= 90) return '#00FF00';
     if (score >= 70) return '#AAFF00';
     if (score >= 50) return '#FFAA00';
@@ -256,9 +259,11 @@ export function DiscoveryPanel() {
                     </tr>
                   ) : (
                     tokens.map((t, i) => {
-                      const buyRatio = Math.round(t.txns24h.buys / (t.txns24h.buys + t.txns24h.sells) * 100);
-                      const volLiqRatio = (t.volume24h / t.liquidity).toFixed(1);
-                      const hasFlags = t.flags.length > 0;
+                      const buys = t.txns24h?.buys ?? 0;
+                      const sells = t.txns24h?.sells ?? 0;
+                      const buyRatio = buys + sells > 0 ? Math.round(buys / (buys + sells) * 100) : 50;
+                      const volLiqRatio = t.liquidity > 0 ? (t.volume24h / t.liquidity).toFixed(1) : '0.0';
+                      const hasFlags = (t.flags?.length ?? 0) > 0;
 
                       return (
                         <tr
@@ -275,7 +280,7 @@ export function DiscoveryPanel() {
                               {hasFlags && <span style={{ color: '#FF6600', marginLeft: '4px' }}>⚠</span>}
                             </div>
                             <div style={{ color: '#666666', fontSize: '8px' }}>
-                              {t.name.slice(0, 15)}{t.name.length > 15 ? '...' : ''}
+                              {(t.name ?? '').slice(0, 15)}{(t.name?.length ?? 0) > 15 ? '...' : ''}
                             </div>
                           </td>
                           <td style={{ textAlign: 'right' }}>
@@ -294,10 +299,10 @@ export function DiscoveryPanel() {
                           </td>
                           <td style={{
                             textAlign: 'right',
-                            color: t.priceChange24h >= 0 ? '#008800' : '#CC0000',
+                            color: (t.priceChange24h ?? 0) >= 0 ? '#008800' : '#CC0000',
                             fontWeight: 'bold'
                           }}>
-                            {t.priceChange24h >= 0 ? '+' : ''}{t.priceChange24h.toFixed(0)}%
+                            {(t.priceChange24h ?? 0) >= 0 ? '+' : ''}{(t.priceChange24h ?? 0).toFixed(0)}%
                           </td>
                           <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
                             {volLiqRatio}x
