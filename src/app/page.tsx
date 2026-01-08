@@ -1,7 +1,6 @@
 'use client';
 
 import { Ticker } from '@/components/Ticker';
-import { Hero } from '@/components/Hero';
 import { TerminalPreview } from '@/components/TerminalPreview';
 import { VotingPanel } from '@/components/VotingPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
@@ -24,46 +23,41 @@ export default function Home() {
   return (
     <div style={{ background: '#FFFEF5', minHeight: '100vh' }}>
 
-      {/* Y2K Header Bar */}
-      <div className="header-gradient">
-        <table width="100%" cellPadding={0} cellSpacing={0}>
-          <tbody>
-            <tr>
-              <td>
-                <span className="header-gradient-title">
-                  CLAUDE INVESTMENTS
-                </span>
-                <span style={{ color: '#FFCC00', fontSize: '10px', marginLeft: '8px' }}>®</span>
-                <span className="hide-mobile" style={{ marginLeft: '12px', fontSize: '10px', color: '#99CCFF' }}>
-                  — Automated Retirement Account
-                </span>
-              </td>
-              <td align="right" style={{ fontSize: '10px', color: '#99CCFF' }}>
-                <span className="hide-mobile" style={{ marginRight: '12px' }}>
-                  <LiveClock />
-                </span>
-                <span className="badge-secure">
-                  🔒 128-bit SSL
-                </span>
-                {' '}
-                <span style={{ color: '#00FF00' }}>● ONLINE</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+      {/* Logo Banner - Skeuomorphic */}
+      <div className="skeu-header">
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px 20px',
+          gap: '16px',
+        }}>
+          <img
+            src="/logos/claude-investments.png"
+            alt="Claude Investments"
+            style={{ height: '60px', width: 'auto' }}
+          />
+          <div className="hide-mobile" style={{ textAlign: 'left' }}>
+            <div style={{ fontSize: '10px', color: '#99CCFF', fontStyle: 'italic' }}>
+              "The Future of Investing is Here"
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Alert Bar */}
-      <div style={{
-        background: '#003366',
-        padding: '3px 0',
-        textAlign: 'center',
-        fontSize: '10px',
-        fontWeight: 'bold',
-        color: '#FFFFFF',
-      }}>
-        AI Trading Agent is LIVE — Creator Fees Now Funding Trading Wallet —{' '}
-        <span style={{ color: '#00FF00' }}>● ACTIVE</span>
+      {/* Status Bar - Skeuomorphic */}
+      <div className="skeu-status-bar">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px' }}>
+            <span style={{ color: '#00FF00' }}>● AGENT LIVE</span>
+            <span className="hide-mobile">|</span>
+            <span className="hide-mobile">AI Trading Agent Active</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px' }}>
+            <LiveClock />
+            <span className="badge-secure">🔒 SSL</span>
+          </div>
+        </div>
       </div>
 
       {/* Scrolling Ticker */}
@@ -166,10 +160,7 @@ export default function Home() {
             <TerminalPreview />
           </div>
 
-          {/* Hero Section */}
-          <Hero />
-
-          {/* Treasury Balance - Full Width at Top */}
+          {/* Treasury Balance */}
           <div style={{ marginBottom: '16px' }}>
             <PortfolioChart />
           </div>

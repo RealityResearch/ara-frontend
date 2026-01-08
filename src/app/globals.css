@@ -1260,3 +1260,212 @@ a:hover {
 .terminal-preview-container {
   animation: terminal-glow 3s ease-in-out infinite;
 }
+
+/* ============================================
+   SKEUOMORPHIC UI - Y2K meets Skeuomorphism
+   ============================================ */
+
+/* Skeuomorphic Header */
+.skeu-header {
+  background: linear-gradient(180deg, 
+    #1a2a4a 0%, 
+    #0d1929 50%,
+    #0a1420 100%
+  );
+  border-bottom: 3px solid #0a1420;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Skeuomorphic Status Bar */
+.skeu-status-bar {
+  background: linear-gradient(180deg,
+    #2a3a5a 0%,
+    #1a2a4a 50%,
+    #152238 100%
+  );
+  border-bottom: 2px solid #0a1420;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 2px 4px rgba(0,0,0,0.3);
+  color: #99CCFF;
+}
+
+/* Skeuomorphic Panel */
+.skeu-panel {
+  background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+  border: 1px solid #a0a0a0;
+  border-radius: 6px;
+  box-shadow: 
+    0 2px 8px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.05);
+}
+
+/* Skeuomorphic Button */
+.skeu-btn {
+  background: linear-gradient(180deg, 
+    #f0f0f0 0%, 
+    #d8d8d8 50%,
+    #c8c8c8 100%
+  );
+  border: 1px solid #888;
+  border-radius: 4px;
+  padding: 6px 14px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.8),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  transition: all 0.1s ease;
+}
+
+.skeu-btn:hover {
+  background: linear-gradient(180deg, 
+    #ffffff 0%, 
+    #e8e8e8 50%,
+    #d8d8d8 100%
+  );
+}
+
+.skeu-btn:active {
+  background: linear-gradient(180deg, 
+    #c8c8c8 0%, 
+    #d8d8d8 50%,
+    #e8e8e8 100%
+  );
+  box-shadow: 
+    inset 0 2px 4px rgba(0,0,0,0.2),
+    inset 0 1px 0 rgba(0,0,0,0.1);
+}
+
+/* Skeuomorphic Green Button */
+.skeu-btn-green {
+  background: linear-gradient(180deg, 
+    #5cb85c 0%, 
+    #449d44 50%,
+    #398439 100%
+  );
+  border: 1px solid #255625;
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+.skeu-btn-green:hover {
+  background: linear-gradient(180deg, 
+    #6ed06e 0%, 
+    #5cb85c 50%,
+    #449d44 100%
+  );
+}
+
+/* Skeuomorphic Terminal */
+.skeu-terminal {
+  background: linear-gradient(180deg, #0a0f0a 0%, #050805 100%);
+  border: 3px solid #1a1a1a;
+  border-radius: 6px;
+  box-shadow: 
+    inset 0 0 20px rgba(0,0,0,0.8),
+    inset 0 0 60px rgba(0,255,65,0.03),
+    0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Skeuomorphic Window Frame */
+.skeu-window {
+  background: linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%);
+  border: 1px solid #888;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 16px rgba(0,0,0,0.25),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.skeu-window-titlebar {
+  background: linear-gradient(180deg, 
+    #4a90d9 0%, 
+    #2070c0 50%,
+    #1060b0 100%
+  );
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #0050a0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+.skeu-window-titlebar span {
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Skeuomorphic Input */
+.skeu-input {
+  background: linear-gradient(180deg, #f0f0f0 0%, #ffffff 100%);
+  border: 1px solid #999;
+  border-radius: 4px;
+  padding: 6px 10px;
+  box-shadow: 
+    inset 0 2px 4px rgba(0,0,0,0.1),
+    0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* Skeuomorphic Section Header */
+.skeu-section-header {
+  background: linear-gradient(180deg, 
+    #2a4a7a 0%, 
+    #1a3a6a 50%,
+    #0a2a5a 100%
+  );
+  color: #fff;
+  padding: 8px 12px;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    0 2px 4px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Metallic effect */
+.skeu-metallic {
+  background: linear-gradient(180deg,
+    #d8d8d8 0%,
+    #c0c0c0 25%,
+    #a8a8a8 50%,
+    #c0c0c0 75%,
+    #d8d8d8 100%
+  );
+  border: 1px solid #808080;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.5),
+    inset 0 -1px 0 rgba(0,0,0,0.1),
+    0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Glossy effect */
+.skeu-glossy::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, 
+    rgba(255,255,255,0.3) 0%, 
+    rgba(255,255,255,0) 100%
+  );
+  pointer-events: none;
+}
