@@ -1223,3 +1223,40 @@ a:hover {
     display: none;
   }
 }
+
+/* ============================================
+   ABOVE THE FOLD - Terminal Preview
+   ============================================ */
+
+/* Responsive grid for above-fold section */
+.above-fold-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .above-fold-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Terminal Preview Animations */
+@keyframes terminal-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes terminal-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes terminal-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 65, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.5); }
+}
+
+.terminal-preview-container {
+  animation: terminal-glow 3s ease-in-out infinite;
+}

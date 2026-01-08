@@ -3,6 +3,7 @@
 import { Ticker } from '@/components/Ticker';
 import { Hero } from '@/components/Hero';
 import { AgentTerminal } from '@/components/AgentTerminal';
+import { TerminalPreview } from '@/components/TerminalPreview';
 import { VotingPanel } from '@/components/VotingPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
 import { DiscoveryPanel } from '@/components/DiscoveryPanel';
@@ -100,6 +101,131 @@ export default function Home() {
             </tr>
           </tbody>
         </table>
+      </div>
+
+      {/* ABOVE THE FOLD - Live AI Preview + Quick Buy */}
+      <div style={{
+        background: 'linear-gradient(to bottom, #0a1628 0%, #152238 100%)',
+        padding: '16px',
+        borderBottom: '2px solid #00ff41',
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr) 300px',
+          gap: '16px',
+        }} className="above-fold-grid">
+          {/* Left: Live AI Brain Preview */}
+          <div>
+            <TerminalPreview />
+          </div>
+
+          {/* Right: Quick Buy Box */}
+          <div style={{
+            background: '#FFFFFF',
+            border: '2px solid #003366',
+            borderRadius: '4px',
+            overflow: 'hidden',
+          }}>
+            {/* Header */}
+            <div style={{
+              background: 'linear-gradient(to bottom, #003366 0%, #002244 100%)',
+              padding: '8px 12px',
+              color: '#FFFFFF',
+              fontWeight: 'bold',
+              fontSize: '12px',
+              textAlign: 'center',
+            }}>
+              🚀 BUY $ARA NOW
+            </div>
+
+            {/* Content */}
+            <div style={{ padding: '12px', textAlign: 'center' }}>
+              {/* Token Symbol */}
+              <div style={{
+                background: '#001133',
+                color: '#00FF00',
+                padding: '12px',
+                fontFamily: '"Courier New", monospace',
+                marginBottom: '12px',
+                borderRadius: '4px',
+              }}>
+                <div style={{ fontSize: '10px', color: '#66AAFF', marginBottom: '4px' }}>TICKER SYMBOL</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold' }}>$ARA</div>
+                <div style={{ fontSize: '10px', color: '#00CC00', marginTop: '4px' }}>● LIVE ON SOLANA</div>
+              </div>
+
+              {/* Buy Button */}
+              <a
+                href={SOCIAL_LINKS.pumpfun}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none' }}
+              >
+                <button
+                  className="btn-buy-y2k"
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    marginBottom: '12px',
+                  }}
+                >
+                  APE IN ON PUMP.FUN
+                </button>
+              </a>
+
+              {/* Contract Address */}
+              <div style={{
+                background: '#F5F5F5',
+                border: '1px solid #CCCCCC',
+                padding: '8px',
+                borderRadius: '4px',
+              }}>
+                <div style={{ fontSize: '9px', color: '#666666', marginBottom: '4px' }}>CONTRACT ADDRESS</div>
+                <div style={{
+                  fontFamily: '"Courier New", monospace',
+                  fontSize: '9px',
+                  wordBreak: 'break-all',
+                  marginBottom: '8px',
+                }}>
+                  {CONTRACT_ADDRESS.slice(0, 20)}...
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(CONTRACT_ADDRESS);
+                  }}
+                  className="btn-y2k"
+                  style={{
+                    width: '100%',
+                    padding: '8px',
+                    fontSize: '11px',
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(to bottom, #4CAF50 0%, #388E3C 100%)',
+                    color: '#FFFFFF',
+                    border: '1px solid #2E7D32',
+                  }}
+                >
+                  📋 COPY CA
+                </button>
+              </div>
+
+              {/* Quick Links */}
+              <div style={{
+                display: 'flex',
+                gap: '8px',
+                marginTop: '12px',
+                justifyContent: 'center',
+              }}>
+                <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px' }}>pump.fun</a>
+                <span style={{ color: '#CCC' }}>|</span>
+                <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" style={{ fontSize: '10px' }}>chart</a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Main Content Area with Sidebar */}
