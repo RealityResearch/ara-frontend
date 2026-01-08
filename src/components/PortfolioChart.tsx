@@ -29,22 +29,30 @@ function formatTime(timestamp: number): string {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
+    second: '2-digit',
   });
 }
 
-// Token colors for allocation bar - Y2K Financial Palette
-const TOKEN_COLORS: Record<string, string> = {
-  SOL: '#D4A574',      // Gold/amber - classic finance
-  BONK: '#F7931A',     // Orange
-  WIF: '#006600',      // Money green
-  POPCAT: '#CC0000',   // Alert red
-  JUP: '#003399',      // Web blue
-  ARA: '#D98D6C',      // Claude coral
-  DEFAULT: '#CCAA00',  // Gold
+function formatNumber(num: number, decimals: number = 2): string {
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+// Bloomberg-style colors for allocation
+const ALLOC_COLORS: Record<string, string> = {
+  SOL: '#ff6600',
+  BONK: '#ffaa00',
+  WIF: '#00ff00',
+  POPCAT: '#ff3333',
+  JUP: '#3399ff',
+  ARA: '#ff8844',
+  DEFAULT: '#ffcc00',
 };
 
-function getTokenColor(symbol: string): string {
-  return TOKEN_COLORS[symbol.toUpperCase()] || TOKEN_COLORS.DEFAULT;
+function getAllocColor(symbol: string): string {
+  return ALLOC_COLORS[symbol.toUpperCase()] || ALLOC_COLORS.DEFAULT;
 }
 
 export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
@@ -52,12 +60,28 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
   const [currentBalance, setCurrentBalance] = useState<{ sol: number; usdValue: number } | null>(null);
   const [positions, setPositions] = useState<PositionData[]>([]);
   const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
-  const [solPrice, setSolPrice] = useState<number>(0);  // Real SOL price from agent
+  const [solPrice, setSolPrice] = useState<number>(0);
   const [isConnected, setIsConnected] = useState(false);
+  const [currentTime, setCurrentTime] = useState<string>('--:--:--');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const WS_URL = wsUrl || process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
+
+  // Update time every second
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -72,7 +96,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
       try {
         const message = JSON.parse(event.data);
 
-        // Extract wallet data from market updates
         if (message.type === 'market_update' && message.marketData) {
           const walletSol = message.marketData.walletSol ?? 0;
           const walletValue = message.marketData.walletValue ?? 0;
@@ -80,7 +103,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           const positionValue = message.marketData.totalPositionValue ?? 0;
           const solPriceUsd = message.marketData.solPrice ?? 0;
 
-          // Skip if both are zero/undefined (invalid data)
           if (walletSol === 0 && walletValue === 0) return;
 
           const point: BalancePoint = {
@@ -96,7 +118,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           if (solPriceUsd > 0) setSolPrice(solPriceUsd);
           setBalanceHistory(prev => {
             const newHistory = [...prev, point];
-            // Keep last 50 points (about 25 minutes at 30s intervals)
             return newHistory.slice(-50);
           });
         }
@@ -114,7 +135,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     };
   }, [WS_URL]);
 
-  // Draw chart when data changes
+  // Draw Bloomberg-style chart
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -123,52 +144,45 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Get actual dimensions
     const rect = container.getBoundingClientRect();
-    const width = rect.width - 4;
-    const height = 120; // Slightly smaller to make room for holdings
+    const width = rect.width;
+    const height = 100;
 
-    // Set canvas size
     canvas.width = width;
     canvas.height = height;
 
-    // Clear canvas
-    ctx.fillStyle = '#0a0f0a';
+    // Black background
+    ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
 
-    // Add scanlines effect
-    ctx.strokeStyle = 'rgba(0, 255, 0, 0.03)';
-    for (let y = 0; y < height; y += 2) {
+    // Grid lines (dark)
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 1;
+    for (let i = 0; i < 5; i++) {
+      const y = (i / 4) * height;
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
       ctx.stroke();
     }
+    for (let i = 0; i < 10; i++) {
+      const x = (i / 9) * width;
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, height);
+      ctx.stroke();
+    }
 
-    // Calculate data range
     const values = balanceHistory.map(p => p.sol ?? 0).filter(v => !isNaN(v) && v > 0);
     if (values.length === 0) return;
-    const minVal = Math.min(...values) * 0.95;
-    const maxVal = Math.max(...values) * 1.05;
+    const minVal = Math.min(...values) * 0.98;
+    const maxVal = Math.max(...values) * 1.02;
     const range = maxVal - minVal || 0.01;
 
-    // Draw grid
-    ctx.strokeStyle = '#1a2a1a';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 4; i++) {
-      const y = (i / 3) * height;
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(width, y);
-      ctx.stroke();
-    }
-
-    // Draw the line
+    // Draw the line (Bloomberg orange)
     ctx.beginPath();
-    ctx.strokeStyle = '#00ff41';
+    ctx.strokeStyle = '#ff6600';
     ctx.lineWidth = 2;
-    ctx.shadowColor = '#00ff41';
-    ctx.shadowBlur = 5;
 
     balanceHistory.forEach((point, index) => {
       const x = (index / (balanceHistory.length - 1)) * width;
@@ -183,26 +197,26 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
     ctx.stroke();
 
-    // Draw fill gradient
+    // Fill under the line
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
     ctx.closePath();
 
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, 'rgba(0, 255, 65, 0.3)');
-    gradient.addColorStop(1, 'rgba(0, 255, 65, 0)');
+    gradient.addColorStop(0, 'rgba(255, 102, 0, 0.3)');
+    gradient.addColorStop(1, 'rgba(255, 102, 0, 0)');
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Draw current value marker
+    // Current value dot
     if (balanceHistory.length > 0) {
       const lastPoint = balanceHistory[balanceHistory.length - 1];
-      const lastX = width;
+      const lastX = width - 4;
       const lastY = height - ((lastPoint.sol - minVal) / range) * height;
 
       ctx.beginPath();
-      ctx.arc(lastX - 4, lastY, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#00ff41';
+      ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffaa00';
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 1;
@@ -210,11 +224,10 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     }
 
     // Y-axis labels
-    ctx.shadowBlur = 0;
-    ctx.fillStyle = '#00aa00';
-    ctx.font = '9px "Courier New"';
+    ctx.fillStyle = '#666666';
+    ctx.font = '9px Courier New';
     ctx.textAlign = 'left';
-    ctx.fillText(`${maxVal.toFixed(3)}`, 4, 12);
+    ctx.fillText(`${maxVal.toFixed(3)}`, 4, 10);
     ctx.fillText(`${minVal.toFixed(3)}`, 4, height - 4);
 
   }, [balanceHistory]);
@@ -225,255 +238,253 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
   const isPositive = changePercent >= 0;
 
-  // Calculate allocation percentages using real SOL price
   const solValueUsd = currentBalance && solPrice > 0 ? currentBalance.sol * solPrice : 0;
   const totalValue = solValueUsd + totalPositionValue;
   const solPercent = totalValue > 0 ? (solValueUsd / totalValue) * 100 : 100;
 
+  // Calculate session high/low
+  const sessionHigh = balanceHistory.length > 0 ? Math.max(...balanceHistory.map(p => p.usdValue || 0)) : 0;
+  const sessionLow = balanceHistory.length > 0 ? Math.min(...balanceHistory.map(p => p.usdValue || 0).filter(v => v > 0)) : 0;
+
   return (
-    <div style={{ marginBottom: '16px' }}>
-      {/* Section Header */}
-      <div className="skeu-section-header">
-        Portfolio Balance
-        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
-          {isConnected ? 'LIVE' : 'OFFLINE'}
-        </span>
+    <div className="bb-terminal" style={{ marginBottom: '16px' }}>
+      {/* Bloomberg Header */}
+      <div className="bb-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span className="bb-brand">PORTFOLIO</span>
+          <span style={{ color: '#ffaa00', fontSize: '10px' }}>CLAUDE INVESTMENTS</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span className="bb-time">{currentTime}</span>
+          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'}>
+            {isConnected ? 'LIVE' : 'OFFLINE'}
+          </span>
+        </div>
       </div>
 
-      {/* Main Panel */}
-      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
-        {/* Title Bar with Total Value */}
-        <div className="skeu-window-titlebar" style={{ padding: '8px 12px' }}>
-          <div>
-            <span style={{ fontSize: '10px', color: '#AAAAAA' }}>Total Portfolio Value</span>
-            <div style={{ fontSize: '20px', fontWeight: 'bold', fontFamily: 'Courier New', color: '#FFFFFF' }}>
-              ${currentBalance ? (currentBalance.usdValue ?? 0).toFixed(2) : '--'}
-            </div>
+      {/* Main Stats Grid */}
+      <div className="bb-grid bb-grid-4" style={{ margin: '2px' }}>
+        {/* Total Value */}
+        <div className="bb-stat-box">
+          <div className="bb-stat-label">NAV</div>
+          <div className="bb-stat-value" style={{ color: '#ffffff' }}>
+            ${currentBalance ? formatNumber(currentBalance.usdValue ?? 0) : '--'}
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: '10px', color: '#AAAAAA' }}>Session Change</span>
-            <div style={{
-              fontSize: '16px',
-              fontWeight: 'bold',
-              fontFamily: 'Courier New',
-              color: isPositive ? '#66FF66' : '#FF6666'
-            }}>
-              {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${(changePercent ?? 0).toFixed(2)}%` : '--'}
-            </div>
+          <div className={`bb-stat-change ${isPositive ? 'bb-positive' : 'bb-negative'}`}>
+            {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${formatNumber(changePercent)}%` : '--'}
           </div>
         </div>
 
-        {/* Allocation Bar */}
-        <div style={{
-          background: 'linear-gradient(180deg, #1a1a2e 0%, #0f0f1a 100%)',
-          padding: '8px 12px',
-          borderBottom: '1px solid #333',
-        }}>
-          <div style={{ fontSize: '9px', color: '#888888', marginBottom: '4px' }}>ALLOCATION</div>
-          <div style={{
-            display: 'flex',
-            height: '20px',
-            borderRadius: '4px',
-            overflow: 'hidden',
-            border: '1px solid #444',
-          }}>
-            {/* SOL portion */}
-            <div
-              style={{
-                width: `${solPercent}%`,
-                background: `linear-gradient(180deg, ${TOKEN_COLORS.SOL} 0%, ${TOKEN_COLORS.SOL}99 100%)`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '9px',
-                fontWeight: 'bold',
-                color: '#fff',
-                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                minWidth: solPercent > 10 ? 'auto' : '0',
-              }}
-            >
-              {solPercent > 15 ? `SOL ${solPercent.toFixed(0)}%` : ''}
-            </div>
-            {/* Token positions */}
-            {positions.map((pos, i) => {
+        {/* SOL Balance */}
+        <div className="bb-stat-box">
+          <div className="bb-stat-label">SOL BAL</div>
+          <div className="bb-stat-value">
+            {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
+          </div>
+          <div className="bb-stat-change bb-neutral">
+            ${formatNumber(solValueUsd)}
+          </div>
+        </div>
+
+        {/* Session High */}
+        <div className="bb-stat-box">
+          <div className="bb-stat-label">SESSION HIGH</div>
+          <div className="bb-stat-value bb-positive">
+            ${formatNumber(sessionHigh)}
+          </div>
+          <div className="bb-stat-change bb-neutral">
+            {balanceHistory.length} ticks
+          </div>
+        </div>
+
+        {/* Session Low */}
+        <div className="bb-stat-box">
+          <div className="bb-stat-label">SESSION LOW</div>
+          <div className="bb-stat-value bb-negative">
+            ${sessionLow > 0 ? formatNumber(sessionLow) : '--'}
+          </div>
+          <div className="bb-stat-change bb-neutral">
+            SOL: ${formatNumber(solPrice)}
+          </div>
+        </div>
+      </div>
+
+      {/* Allocation Bar */}
+      <div style={{ padding: '4px 8px', background: '#0d0d0d' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+          <span style={{ color: '#999999', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            ALLOCATION
+          </span>
+          <span style={{ color: '#666666', fontSize: '9px' }}>
+            {positions.length} POSITION{positions.length !== 1 ? 'S' : ''}
+          </span>
+        </div>
+        <div className="bb-allocation-bar">
+          <div
+            className="bb-allocation-segment"
+            style={{
+              width: `${solPercent}%`,
+              background: getAllocColor('SOL'),
+            }}
+          >
+            {solPercent > 15 ? `SOL ${solPercent.toFixed(0)}%` : ''}
+          </div>
+          {positions.map((pos) => {
+            const posPercent = totalValue > 0 ? ((pos.currentValue || 0) / totalValue) * 100 : 0;
+            if (posPercent < 1) return null;
+            return (
+              <div
+                key={pos.tokenAddress}
+                className="bb-allocation-segment"
+                style={{
+                  width: `${posPercent}%`,
+                  background: getAllocColor(pos.tokenSymbol),
+                }}
+              >
+                {posPercent > 10 ? `${pos.tokenSymbol} ${posPercent.toFixed(0)}%` : ''}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Holdings Table */}
+      <div style={{ padding: '0 2px' }}>
+        <table className="bb-table">
+          <thead>
+            <tr>
+              <th>ASSET</th>
+              <th style={{ textAlign: 'right' }}>AMOUNT</th>
+              <th style={{ textAlign: 'right' }}>VALUE</th>
+              <th style={{ textAlign: 'right' }}>P&L</th>
+              <th style={{ textAlign: 'right' }}>%</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* SOL Row */}
+            <tr>
+              <td>
+                <span style={{ color: '#ff6600', fontWeight: 'bold' }}>SOL</span>
+                <span style={{ color: '#666666', marginLeft: '8px', fontSize: '9px' }}>SOLANA</span>
+              </td>
+              <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+                {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
+              </td>
+              <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff' }}>
+                ${formatNumber(solValueUsd)}
+              </td>
+              <td style={{ textAlign: 'right', color: '#666666' }}>--</td>
+              <td style={{ textAlign: 'right', color: '#ffaa00' }}>
+                {solPercent.toFixed(1)}%
+              </td>
+            </tr>
+
+            {/* Token Positions */}
+            {positions.map((pos) => {
+              const pnlPercent = pos.unrealizedPnlPercent ?? 0;
               const posPercent = totalValue > 0 ? ((pos.currentValue || 0) / totalValue) * 100 : 0;
-              if (posPercent < 1) return null;
               return (
-                <div
-                  key={pos.tokenAddress}
-                  style={{
-                    width: `${posPercent}%`,
-                    background: `linear-gradient(180deg, ${getTokenColor(pos.tokenSymbol)} 0%, ${getTokenColor(pos.tokenSymbol)}99 100%)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '9px',
-                    fontWeight: 'bold',
-                    color: '#fff',
-                    textShadow: '0 1px 2px rgba(0,0,0,0.5)',
-                  }}
-                >
-                  {posPercent > 15 ? `${pos.tokenSymbol} ${posPercent.toFixed(0)}%` : ''}
-                </div>
+                <tr key={pos.tokenAddress}>
+                  <td>
+                    <span style={{ color: getAllocColor(pos.tokenSymbol), fontWeight: 'bold' }}>
+                      {pos.tokenSymbol}
+                    </span>
+                    <span style={{ color: '#666666', marginLeft: '8px', fontSize: '9px' }}>
+                      MEMECOIN
+                    </span>
+                  </td>
+                  <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+                    {formatNumber(pos.amount, 0)}
+                  </td>
+                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff' }}>
+                    ${formatNumber(pos.currentValue ?? pos.costBasis)}
+                  </td>
+                  <td style={{ textAlign: 'right' }} className={pnlPercent >= 0 ? 'bb-positive' : 'bb-negative'}>
+                    {pnlPercent >= 0 ? '+' : ''}{formatNumber(pnlPercent)}%
+                  </td>
+                  <td style={{ textAlign: 'right', color: '#ffaa00' }}>
+                    {posPercent.toFixed(1)}%
+                  </td>
+                </tr>
               );
             })}
-          </div>
+
+            {positions.length === 0 && (
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'center', color: '#666666', padding: '12px' }}>
+                  NO OPEN POSITIONS
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="bb-divider" />
+
+      {/* Chart Area */}
+      <div style={{ padding: '4px 8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+          <span style={{ color: '#ffaa00', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            SOL BALANCE CHART
+          </span>
+          <span style={{ color: '#666666', fontSize: '9px' }}>
+            30s INTERVALS
+          </span>
         </div>
-
-        {/* Holdings Breakdown */}
-        <div style={{
-          background: 'linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%)',
-          padding: '8px 12px',
-        }}>
-          <div style={{ fontSize: '9px', color: '#666666', marginBottom: '6px' }}>HOLDINGS</div>
-
-          {/* SOL Balance */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '4px 8px',
-            background: '#fff',
-            borderRadius: '4px',
-            marginBottom: '4px',
-            border: '1px solid #ddd',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: TOKEN_COLORS.SOL,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                color: '#fff',
-              }}>S</div>
-              <div>
-                <div style={{ fontWeight: 'bold', fontSize: '12px' }}>SOL</div>
-                <div style={{ fontSize: '9px', color: '#888' }}>
-                  {currentBalance ? (currentBalance.sol ?? 0).toFixed(4) : '--'} SOL
-                </div>
-              </div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '12px', fontFamily: 'Courier New' }}>
-                ${solValueUsd.toFixed(2)}
-              </div>
-              <div style={{ fontSize: '9px', color: '#888' }}>
-                {solPercent.toFixed(1)}% of portfolio
-              </div>
-            </div>
-          </div>
-
-          {/* Token Positions */}
-          {positions.length > 0 ? (
-            positions.map((pos) => {
-              const pnlColor = (pos.unrealizedPnlPercent ?? 0) >= 0 ? '#008800' : '#CC0000';
-              const posPercent = totalValue > 0 ? ((pos.currentValue || 0) / totalValue) * 100 : 0;
-              return (
-                <div
-                  key={pos.tokenAddress}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '4px 8px',
-                    background: '#fff',
-                    borderRadius: '4px',
-                    marginBottom: '4px',
-                    border: '1px solid #ddd',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '50%',
-                      background: getTokenColor(pos.tokenSymbol),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '10px',
-                      fontWeight: 'bold',
-                      color: '#fff',
-                    }}>{pos.tokenSymbol.charAt(0)}</div>
-                    <div>
-                      <div style={{ fontWeight: 'bold', fontSize: '12px' }}>{pos.tokenSymbol}</div>
-                      <div style={{ fontSize: '9px', color: '#888' }}>
-                        {pos.amount.toLocaleString()} tokens
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontWeight: 'bold', fontSize: '12px', fontFamily: 'Courier New' }}>
-                      ${(pos.currentValue ?? pos.costBasis).toFixed(2)}
-                    </div>
-                    <div style={{ fontSize: '9px', color: pnlColor, fontWeight: 'bold' }}>
-                      {(pos.unrealizedPnlPercent ?? 0) >= 0 ? '+' : ''}{(pos.unrealizedPnlPercent ?? 0).toFixed(1)}%
-                      <span style={{ color: '#888', fontWeight: 'normal', marginLeft: '4px' }}>
-                        ({posPercent.toFixed(1)}%)
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          ) : (
-            <div style={{
-              padding: '8px',
-              textAlign: 'center',
-              color: '#888',
-              fontSize: '10px',
-              fontStyle: 'italic',
-            }}>
-              No open positions
-            </div>
-          )}
-        </div>
-
-        {/* Chart Area */}
-        <div
-          ref={containerRef}
-          className="skeu-terminal"
-          style={{
-            padding: '2px',
-            borderRadius: 0,
-            borderTop: '1px solid #333',
-          }}
-        >
+        <div ref={containerRef} className="bb-chart-container">
           {balanceHistory.length < 2 ? (
             <div style={{
-              height: '120px',
+              height: '100px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#00aa00',
-              fontFamily: '"Courier New", monospace',
+              color: '#ff6600',
+              fontFamily: 'Courier New',
               fontSize: '11px',
             }}>
-              <span>Collecting data</span>
-              <span className="cursor-blink"></span>
+              <span>COLLECTING DATA</span>
+              <span className="bb-cursor" style={{ marginLeft: '4px' }}></span>
             </div>
           ) : (
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '120px' }} />
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100px' }} />
           )}
         </div>
+      </div>
 
-        {/* Info Bar */}
-        <div style={{
-          background: 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)',
-          borderTop: '1px solid #a0a0a0',
-          padding: '4px 8px',
-          fontSize: '9px',
-          color: '#666666',
-          textAlign: 'center',
-          borderRadius: '0 0 8px 8px'
-        }}>
-          Updates every ~30s | SOL Balance Chart
-        </div>
+      {/* Function Keys */}
+      <div className="bb-function-keys">
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F1</span>
+          HELP
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F2</span>
+          CHART
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F3</span>
+          TRADES
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F4</span>
+          NEWS
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F5</span>
+          SCAN
+        </button>
+        <button className="bb-fkey" style={{ marginLeft: 'auto' }}>
+          <span className="bb-fkey-label">F10</span>
+          ACTIONS
+        </button>
+      </div>
+
+      {/* Command Line */}
+      <div className="bb-command">
+        <span className="bb-prompt">{'>'}</span>
+        <span style={{ color: '#ff6600' }}>PORTFOLIO GO</span>
+        <span className="bb-cursor"></span>
       </div>
     </div>
   );

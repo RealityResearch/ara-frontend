@@ -72,7 +72,13 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
             timestamp: data.timestamp || Date.now(),
             replyTo: data.replyTo,
           };
-          setMessages(prev => [...prev.slice(-50), newMsg]); // Keep last 50 messages
+          // Deduplicate by ID (prevents double-adding when server echoes back our own message)
+          setMessages(prev => {
+            if (prev.some(m => m.id === newMsg.id)) {
+              return prev; // Already have this message
+            }
+            return [...prev.slice(-50), newMsg];
+          });
         }
 
         // Handle chat history on connect
@@ -117,20 +123,23 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
     if (!ws || ws.readyState !== WebSocket.OPEN || !inputValue.trim()) return;
 
     const message = inputValue.trim().slice(0, 280); // Limit to 280 chars
+    const msgId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const timestamp = Date.now();
 
     ws.send(JSON.stringify({
       type: 'chat_message',
+      id: msgId, // Send ID so server uses it
       message,
       anonId,
-      timestamp: Date.now(),
+      timestamp,
     }));
 
-    // Optimistically add to local messages
+    // Optimistically add to local messages with same ID
     const newMsg: ChatMessage = {
-      id: `local-${Date.now()}`,
+      id: msgId,
       type: 'user',
       message: `@${anonId}: ${message}`,
-      timestamp: Date.now(),
+      timestamp,
     };
     setMessages(prev => [...prev.slice(-50), newMsg]);
 

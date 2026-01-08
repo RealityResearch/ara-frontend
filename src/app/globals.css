@@ -1463,9 +1463,400 @@ a:hover {
   left: 0;
   right: 0;
   height: 50%;
-  background: linear-gradient(180deg, 
-    rgba(255,255,255,0.3) 0%, 
+  background: linear-gradient(180deg,
+    rgba(255,255,255,0.3) 0%,
     rgba(255,255,255,0) 100%
   );
   pointer-events: none;
+}
+
+/* ============================================
+   BLOOMBERG TERMINAL AESTHETIC
+   ============================================ */
+
+/* Bloomberg Color Palette */
+:root {
+  --bb-black: #000000;
+  --bb-dark: #1a1a1a;
+  --bb-panel: #0d0d0d;
+  --bb-border: #333333;
+  --bb-orange: #ff6600;
+  --bb-amber: #ffaa00;
+  --bb-yellow: #ffff00;
+  --bb-green: #00ff00;
+  --bb-red: #ff3333;
+  --bb-blue: #3399ff;
+  --bb-white: #ffffff;
+  --bb-gray: #666666;
+  --bb-light-gray: #999999;
+}
+
+/* Bloomberg Terminal Container */
+.bb-terminal {
+  background: var(--bb-black);
+  font-family: 'Courier New', 'Lucida Console', Monaco, monospace;
+  font-size: 11px;
+  color: var(--bb-orange);
+  border: 2px solid var(--bb-border);
+  position: relative;
+}
+
+/* Bloomberg Panel */
+.bb-panel {
+  background: var(--bb-panel);
+  border: 1px solid var(--bb-border);
+  margin: 2px;
+}
+
+/* Bloomberg Header Bar */
+.bb-header {
+  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+  border-bottom: 1px solid var(--bb-border);
+  padding: 4px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bb-header-title {
+  color: var(--bb-amber);
+  font-weight: bold;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.bb-header-live {
+  color: var(--bb-green);
+  font-size: 9px;
+  animation: bb-blink 1s infinite;
+}
+
+@keyframes bb-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.3; }
+}
+
+/* Bloomberg Function Keys */
+.bb-function-keys {
+  display: flex;
+  gap: 2px;
+  background: var(--bb-dark);
+  padding: 4px;
+  border-top: 1px solid var(--bb-border);
+}
+
+.bb-fkey {
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  border: 1px solid var(--bb-border);
+  color: var(--bb-amber);
+  font-size: 9px;
+  padding: 4px 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.bb-fkey:hover {
+  background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+  color: var(--bb-yellow);
+}
+
+.bb-fkey-label {
+  color: var(--bb-light-gray);
+  font-size: 8px;
+  display: block;
+}
+
+/* Bloomberg Data Table */
+.bb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+}
+
+.bb-table th {
+  background: var(--bb-dark);
+  color: var(--bb-amber);
+  padding: 4px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--bb-border);
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+}
+
+.bb-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid #1a1a1a;
+  color: var(--bb-orange);
+}
+
+.bb-table tr:hover td {
+  background: rgba(255, 102, 0, 0.1);
+}
+
+/* Bloomberg Data Row Highlight */
+.bb-row-highlight {
+  background: rgba(255, 170, 0, 0.1) !important;
+}
+
+/* Bloomberg Value Colors */
+.bb-positive { color: var(--bb-green) !important; }
+.bb-negative { color: var(--bb-red) !important; }
+.bb-neutral { color: var(--bb-light-gray) !important; }
+.bb-highlight { color: var(--bb-yellow) !important; }
+.bb-primary { color: var(--bb-orange) !important; }
+.bb-secondary { color: var(--bb-amber) !important; }
+.bb-info { color: var(--bb-blue) !important; }
+
+/* Bloomberg Badge */
+.bb-badge {
+  display: inline-block;
+  padding: 1px 6px;
+  font-size: 8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.bb-badge-live {
+  background: var(--bb-green);
+  color: var(--bb-black);
+  animation: bb-pulse 2s infinite;
+}
+
+.bb-badge-offline {
+  background: var(--bb-red);
+  color: var(--bb-white);
+}
+
+@keyframes bb-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Bloomberg Stat Box */
+.bb-stat-box {
+  background: var(--bb-panel);
+  border: 1px solid var(--bb-border);
+  padding: 8px;
+  text-align: center;
+}
+
+.bb-stat-label {
+  color: var(--bb-light-gray);
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 2px;
+}
+
+.bb-stat-value {
+  color: var(--bb-amber);
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.bb-stat-change {
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+/* Bloomberg Chart Area */
+.bb-chart-container {
+  background: var(--bb-black);
+  border: 1px solid var(--bb-border);
+  position: relative;
+  padding: 4px;
+}
+
+.bb-chart-label {
+  position: absolute;
+  color: var(--bb-gray);
+  font-size: 8px;
+}
+
+/* Bloomberg Scrolling Ticker */
+.bb-ticker {
+  background: var(--bb-black);
+  border-top: 1px solid var(--bb-border);
+  border-bottom: 1px solid var(--bb-border);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 4px 0;
+}
+
+.bb-ticker-content {
+  display: inline-block;
+  animation: bb-scroll 30s linear infinite;
+}
+
+@keyframes bb-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.bb-ticker-item {
+  display: inline-block;
+  padding: 0 16px;
+  border-right: 1px solid var(--bb-border);
+}
+
+.bb-ticker-symbol {
+  color: var(--bb-amber);
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.bb-ticker-price {
+  color: var(--bb-white);
+  margin-right: 8px;
+}
+
+/* Bloomberg Grid Layout */
+.bb-grid {
+  display: grid;
+  gap: 2px;
+  background: var(--bb-border);
+  padding: 2px;
+}
+
+.bb-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.bb-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.bb-grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Bloomberg Section Divider */
+.bb-divider {
+  height: 1px;
+  background: var(--bb-border);
+  margin: 4px 0;
+}
+
+.bb-divider-double {
+  height: 3px;
+  background: linear-gradient(180deg, var(--bb-border) 0%, var(--bb-black) 50%, var(--bb-border) 100%);
+  margin: 4px 0;
+}
+
+/* Bloomberg Input */
+.bb-input {
+  background: var(--bb-black);
+  border: 1px solid var(--bb-border);
+  color: var(--bb-amber);
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+.bb-input:focus {
+  border-color: var(--bb-orange);
+  outline: none;
+}
+
+/* Bloomberg Command Line */
+.bb-command {
+  background: var(--bb-black);
+  border-top: 1px solid var(--bb-border);
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bb-prompt {
+  color: var(--bb-green);
+  font-weight: bold;
+}
+
+.bb-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 14px;
+  background: var(--bb-amber);
+  animation: bb-cursor-blink 1s step-end infinite;
+}
+
+@keyframes bb-cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Bloomberg Allocation Bar */
+.bb-allocation-bar {
+  height: 16px;
+  background: var(--bb-dark);
+  border: 1px solid var(--bb-border);
+  display: flex;
+  overflow: hidden;
+}
+
+.bb-allocation-segment {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: bold;
+  color: var(--bb-black);
+  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+  transition: width 0.3s ease;
+}
+
+/* Bloomberg News Flash */
+.bb-flash {
+  background: var(--bb-red);
+  color: var(--bb-white);
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: 10px;
+  text-transform: uppercase;
+  animation: bb-flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes bb-flash {
+  0% { opacity: 1; }
+  100% { opacity: 0.8; }
+}
+
+/* Bloomberg Box Drawing Characters Style */
+.bb-box {
+  position: relative;
+}
+
+.bb-box::before {
+  content: '┌' attr(data-title) '─';
+  position: absolute;
+  top: -8px;
+  left: 4px;
+  background: var(--bb-black);
+  padding: 0 4px;
+  color: var(--bb-amber);
+  font-size: 9px;
+}
+
+/* Bloomberg Time Display */
+.bb-time {
+  color: var(--bb-green);
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Bloomberg Logo/Branding Area */
+.bb-brand {
+  color: var(--bb-orange);
+  font-weight: bold;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Mobile responsive for Bloomberg */
+@media (max-width: 768px) {
+  .bb-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .bb-grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .bb-function-keys { flex-wrap: wrap; }
+  .bb-fkey { flex: 1; min-width: 60px; text-align: center; }
 }
