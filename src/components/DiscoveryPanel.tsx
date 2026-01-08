@@ -31,9 +31,24 @@ export function DiscoveryPanel() {
   const [isConnected, setIsConnected] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [lastScan, setLastScan] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState('--:--:--');
   const thoughtsRef = useRef<HTMLDivElement>(null);
 
   const WS_URL = process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
+
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -117,11 +132,11 @@ export function DiscoveryPanel() {
   };
 
   const getScoreColor = (score: number | undefined | null): string => {
-    if (score == null) return '#999999';
-    if (score >= 90) return '#00FF00';
-    if (score >= 70) return '#AAFF00';
-    if (score >= 50) return '#FFAA00';
-    return '#FF6666';
+    if (score == null) return '#666666';
+    if (score >= 90) return '#00ff00';
+    if (score >= 70) return '#aaff00';
+    if (score >= 50) return '#ffaa00';
+    return '#ff6666';
   };
 
   const formatTime = (ts: number): string => {
@@ -134,176 +149,189 @@ export function DiscoveryPanel() {
   };
 
   return (
-    <div id="discovery" style={{ marginBottom: '16px' }}>
-      {/* Section Header */}
-      <div className="skeu-section-header">
-        Token Discovery
-        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
-          {isScanning ? 'SCANNING...' : isConnected ? 'LIVE' : 'OFFLINE'}
-        </span>
-      </div>
-
-      {/* Main Panel */}
-      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
-        {/* Title Bar */}
-        <div className="skeu-window-titlebar">
-          <span>DexScreener Scanner - 2X Targets</span>
-          <span style={{ fontSize: '9px', color: '#99CCFF', fontWeight: 'normal' }}>
-            {lastScan ? `Last scan: ${formatTime(lastScan)}` : 'Waiting for data...'}
+    <div id="discovery" className="bb-terminal" style={{ marginBottom: '16px' }}>
+      {/* Bloomberg Header */}
+      <div className="bb-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span className="bb-brand">TOKEN DISCOVERY</span>
+          <span style={{ color: '#ffaa00', fontSize: '10px' }}>DEXSCREENER SCANNER</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ color: '#666666', fontSize: '9px' }}>
+            {lastScan ? `Last: ${formatTime(lastScan)}` : 'Waiting...'}
+          </span>
+          <span className="bb-time">{currentTime}</span>
+          <span className={`bb-badge ${isScanning ? '' : isConnected ? 'bb-badge-live' : 'bb-badge-offline'}`}
+            style={isScanning ? { background: '#ffaa00', color: '#000' } : {}}>
+            {isScanning ? 'SCANNING' : isConnected ? 'LIVE' : 'OFFLINE'}
           </span>
         </div>
+      </div>
 
-        {/* Two Column Layout */}
-        <div style={{ display: 'flex', gap: '8px', padding: '8px' }}>
-          {/* Left: Agent Thoughts */}
-          <div style={{ flex: '1', minWidth: '0' }}>
-            <div className="skeu-panel" style={{ padding: 0, height: '200px', display: 'flex', flexDirection: 'column' }}>
-              <div className="skeu-section-header" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px 4px 0 0' }}>
-                AGENT THOUGHTS
-              </div>
-              <div
-                ref={thoughtsRef}
-                className="skeu-terminal"
-                style={{
-                  flex: 1,
-                  overflow: 'auto',
-                  padding: '8px',
-                  fontFamily: '"Courier New", monospace',
-                  fontSize: '10px',
-                  borderRadius: '0 0 4px 4px',
-                }}
-              >
-                {thoughts.length === 0 ? (
-                  <div style={{ color: '#666666', fontStyle: 'italic' }}>
-                    Waiting for agent analysis...
-                  </div>
-                ) : (
-                  thoughts.map((t, i) => (
-                    <div key={i} style={{ marginBottom: '6px' }}>
-                      <span style={{ color: '#666666' }}>[{formatTime(t.timestamp)}]</span>
-                      {' '}
-                      <span style={{
-                        color: t.type === 'alert' ? '#FF6666' :
-                               t.type === 'decision' ? '#00CCCC' :
-                               t.type === 'scanning' ? '#FFAA00' : '#00AA00'
-                      }}>
-                        {t.content}
-                      </span>
-                    </div>
-                  ))
-                )}
-                {isScanning && (
-                  <div style={{ color: '#FFAA00' }}>
-                    <span className="blink">*</span> Scanning DexScreener...
-                  </div>
-                )}
-              </div>
-            </div>
+      {/* Two Column Layout */}
+      <div style={{ display: 'flex', gap: '2px', padding: '2px' }}>
+        {/* Left: Agent Thoughts */}
+        <div style={{ flex: 1 }} className="bb-panel">
+          <div style={{
+            background: '#0d0d0d',
+            padding: '4px 8px',
+            borderBottom: '1px solid #333333',
+          }}>
+            <span style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px' }}>AGENT THOUGHTS</span>
           </div>
+          <div
+            ref={thoughtsRef}
+            style={{
+              background: '#000000',
+              height: '160px',
+              overflow: 'auto',
+              padding: '8px',
+              fontFamily: '"Courier New", monospace',
+              fontSize: '10px',
+            }}
+          >
+            {thoughts.length === 0 ? (
+              <div style={{ color: '#666666', fontStyle: 'italic' }}>
+                Waiting for agent analysis...
+              </div>
+            ) : (
+              thoughts.map((t, i) => (
+                <div key={i} style={{ marginBottom: '6px' }}>
+                  <span style={{ color: '#666666' }}>[{formatTime(t.timestamp)}]</span>
+                  {' '}
+                  <span style={{
+                    color: t.type === 'alert' ? '#ff3333' :
+                           t.type === 'decision' ? '#00ddff' :
+                           t.type === 'scanning' ? '#ffaa00' : '#00ff00'
+                  }}>
+                    {t.content}
+                  </span>
+                </div>
+              ))
+            )}
+            {isScanning && (
+              <div style={{ color: '#ffaa00' }}>
+                <span className="bb-cursor"></span> Scanning DexScreener...
+              </div>
+            )}
+          </div>
+        </div>
 
-          {/* Right: Token List */}
-          <div style={{ flex: '1.5', minWidth: '0' }}>
-            <div className="skeu-panel" style={{ padding: 0, height: '200px', overflow: 'auto' }}>
-              <table width="100%" cellPadding={2} cellSpacing={0} style={{ fontSize: '9px' }}>
-                <thead>
-                  <tr className="skeu-metallic" style={{ position: 'sticky', top: 0 }}>
-                    <th style={{ textAlign: 'left', padding: '6px 4px', fontWeight: 'bold' }}>Token</th>
-                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Score</th>
-                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Price</th>
-                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>24h</th>
-                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Vol/Liq</th>
-                    <th style={{ textAlign: 'center', padding: '6px 4px', fontWeight: 'bold' }}>Buy%</th>
+        {/* Right: Token List */}
+        <div style={{ flex: 1.5 }} className="bb-panel">
+          <div style={{ height: '200px', overflow: 'auto' }}>
+            <table className="bb-table" style={{ fontSize: '9px' }}>
+              <thead>
+                <tr>
+                  <th style={{ position: 'sticky', top: 0, background: '#1a1a1a' }}>TOKEN</th>
+                  <th style={{ textAlign: 'right', position: 'sticky', top: 0, background: '#1a1a1a' }}>SCORE</th>
+                  <th style={{ textAlign: 'right', position: 'sticky', top: 0, background: '#1a1a1a' }}>PRICE</th>
+                  <th style={{ textAlign: 'right', position: 'sticky', top: 0, background: '#1a1a1a' }}>24H</th>
+                  <th style={{ textAlign: 'right', position: 'sticky', top: 0, background: '#1a1a1a' }}>VOL/LIQ</th>
+                  <th style={{ textAlign: 'center', position: 'sticky', top: 0, background: '#1a1a1a' }}>BUY%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tokens.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', color: '#666666', padding: '40px 20px' }}>
+                      NO TOKENS MATCHING CRITERIA
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {tokens.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} style={{ padding: '20px', textAlign: 'center', color: '#999999' }}>
-                        No tokens found matching criteria
-                      </td>
-                    </tr>
-                  ) : (
-                    tokens.map((t, i) => {
-                      const buys = t.txns24h?.buys ?? 0;
-                      const sells = t.txns24h?.sells ?? 0;
-                      const buyRatio = buys + sells > 0 ? Math.round(buys / (buys + sells) * 100) : 50;
-                      const volLiqRatio = t.liquidity > 0 ? (t.volume24h / t.liquidity).toFixed(1) : '0.0';
-                      const hasFlags = (t.flags?.length ?? 0) > 0;
+                ) : (
+                  tokens.map((t) => {
+                    const buys = t.txns24h?.buys ?? 0;
+                    const sells = t.txns24h?.sells ?? 0;
+                    const buyRatio = buys + sells > 0 ? Math.round(buys / (buys + sells) * 100) : 50;
+                    const volLiqRatio = t.liquidity > 0 ? (t.volume24h / t.liquidity).toFixed(1) : '0.0';
+                    const hasFlags = (t.flags?.length ?? 0) > 0;
 
-                      return (
-                        <tr
-                          key={t.address}
-                          style={{
-                            background: i % 2 === 0 ? '#ffffff' : '#f8f8f8',
-                            cursor: 'pointer',
-                          }}
-                          onClick={() => window.open(t.url || `https://dexscreener.com/solana/${t.address}`, '_blank')}
-                          onMouseEnter={(e) => e.currentTarget.style.background = '#e8f0ff'}
-                          onMouseLeave={(e) => e.currentTarget.style.background = i % 2 === 0 ? '#ffffff' : '#f8f8f8'}
-                        >
-                          <td style={{ padding: '4px' }}>
-                            <div style={{ fontWeight: 'bold' }}>
-                              {t.symbol}
-                              {hasFlags && <span style={{ color: '#FF6600', marginLeft: '4px' }}>!</span>}
-                            </div>
-                            <div style={{ color: '#666666', fontSize: '8px' }}>
-                              {(t.name ?? '').slice(0, 15)}{(t.name?.length ?? 0) > 15 ? '...' : ''}
-                            </div>
-                          </td>
-                          <td style={{ textAlign: 'right' }}>
-                            <span className="skeu-btn" style={{
-                              padding: '1px 6px',
-                              fontSize: '9px',
-                              fontWeight: 'bold',
-                              background: `linear-gradient(180deg, ${getScoreColor(t.score)} 0%, ${getScoreColor(t.score)}BB 100%)`,
-                              color: '#000000',
-                            }}>
-                              {t.score}
-                            </span>
-                          </td>
-                          <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
-                            ${formatPrice(t.priceUsd)}
-                          </td>
-                          <td style={{
-                            textAlign: 'right',
-                            color: (t.priceChange24h ?? 0) >= 0 ? '#008800' : '#CC0000',
-                            fontWeight: 'bold'
+                    return (
+                      <tr
+                        key={t.address}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => window.open(t.url || `https://dexscreener.com/solana/${t.address}`, '_blank')}
+                      >
+                        <td>
+                          <div style={{ fontWeight: 'bold', color: '#ffffff' }}>
+                            {t.symbol}
+                            {hasFlags && <span style={{ color: '#ff6600', marginLeft: '4px' }}>!</span>}
+                          </div>
+                          <div style={{ color: '#666666', fontSize: '8px' }}>
+                            {(t.name ?? '').slice(0, 12)}{(t.name?.length ?? 0) > 12 ? '...' : ''}
+                          </div>
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <span style={{
+                            padding: '1px 6px',
+                            fontSize: '9px',
+                            fontWeight: 'bold',
+                            background: getScoreColor(t.score),
+                            color: '#000000',
                           }}>
-                            {(t.priceChange24h ?? 0) >= 0 ? '+' : ''}{(t.priceChange24h ?? 0).toFixed(0)}%
-                          </td>
-                          <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
-                            {volLiqRatio}x
-                          </td>
-                          <td style={{ textAlign: 'center' }}>
-                            <span style={{
-                              color: buyRatio >= 55 ? '#008800' : buyRatio >= 50 ? '#666666' : '#CC0000'
-                            }}>
-                              {buyRatio}%
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                            {t.score}
+                          </span>
+                        </td>
+                        <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+                          ${formatPrice(t.priceUsd)}
+                        </td>
+                        <td style={{ textAlign: 'right' }} className={(t.priceChange24h ?? 0) >= 0 ? 'bb-positive' : 'bb-negative'}>
+                          {(t.priceChange24h ?? 0) >= 0 ? '+' : ''}{(t.priceChange24h ?? 0).toFixed(0)}%
+                        </td>
+                        <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+                          {volLiqRatio}x
+                        </td>
+                        <td style={{ textAlign: 'center' }} className={buyRatio >= 55 ? 'bb-positive' : buyRatio >= 50 ? '' : 'bb-negative'}>
+                          {buyRatio}%
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
 
-        {/* Filter Info */}
-        <div className="skeu-metallic" style={{
-          borderTop: '1px solid #a0a0a0',
-          padding: '6px 8px',
-          fontSize: '9px',
-          color: '#666666',
-          display: 'flex',
-          justifyContent: 'space-between',
-          borderRadius: '0 0 8px 8px'
-        }}>
-          <span>Filters: &gt;$50K liq | &gt;$100K vol | &gt;50% buys | Not dumping</span>
-          <span>Click token to open DexScreener</span>
-        </div>
+      {/* Filter Info */}
+      <div style={{
+        background: '#0d0d0d',
+        padding: '6px 8px',
+        fontSize: '9px',
+        color: '#666666',
+        display: 'flex',
+        justifyContent: 'space-between',
+      }}>
+        <span>FILTERS: &gt;$50K LIQ | &gt;$100K VOL | &gt;50% BUYS | NOT DUMPING</span>
+        <span>Click token to open DexScreener</span>
+      </div>
+
+      {/* Function Keys */}
+      <div className="bb-function-keys">
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F1</span>
+          HELP
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F2</span>
+          FILTER
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F3</span>
+          REFRESH
+        </button>
+        <button className="bb-fkey" style={{ marginLeft: 'auto' }}>
+          <span className="bb-fkey-label">F10</span>
+          MENU
+        </button>
+      </div>
+
+      {/* Command Line */}
+      <div className="bb-command">
+        <span className="bb-prompt">{'>'}</span>
+        <span style={{ color: '#ff6600' }}>DISCOVERY GO</span>
+        <span className="bb-cursor"></span>
       </div>
     </div>
   );

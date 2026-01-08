@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Ticker } from '@/components/Ticker';
 import { TerminalPreview } from '@/components/TerminalPreview';
 import { ChatPanel } from '@/components/ChatPanel';
@@ -13,7 +14,6 @@ import { HowItWorks } from '@/components/HowItWorks';
 import { TokenInfo } from '@/components/TokenInfo';
 import { ComingSoon } from '@/components/ComingSoon';
 import { Footer } from '@/components/Footer';
-import { LiveClock } from '@/components/LiveClock';
 import { StickyCA } from '@/components/StickyCA';
 import { TradePopup } from '@/components/TradePopup';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
@@ -21,148 +21,205 @@ import { useAgentStats } from '@/hooks/useAgentStats';
 
 export default function Home() {
   const { performance, evolution, tradeHistory, isLive } = useAgentStats();
-  return (
-    <div style={{ background: '#FFFEF5', minHeight: '100vh' }}>
+  const [currentTime, setCurrentTime] = useState('--:--:--');
 
-      {/* Logo Banner - Skeuomorphic */}
-      <div className="skeu-header">
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '16px 20px',
-          gap: '16px',
-        }}>
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div style={{ background: '#000000', minHeight: '100vh', color: '#ff6600' }}>
+
+      {/* Bloomberg Header Bar */}
+      <div style={{
+        background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)',
+        borderBottom: '2px solid #333333',
+        padding: '8px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img
             src="/logos/claude-investments.png"
             alt="Claude Investments"
-            style={{ height: '60px', width: 'auto' }}
+            style={{ height: '36px', width: 'auto', filter: 'brightness(1.1)' }}
           />
-          <div className="hide-mobile" style={{ textAlign: 'left' }}>
-            <div style={{ fontSize: '10px', color: '#99CCFF', fontStyle: 'italic' }}>
-              "The Future of Investing is Here"
-            </div>
-          </div>
+          <span className="hide-mobile" style={{ color: '#ffaa00', fontSize: '10px', fontStyle: 'italic' }}>
+            "The Future of Investing is Here"
+          </span>
         </div>
-      </div>
-
-      {/* Status Bar - Skeuomorphic */}
-      <div className="skeu-status-bar">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px' }}>
-            <span style={{ color: '#00FF00' }}>● AGENT LIVE</span>
-            <span className="hide-mobile">|</span>
-            <span className="hide-mobile">AI Trading Agent Active</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '10px' }}>
-            <LiveClock />
-            <span className="badge-secure">🔒 SSL</span>
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ color: '#00ff00', fontSize: '10px' }}>
+            <span style={{ animation: 'bb-blink 1s infinite' }}>●</span> AGENT LIVE
+          </span>
+          <span className="bb-time">{currentTime}</span>
+          <span className="bb-badge bb-badge-live">LIVE</span>
         </div>
       </div>
 
       {/* Scrolling Ticker */}
       <Ticker />
 
-      {/* Navigation Bar */}
+      {/* Bloomberg Navigation */}
       <div style={{
-        background: 'linear-gradient(to bottom, #F5F5F5 0%, #E0E0E0 100%)',
-        borderBottom: '1px solid #999999',
-        padding: '4px 12px',
-        fontSize: '11px'
+        background: '#0d0d0d',
+        borderBottom: '1px solid #333333',
+        padding: '4px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
       }}>
-        <table width="100%" cellPadding={0} cellSpacing={0}>
-          <tbody>
-            <tr>
-              <td>
-                <a href="#" style={{ marginRight: '12px' }}>Home</a>
-                <a href="#terminal" style={{ marginRight: '12px' }}>
-                  Terminal
-                  <span style={{ fontSize: '8px', marginLeft: '4px', color: '#008800' }}>● LIVE</span>
-                </a>
-                <a href="#performance" style={{ marginRight: '12px' }}>Stats</a>
-                <a href="#trades" style={{ marginRight: '12px' }}>Trades</a>
-                <a href="#chart" style={{ marginRight: '12px' }}>Chart</a>
-                <a href="#token" className="hide-mobile" style={{ marginRight: '12px' }}>Token</a>
-                <a href="#roadmap" className="hide-mobile">Roadmap</a>
-              </td>
-              <td align="right" className="hide-mobile">
-                <span style={{ color: '#666666', fontSize: '10px' }}>
-                  <span style={{ color: '#008800' }}>●</span> Agent Active |{' '}
-                  Analyzing: <span style={{ fontFamily: 'Courier New' }}>$ARA</span>
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div style={{ display: 'flex', gap: '4px' }}>
+          {[
+            { label: 'TERMINAL', href: '#terminal', live: true },
+            { label: 'PORTFOLIO', href: '#portfolio' },
+            { label: 'TRADES', href: '#trades' },
+            { label: 'STATS', href: '#performance' },
+            { label: 'CHART', href: '#chart', live: true },
+            { label: 'TOKEN', href: '#token' },
+          ].map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              className="bb-fkey"
+              style={{
+                textDecoration: 'none',
+                fontSize: '9px',
+                padding: '4px 12px',
+              }}
+            >
+              {item.label}
+              {item.live && <span style={{ color: '#00ff00', marginLeft: '4px' }}>●</span>}
+            </a>
+          ))}
+        </div>
+        <div className="hide-mobile" style={{ fontSize: '9px', color: '#666666' }}>
+          <span style={{ color: '#00ff00' }}>●</span> Connected | Analyzing: <span style={{ color: '#ffaa00' }}>$ARA</span>
+        </div>
       </div>
 
-      {/* Main Content Area with Sidebar */}
-      <div className="layout-sidebar" style={{ padding: '12px' }}>
+      {/* Main Content Area */}
+      <div style={{ display: 'flex', padding: '8px', gap: '8px' }}>
         {/* Sidebar - Desktop Only */}
-        <div className="sidebar-nav hide-mobile" style={{ alignSelf: 'start' }}>
-          <div className="sidebar-nav-header">Navigation</div>
-          <a href="#" className="sidebar-nav-item">Home</a>
-          <a href="#terminal" className="sidebar-nav-item">
-            Terminal <span style={{ fontSize: '7px', color: '#008800' }}>● LIVE</span>
-          </a>
-          <a href="#chat" className="sidebar-nav-item">
-            Chat <span style={{ fontSize: '7px', color: '#00AAFF' }}>● LIVE</span>
-          </a>
-          <a href="#discovery" className="sidebar-nav-item">
-            Discovery <span style={{ fontSize: '7px', color: '#00CCFF' }}>● SCAN</span>
-          </a>
-          <a href="#performance" className="sidebar-nav-item">Performance</a>
-          <a href="#evolution" className="sidebar-nav-item">Evolution</a>
-          <a href="#trades" className="sidebar-nav-item">Trade History</a>
-          <a href="#chart" className="sidebar-nav-item">
-            Chart <span style={{ fontSize: '7px', color: '#00FF00' }}>● LIVE</span>
-          </a>
-          <a href="#how-it-works" className="sidebar-nav-item">How It Works</a>
-          <a href="#token" className="sidebar-nav-item">Token Info</a>
-          <a href="#roadmap" className="sidebar-nav-item">Roadmap</a>
-
-          <div className="hr-dotted" style={{ margin: '4px 8px' }} />
-
-          <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer" className="sidebar-nav-item">Twitter/X</a>
-          <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="sidebar-nav-item">DEXScreener</a>
-
-          {/* Sidebar Promo Box */}
-          <div style={{ padding: '8px', background: '#003366' }}>
-            <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center' }}>
-              BUY $ARA
+        <div className="hide-mobile" style={{
+          width: '160px',
+          flexShrink: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2px',
+        }}>
+          {/* Navigation Panel */}
+          <div className="bb-terminal" style={{ padding: 0 }}>
+            <div className="bb-header" style={{ padding: '4px 8px' }}>
+              <span style={{ color: '#ffaa00', fontSize: '9px', fontWeight: 'bold' }}>NAVIGATION</span>
             </div>
-            <div style={{ textAlign: 'center', marginTop: '6px' }}>
-              <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer">
-                <button className="btn-buy-y2k" style={{ fontSize: '10px', padding: '6px 12px' }}>
-                  PUMP.FUN
-                </button>
+            {[
+              { label: 'Terminal', href: '#terminal', badge: 'LIVE', badgeColor: '#00ff00' },
+              { label: 'Portfolio', href: '#portfolio' },
+              { label: 'Chat', href: '#chat', badge: 'LIVE', badgeColor: '#3399ff' },
+              { label: 'Discovery', href: '#discovery', badge: 'SCAN', badgeColor: '#ffaa00' },
+              { label: 'Performance', href: '#performance' },
+              { label: 'Evolution', href: '#evolution' },
+              { label: 'Trade History', href: '#trades' },
+              { label: 'Chart', href: '#chart', badge: 'LIVE', badgeColor: '#00ff00' },
+              { label: 'How It Works', href: '#how-it-works' },
+              { label: 'Token Info', href: '#token' },
+              { label: 'Roadmap', href: '#roadmap' },
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                style={{
+                  display: 'block',
+                  padding: '6px 8px',
+                  color: '#ff6600',
+                  textDecoration: 'none',
+                  fontSize: '10px',
+                  borderBottom: '1px solid #1a1a1a',
+                  transition: 'background 0.1s',
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 102, 0, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                {item.label}
+                {item.badge && (
+                  <span style={{
+                    marginLeft: '4px',
+                    fontSize: '7px',
+                    color: item.badgeColor,
+                  }}>● {item.badge}</span>
+                )}
+              </a>
+            ))}
+          </div>
+
+          {/* Quick Links */}
+          <div className="bb-terminal" style={{ padding: 0 }}>
+            <div className="bb-header" style={{ padding: '4px 8px' }}>
+              <span style={{ color: '#ffaa00', fontSize: '9px', fontWeight: 'bold' }}>LINKS</span>
+            </div>
+            <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer" className="bb-fkey" style={{ textAlign: 'center', textDecoration: 'none', fontSize: '9px' }}>
+                TWITTER/X
+              </a>
+              <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="bb-fkey" style={{ textAlign: 'center', textDecoration: 'none', fontSize: '9px' }}>
+                DEXSCREENER
               </a>
             </div>
           </div>
 
-          {/* Visitor Counter */}
-          <div style={{ padding: '8px', textAlign: 'center', background: '#E8E8E8', borderTop: '1px solid #CCCCCC' }}>
-            <div style={{ fontSize: '8px', color: '#666666' }}>You are visitor:</div>
-            <div className="hit-counter" style={{ fontSize: '10px', marginTop: '4px' }}>
-              <span className="hit-counter-digit">0</span>
-              <span className="hit-counter-digit">8</span>
-              <span className="hit-counter-digit">4</span>
-              <span className="hit-counter-digit">2</span>
-              <span className="hit-counter-digit">0</span>
+          {/* Buy CTA */}
+          <div className="bb-terminal" style={{ padding: '8px', textAlign: 'center' }}>
+            <div style={{ color: '#ffaa00', fontSize: '9px', marginBottom: '8px', fontWeight: 'bold' }}>BUY $ARA</div>
+            <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <button style={{
+                width: '100%',
+                background: 'linear-gradient(180deg, #00aa00 0%, #006600 100%)',
+                border: '1px solid #00ff00',
+                color: '#ffffff',
+                padding: '8px',
+                fontFamily: 'Courier New',
+                fontWeight: 'bold',
+                fontSize: '11px',
+                cursor: 'pointer',
+              }}>
+                PUMP.FUN
+              </button>
+            </a>
+          </div>
+
+          {/* System Status */}
+          <div className="bb-terminal" style={{ padding: '8px' }}>
+            <div style={{ color: '#666666', fontSize: '8px', textAlign: 'center', marginBottom: '4px' }}>SYSTEM STATUS</div>
+            <div style={{ fontSize: '9px', color: '#00ff00', textAlign: 'center' }}>
+              ● ALL SYSTEMS NOMINAL
+            </div>
+            <div style={{ fontSize: '8px', color: '#666666', textAlign: 'center', marginTop: '4px' }}>
+              {currentTime} UTC
             </div>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="main-content">
+        <div style={{ flex: 1, minWidth: 0 }}>
           {/* AI Brain Terminal - Above the Fold */}
           <div id="terminal">
             <TerminalPreview />
           </div>
 
           {/* Treasury Balance */}
-          <div style={{ marginBottom: '16px' }}>
+          <div id="portfolio">
             <PortfolioChart />
           </div>
 
@@ -170,7 +227,7 @@ export default function Home() {
           <TradeHistory trades={tradeHistory} />
 
           {/* Chat Panel */}
-          <div id="chat" style={{ marginBottom: '16px' }}>
+          <div id="chat">
             <ChatPanel />
           </div>
 

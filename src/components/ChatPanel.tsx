@@ -7,7 +7,7 @@ interface ChatMessage {
   type: 'user' | 'bot';
   message: string;
   timestamp: number;
-  replyTo?: string; // For bot replies, reference to user message
+  replyTo?: string;
 }
 
 interface ChatPanelProps {
@@ -39,12 +39,26 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
   const [anonId] = useState(() => typeof window !== 'undefined' ? generateAnonId() : 'anon');
   const [onlineCount, setOnlineCount] = useState(1);
   const [sendStatus, setSendStatus] = useState<string | null>(null);
+  const [currentTime, setCurrentTime] = useState('--:--:--');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const WS_URL = wsUrl || process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
 
-  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(new Date().toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+      }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -55,7 +69,6 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
     const socket = new WebSocket(WS_URL);
 
     socket.onopen = () => {
-      console.log('Chat connected');
       setIsConnected(true);
     };
 
@@ -63,7 +76,6 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
       try {
         const data = JSON.parse(event.data);
 
-        // Handle chat messages
         if (data.type === 'chat_message') {
           const newMsg: ChatMessage = {
             id: data.id || `${Date.now()}-${Math.random()}`,
@@ -72,16 +84,14 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
             timestamp: data.timestamp || Date.now(),
             replyTo: data.replyTo,
           };
-          // Deduplicate by ID (prevents double-adding when server echoes back our own message)
           setMessages(prev => {
             if (prev.some(m => m.id === newMsg.id)) {
-              return prev; // Already have this message
+              return prev;
             }
             return [...prev.slice(-50), newMsg];
           });
         }
 
-        // Handle chat history on connect
         if (data.type === 'chat_history') {
           const history: ChatMessage[] = (data.messages || []).map((m: ChatMessage) => ({
             id: m.id || `${m.timestamp}-${Math.random()}`,
@@ -93,12 +103,10 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
           setMessages(history);
         }
 
-        // Handle online count
         if (data.type === 'online_count') {
           setOnlineCount(data.count || 1);
         }
 
-        // Handle send confirmation
         if (data.type === 'chat_sent') {
           setSendStatus('Sent!');
           setTimeout(() => setSendStatus(null), 2000);
@@ -122,19 +130,18 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
   const sendMessage = useCallback(() => {
     if (!ws || ws.readyState !== WebSocket.OPEN || !inputValue.trim()) return;
 
-    const message = inputValue.trim().slice(0, 280); // Limit to 280 chars
+    const message = inputValue.trim().slice(0, 280);
     const msgId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const timestamp = Date.now();
 
     ws.send(JSON.stringify({
       type: 'chat_message',
-      id: msgId, // Send ID so server uses it
+      id: msgId,
       message,
       anonId,
       timestamp,
     }));
 
-    // Optimistically add to local messages with same ID
     const newMsg: ChatMessage = {
       id: msgId,
       type: 'user',
@@ -154,134 +161,150 @@ export function ChatPanel({ wsUrl }: ChatPanelProps) {
   };
 
   return (
-    <div style={{ marginBottom: '16px' }}>
-      {/* Section Header */}
-      <div className="skeu-section-header">
-        COMMUNITY CHAT
-        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
-          {isConnected ? 'LIVE' : 'OFFLINE'}
-        </span>
-      </div>
-
-      {/* Main Panel */}
-      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
-        {/* Title Bar */}
-        <div className="skeu-window-titlebar">
-          <span>Talk to the Branch Manager</span>
-          <span style={{ fontSize: '9px', color: '#99CCFF', fontWeight: 'normal' }}>
-            {onlineCount} online | You are @{anonId}
+    <div className="bb-terminal" style={{ marginBottom: '16px' }}>
+      {/* Bloomberg Header */}
+      <div className="bb-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span className="bb-brand">COMMUNITY CHAT</span>
+          <span style={{ color: '#ffaa00', fontSize: '10px' }}>BRANCH MANAGER</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ color: '#666666', fontSize: '9px' }}>{onlineCount} online</span>
+          <span className="bb-time">{currentTime}</span>
+          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'}>
+            {isConnected ? 'LIVE' : 'OFFLINE'}
           </span>
         </div>
+      </div>
 
-        {/* Chat Messages */}
-        <div
-          ref={chatContainerRef}
-          className="skeu-terminal"
-          style={{
-            height: '240px',
-            overflow: 'auto',
-            padding: '8px',
-            borderRadius: 0,
-          }}
-        >
-          {messages.length === 0 ? (
-            <div style={{ color: '#666666', textAlign: 'center', paddingTop: '80px' }}>
-              <div style={{ marginBottom: '8px' }}>No messages yet</div>
-              <div style={{ fontSize: '10px' }}>Be the first to chat with the bot!</div>
-            </div>
-          ) : (
-            messages.map((msg) => (
-              <div
-                key={msg.id}
-                style={{
-                  marginBottom: '6px',
-                  padding: msg.type === 'bot' ? '6px 8px' : '2px 0',
-                  background: msg.type === 'bot' ? 'rgba(0, 170, 255, 0.1)' : 'transparent',
-                  borderLeft: msg.type === 'bot' ? '2px solid #00AAFF' : 'none',
-                  borderRadius: msg.type === 'bot' ? '0 4px 4px 0' : 0,
-                }}
-              >
-                <span style={{ color: '#555555', fontSize: '9px' }}>
-                  [{formatTime(msg.timestamp)}]
-                </span>{' '}
-                {msg.type === 'bot' ? (
-                  <>
-                    <span style={{ color: '#00AAFF', fontWeight: 'bold' }}>BOT:</span>{' '}
-                    <span style={{ color: '#00DDFF' }}>{msg.message}</span>
-                  </>
-                ) : (
-                  <span style={{ color: '#00CC00' }}>{msg.message}</span>
-                )}
-              </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+      {/* User ID Display */}
+      <div style={{
+        background: '#0d0d0d',
+        padding: '4px 8px',
+        borderBottom: '1px solid #333333',
+        fontSize: '9px',
+      }}>
+        <span style={{ color: '#666666' }}>YOU ARE:</span>
+        <span style={{ color: '#00ff00', marginLeft: '8px' }}>@{anonId}</span>
+      </div>
 
-        {/* Input Area */}
-        <div style={{
+      {/* Chat Messages */}
+      <div
+        ref={chatContainerRef}
+        style={{
+          background: '#000000',
+          height: '200px',
+          overflow: 'auto',
           padding: '8px',
-          background: 'linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%)',
-          borderTop: '1px solid #a0a0a0',
-        }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Say something to the bot..."
-              className="skeu-input"
+          fontFamily: '"Courier New", monospace',
+          fontSize: '10px',
+        }}
+      >
+        {messages.length === 0 ? (
+          <div style={{ color: '#666666', textAlign: 'center', paddingTop: '80px' }}>
+            <div style={{ marginBottom: '8px', color: '#ff6600' }}>NO MESSAGES YET</div>
+            <div style={{ fontSize: '9px' }}>Be the first to chat with the bot!</div>
+          </div>
+        ) : (
+          messages.map((msg) => (
+            <div
+              key={msg.id}
               style={{
-                flex: 1,
-                fontSize: '11px',
-              }}
-              maxLength={280}
-              disabled={!isConnected}
-            />
-            <button
-              onClick={sendMessage}
-              disabled={!isConnected || !inputValue.trim()}
-              className="skeu-btn-green skeu-btn"
-              style={{
-                fontSize: '11px',
-                padding: '6px 16px',
-                opacity: isConnected && inputValue.trim() ? 1 : 0.5,
+                marginBottom: '6px',
+                padding: msg.type === 'bot' ? '6px 8px' : '2px 0',
+                background: msg.type === 'bot' ? 'rgba(51, 153, 255, 0.1)' : 'transparent',
+                borderLeft: msg.type === 'bot' ? '2px solid #3399ff' : 'none',
               }}
             >
-              Send
-            </button>
-          </div>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginTop: '4px',
-            fontSize: '9px',
-            color: '#666666',
-          }}>
-            <span>
-              {sendStatus ? (
-                <span style={{ color: '#008800' }}>{sendStatus}</span>
+              <span style={{ color: '#666666', fontSize: '9px' }}>
+                [{formatTime(msg.timestamp)}]
+              </span>{' '}
+              {msg.type === 'bot' ? (
+                <>
+                  <span style={{ color: '#3399ff', fontWeight: 'bold' }}>BOT:</span>{' '}
+                  <span style={{ color: '#00ddff' }}>{msg.message}</span>
+                </>
               ) : (
-                `${280 - inputValue.length} chars left`
+                <span style={{ color: '#00ff00' }}>{msg.message}</span>
               )}
-            </span>
-            <span>Bot responds to ~3 messages per cycle</span>
-          </div>
-        </div>
+            </div>
+          ))
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-        {/* Info Bar */}
-        <div style={{
-          background: 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)',
-          borderTop: '1px solid #a0a0a0',
-          padding: '6px 8px',
-          fontSize: '9px',
-          color: '#666666',
-          textAlign: 'center',
-          borderRadius: '0 0 8px 8px',
-        }}>
-          Messages are anonymous | Bot picks interesting messages to respond to
+      {/* Input Area */}
+      <div style={{
+        background: '#0d0d0d',
+        borderTop: '1px solid #333333',
+        padding: '8px',
+      }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Say something to the bot..."
+            className="bb-input"
+            style={{ flex: 1 }}
+            maxLength={280}
+            disabled={!isConnected}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!isConnected || !inputValue.trim()}
+            style={{
+              background: isConnected && inputValue.trim()
+                ? 'linear-gradient(180deg, #00aa00 0%, #006600 100%)'
+                : '#333333',
+              border: '1px solid #00ff00',
+              color: '#ffffff',
+              padding: '4px 16px',
+              fontFamily: 'Courier New',
+              fontWeight: 'bold',
+              fontSize: '11px',
+              cursor: isConnected && inputValue.trim() ? 'pointer' : 'not-allowed',
+              opacity: isConnected && inputValue.trim() ? 1 : 0.5,
+            }}
+          >
+            SEND
+          </button>
         </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginTop: '4px',
+          fontSize: '9px',
+        }}>
+          <span style={{ color: sendStatus ? '#00ff00' : '#666666' }}>
+            {sendStatus || `${280 - inputValue.length} chars left`}
+          </span>
+          <span style={{ color: '#666666' }}>Bot responds to ~3 messages per cycle</span>
+        </div>
+      </div>
+
+      {/* Function Keys */}
+      <div className="bb-function-keys">
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F1</span>
+          HELP
+        </button>
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F2</span>
+          CLEAR
+        </button>
+        <button className="bb-fkey" style={{ marginLeft: 'auto' }}>
+          <span className="bb-fkey-label">F10</span>
+          MENU
+        </button>
+      </div>
+
+      {/* Command Line */}
+      <div className="bb-command">
+        <span className="bb-prompt">{'>'}</span>
+        <span style={{ color: '#ff6600' }}>CHAT GO</span>
+        <span className="bb-cursor"></span>
       </div>
     </div>
   );

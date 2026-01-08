@@ -13,121 +13,167 @@ export function TokenInfo() {
   };
 
   return (
-    <div id="token" style={{ marginBottom: '16px' }}>
-      {/* Section Header */}
-      <div className="skeu-section-header">
-        TOKEN INFORMATION
+    <div id="token" className="bb-terminal" style={{ marginBottom: '16px' }}>
+      {/* Bloomberg Header */}
+      <div className="bb-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span className="bb-brand">TOKEN INFO</span>
+          <span style={{ color: '#ffaa00', fontSize: '10px' }}>$ARA</span>
+        </div>
+        <span className="bb-badge" style={{ background: '#9945FF', color: '#fff' }}>SOLANA</span>
       </div>
 
-      {/* Main Content */}
-      <div className="skeu-panel" style={{ borderRadius: '0 0 6px 6px', padding: '12px' }}>
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <div style={{ flex: '0 0 65%' }}>
+      <div style={{ display: 'flex', gap: '2px', padding: '2px' }}>
+        {/* Left: Contract & Buy */}
+        <div style={{ flex: 2 }} className="bb-panel">
+          <div style={{ padding: '12px' }}>
             {/* Contract Address */}
-            <div className="skeu-panel" style={{ marginBottom: '12px', padding: '12px' }}>
-              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
-                Contract Address (CA)
+            <div style={{ marginBottom: '12px' }}>
+              <div style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px', marginBottom: '8px' }}>
+                CONTRACT ADDRESS (CA)
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
                 <input
                   type="text"
-                  className="skeu-input"
+                  className="bb-input"
                   value={CONTRACT_ADDRESS}
                   readOnly
-                  style={{ flex: 1, fontFamily: 'Courier New, monospace', fontSize: '10px' }}
+                  style={{ flex: 1, fontSize: '10px' }}
                 />
-                <button className="skeu-btn" onClick={copyToClipboard} style={{ minWidth: '70px' }}>
-                  {copied ? 'Copied!' : 'Copy'}
+                <button
+                  onClick={copyToClipboard}
+                  style={{
+                    background: copied ? '#00aa00' : 'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)',
+                    border: `1px solid ${copied ? '#00ff00' : '#333333'}`,
+                    color: copied ? '#ffffff' : '#ffaa00',
+                    padding: '4px 16px',
+                    fontFamily: 'Courier New',
+                    fontSize: '10px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {copied ? 'COPIED!' : 'COPY'}
                 </button>
               </div>
             </div>
 
             {/* Buy Links */}
-            <div className="skeu-panel" style={{ padding: '12px' }}>
-              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
-                Buy $ARA
+            <div>
+              <div style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px', marginBottom: '8px' }}>
+                BUY $ARA
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
-                  <button className="skeu-btn-green skeu-btn" style={{ width: '100%' }}>
-                    pump.fun
+                  <button style={{
+                    width: '100%',
+                    background: 'linear-gradient(180deg, #00aa00 0%, #006600 100%)',
+                    border: '1px solid #00ff00',
+                    color: '#ffffff',
+                    padding: '8px',
+                    fontFamily: 'Courier New',
+                    fontWeight: 'bold',
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                  }}>
+                    PUMP.FUN
                   </button>
                 </a>
                 <a href={SOCIAL_LINKS.jupiter} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
-                  <button className="skeu-btn" style={{ width: '100%' }}>
-                    Jupiter
+                  <button className="bb-fkey" style={{ width: '100%', padding: '8px', fontSize: '11px' }}>
+                    JUPITER
                   </button>
                 </a>
                 <a href={SOCIAL_LINKS.raydium} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
-                  <button className="skeu-btn" style={{ width: '100%' }}>
-                    Raydium
+                  <button className="bb-fkey" style={{ width: '100%', padding: '8px', fontSize: '11px' }}>
+                    RAYDIUM
                   </button>
                 </a>
               </div>
             </div>
           </div>
+        </div>
 
-          <div style={{ flex: '0 0 35%' }}>
-            {/* Token Stats */}
-            <div className="skeu-panel" style={{ padding: '12px', height: '100%', boxSizing: 'border-box' }}>
-              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
-                Token Details
-              </div>
-              <table style={{ width: '100%', fontSize: '10px' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Network</td>
-                    <td style={{ padding: '4px 0' }}>
-                      <span style={{ color: '#9945FF' }}>*</span> Solana
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Token Type</td>
-                    <td style={{ padding: '4px 0' }}>SPL Token</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Total Supply</td>
-                    <td style={{ padding: '4px 0' }}>1,000,000,000</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Tax</td>
-                    <td style={{ padding: '4px 0', color: '#008800', fontWeight: 'bold' }}>0%</td>
-                  </tr>
-                </tbody>
-              </table>
+        {/* Right: Token Details */}
+        <div style={{ flex: 1 }} className="bb-panel">
+          <div style={{ padding: '12px' }}>
+            <div style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px', marginBottom: '8px' }}>
+              TOKEN DETAILS
+            </div>
+            <table className="bb-table" style={{ fontSize: '10px' }}>
+              <tbody>
+                <tr>
+                  <td style={{ color: '#666666' }}>NETWORK</td>
+                  <td style={{ textAlign: 'right' }}>
+                    <span style={{ color: '#9945FF' }}>*</span> SOLANA
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ color: '#666666' }}>TYPE</td>
+                  <td style={{ textAlign: 'right', color: '#ffffff' }}>SPL TOKEN</td>
+                </tr>
+                <tr>
+                  <td style={{ color: '#666666' }}>SUPPLY</td>
+                  <td style={{ textAlign: 'right', color: '#ffffff', fontFamily: 'Courier New' }}>1,000,000,000</td>
+                </tr>
+                <tr>
+                  <td style={{ color: '#666666' }}>TAX</td>
+                  <td style={{ textAlign: 'right' }} className="bb-positive">0%</td>
+                </tr>
+              </tbody>
+            </table>
 
-              <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="skeu-btn" style={{
-                  display: 'inline-block',
-                  textDecoration: 'none',
-                  fontSize: '10px'
-                }}>
-                  View Chart on DexScreener
-                </a>
-              </div>
+            <div style={{ marginTop: '12px' }}>
+              <a
+                href={SOCIAL_LINKS.dexscreener}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bb-fkey"
+                style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '8px', fontSize: '10px' }}
+              >
+                VIEW CHART
+              </a>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Powered by Solana */}
-        <div className="skeu-metallic" style={{
-          marginTop: '12px',
-          padding: '8px',
-          textAlign: 'center',
-          fontSize: '10px',
-          borderRadius: '4px'
+      {/* Powered by Solana */}
+      <div style={{
+        background: '#0d0d0d',
+        padding: '8px',
+        textAlign: 'center',
+        fontSize: '10px',
+        borderTop: '1px solid #333333',
+      }}>
+        <span style={{ color: '#666666' }}>Powered by</span>{' '}
+        <span style={{
+          background: 'linear-gradient(to right, #9945FF, #14F195)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontWeight: 'bold',
         }}>
-          <span style={{ fontWeight: 'bold' }}>Powered by</span>{' '}
-          <span style={{
-            background: 'linear-gradient(to right, #9945FF, #14F195)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontWeight: 'bold'
-          }}>
-            SOLANA
-          </span>
-          {' '} | Fast | Secure | Decentralized
-        </div>
+          SOLANA
+        </span>
+        {' '}<span style={{ color: '#666666' }}>| Fast | Secure | Decentralized</span>
+      </div>
+
+      {/* Function Keys */}
+      <div className="bb-function-keys">
+        <button className="bb-fkey">
+          <span className="bb-fkey-label">F1</span>
+          HELP
+        </button>
+        <button className="bb-fkey" style={{ marginLeft: 'auto' }}>
+          <span className="bb-fkey-label">F10</span>
+          MENU
+        </button>
+      </div>
+
+      {/* Command Line */}
+      <div className="bb-command">
+        <span className="bb-prompt">{'>'}</span>
+        <span style={{ color: '#ff6600' }}>TOKEN GO</span>
+        <span className="bb-cursor"></span>
       </div>
     </div>
   );
