@@ -24,15 +24,6 @@ interface PortfolioChartProps {
   wsUrl?: string;
 }
 
-function formatTime(timestamp: number): string {
-  return new Date(timestamp).toLocaleTimeString('en-US', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-}
-
 function formatNumber(num: number, decimals: number = 2): string {
   return num.toLocaleString('en-US', {
     minimumFractionDigits: decimals,
@@ -68,7 +59,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
   const WS_URL = wsUrl || process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
 
-  // Update time every second
   useEffect(() => {
     const updateTime = () => {
       setCurrentTime(new Date().toLocaleTimeString('en-US', {
@@ -135,7 +125,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     };
   }, [WS_URL]);
 
-  // Draw Bloomberg-style chart
+  // Draw chart
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -146,30 +136,21 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
     const rect = container.getBoundingClientRect();
     const width = rect.width;
-    const height = 100;
+    const height = 80;
 
     canvas.width = width;
     canvas.height = height;
 
-    // Black background
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, width, height);
 
-    // Grid lines (dark)
     ctx.strokeStyle = '#1a1a1a';
     ctx.lineWidth = 1;
-    for (let i = 0; i < 5; i++) {
-      const y = (i / 4) * height;
+    for (let i = 0; i < 4; i++) {
+      const y = (i / 3) * height;
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.lineTo(width, y);
-      ctx.stroke();
-    }
-    for (let i = 0; i < 10; i++) {
-      const x = (i / 9) * width;
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, height);
       ctx.stroke();
     }
 
@@ -179,7 +160,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     const maxVal = Math.max(...values) * 1.02;
     const range = maxVal - minVal || 0.01;
 
-    // Draw the line (Bloomberg orange)
     ctx.beginPath();
     ctx.strokeStyle = '#ff6600';
     ctx.lineWidth = 2;
@@ -187,150 +167,147 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     balanceHistory.forEach((point, index) => {
       const x = (index / (balanceHistory.length - 1)) * width;
       const y = height - ((point.sol - minVal) / range) * height;
-
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
-      }
+      if (index === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
     });
-
     ctx.stroke();
 
-    // Fill under the line
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
     ctx.closePath();
-
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
     gradient.addColorStop(0, 'rgba(255, 102, 0, 0.3)');
     gradient.addColorStop(1, 'rgba(255, 102, 0, 0)');
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Current value dot
     if (balanceHistory.length > 0) {
       const lastPoint = balanceHistory[balanceHistory.length - 1];
       const lastX = width - 4;
       const lastY = height - ((lastPoint.sol - minVal) / range) * height;
-
       ctx.beginPath();
       ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
       ctx.fillStyle = '#ffaa00';
       ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1;
-      ctx.stroke();
     }
-
-    // Y-axis labels
-    ctx.fillStyle = '#666666';
-    ctx.font = '9px Courier New';
-    ctx.textAlign = 'left';
-    ctx.fillText(`${maxVal.toFixed(3)}`, 4, 10);
-    ctx.fillText(`${minVal.toFixed(3)}`, 4, height - 4);
-
   }, [balanceHistory]);
+
+  // Calculate values
+  const solValueUsd = currentBalance && solPrice > 0 ? currentBalance.sol * solPrice : 0;
+  const totalPortfolioValue = solValueUsd + totalPositionValue;
+  const solPercent = totalPortfolioValue > 0 ? (solValueUsd / totalPortfolioValue) * 100 : 100;
+  const memecoinPercent = totalPortfolioValue > 0 ? (totalPositionValue / totalPortfolioValue) * 100 : 0;
 
   const changePercent = balanceHistory.length >= 2
     ? ((balanceHistory[balanceHistory.length - 1].sol - balanceHistory[0].sol) / balanceHistory[0].sol) * 100
     : 0;
-
   const isPositive = changePercent >= 0;
-
-  const solValueUsd = currentBalance && solPrice > 0 ? currentBalance.sol * solPrice : 0;
-  const totalValue = solValueUsd + totalPositionValue;
-  const solPercent = totalValue > 0 ? (solValueUsd / totalValue) * 100 : 100;
-
-  // Calculate session high/low
-  const sessionHigh = balanceHistory.length > 0 ? Math.max(...balanceHistory.map(p => p.usdValue || 0)) : 0;
-  const sessionLow = balanceHistory.length > 0 ? Math.min(...balanceHistory.map(p => p.usdValue || 0).filter(v => v > 0)) : 0;
 
   return (
     <div className="bb-terminal" style={{ marginBottom: '16px' }}>
-      {/* Bloomberg Header */}
+      {/* Header */}
       <div className="bb-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span className="bb-brand">PORTFOLIO</span>
-          <span style={{ color: '#ffaa00', fontSize: '10px' }}>CLAUDE INVESTMENTS</span>
+          <span className="bb-brand" style={{ fontSize: '16px' }}>TREASURY</span>
+          <span style={{ color: '#ffaa00', fontSize: '12px' }}>CLAUDE INVESTMENTS</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="bb-time">{currentTime}</span>
-          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'}>
+          <span className="bb-time" style={{ fontSize: '12px' }}>{currentTime}</span>
+          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'} style={{ fontSize: '10px', padding: '2px 8px' }}>
             {isConnected ? 'LIVE' : 'OFFLINE'}
           </span>
         </div>
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="bb-grid bb-grid-4" style={{ margin: '2px' }}>
-        {/* Total Value */}
-        <div className="bb-stat-box">
-          <div className="bb-stat-label">NAV</div>
-          <div className="bb-stat-value" style={{ color: '#ffffff' }}>
-            ${currentBalance ? formatNumber(currentBalance.usdValue ?? 0) : '--'}
-          </div>
-          <div className={`bb-stat-change ${isPositive ? 'bb-positive' : 'bb-negative'}`}>
-            {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${formatNumber(changePercent)}%` : '--'}
-          </div>
+      {/* TOTAL PORTFOLIO VALUE - Big and prominent */}
+      <div style={{
+        background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)',
+        padding: '20px',
+        textAlign: 'center',
+        borderBottom: '2px solid #ff6600',
+      }}>
+        <div style={{ color: '#888888', fontSize: '12px', letterSpacing: '2px', marginBottom: '8px' }}>
+          TOTAL PORTFOLIO VALUE
         </div>
+        <div style={{
+          fontSize: '48px',
+          fontWeight: 'bold',
+          fontFamily: 'Courier New, monospace',
+          color: '#ffffff',
+          textShadow: '0 0 20px rgba(255, 102, 0, 0.5)',
+        }}>
+          ${formatNumber(totalPortfolioValue)}
+        </div>
+        <div style={{ marginTop: '8px', fontSize: '14px' }}>
+          <span style={{ color: '#ff6600' }}>SOL: ${formatNumber(solValueUsd)}</span>
+          <span style={{ color: '#444444', margin: '0 12px' }}>|</span>
+          <span style={{ color: '#ffaa00' }}>MEMECOINS: ${formatNumber(totalPositionValue)}</span>
+        </div>
+      </div>
 
+      {/* Stats Row */}
+      <div style={{ display: 'flex', gap: '2px', padding: '2px' }}>
         {/* SOL Balance */}
-        <div className="bb-stat-box">
-          <div className="bb-stat-label">SOL BAL</div>
-          <div className="bb-stat-value">
+        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
+          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL BALANCE</div>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff6600', fontFamily: 'Courier New' }}>
             {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
           </div>
-          <div className="bb-stat-change bb-neutral">
-            ${formatNumber(solValueUsd)}
+          <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
+            ${formatNumber(solValueUsd)} USD
           </div>
         </div>
 
-        {/* Session High */}
-        <div className="bb-stat-box">
-          <div className="bb-stat-label">SESSION HIGH</div>
-          <div className="bb-stat-value bb-positive">
-            ${formatNumber(sessionHigh)}
+        {/* Memecoin Value */}
+        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
+          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>MEMECOIN VALUE</div>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffaa00', fontFamily: 'Courier New' }}>
+            ${formatNumber(totalPositionValue)}
           </div>
-          <div className="bb-stat-change bb-neutral">
-            {balanceHistory.length} ticks
+          <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
+            {positions.length} POSITION{positions.length !== 1 ? 'S' : ''}
           </div>
         </div>
 
-        {/* Session Low */}
-        <div className="bb-stat-box">
-          <div className="bb-stat-label">SESSION LOW</div>
-          <div className="bb-stat-value bb-negative">
-            ${sessionLow > 0 ? formatNumber(sessionLow) : '--'}
+        {/* SOL Price */}
+        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
+          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL PRICE</div>
+          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ff00', fontFamily: 'Courier New' }}>
+            ${formatNumber(solPrice)}
           </div>
-          <div className="bb-stat-change bb-neutral">
-            SOL: ${formatNumber(solPrice)}
+          <div style={{ fontSize: '12px', marginTop: '4px' }} className={isPositive ? 'bb-positive' : 'bb-negative'}>
+            {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${formatNumber(changePercent)}% session` : '--'}
           </div>
         </div>
       </div>
 
       {/* Allocation Bar */}
-      <div style={{ padding: '4px 8px', background: '#0d0d0d' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <span style={{ color: '#999999', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            ALLOCATION
-          </span>
-          <span style={{ color: '#666666', fontSize: '9px' }}>
-            {positions.length} POSITION{positions.length !== 1 ? 'S' : ''}
+      <div style={{ padding: '12px', background: '#0a0a0a' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <span style={{ color: '#888888', fontSize: '12px', letterSpacing: '1px' }}>ALLOCATION</span>
+          <span style={{ color: '#888888', fontSize: '12px' }}>
+            <span style={{ color: '#ff6600' }}>SOL {solPercent.toFixed(0)}%</span>
+            {memecoinPercent > 0 && (
+              <>
+                <span style={{ margin: '0 8px' }}>|</span>
+                <span style={{ color: '#ffaa00' }}>MEME {memecoinPercent.toFixed(0)}%</span>
+              </>
+            )}
           </span>
         </div>
-        <div className="bb-allocation-bar">
+        <div className="bb-allocation-bar" style={{ height: '24px', borderRadius: '4px' }}>
           <div
             className="bb-allocation-segment"
             style={{
               width: `${solPercent}%`,
-              background: getAllocColor('SOL'),
+              background: 'linear-gradient(180deg, #ff6600 0%, #cc4400 100%)',
+              fontSize: '11px',
             }}
           >
-            {solPercent > 15 ? `SOL ${solPercent.toFixed(0)}%` : ''}
+            {solPercent > 20 ? `SOL` : ''}
           </div>
           {positions.map((pos) => {
-            const posPercent = totalValue > 0 ? ((pos.currentValue || 0) / totalValue) * 100 : 0;
+            const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
             if (posPercent < 1) return null;
             return (
               <div
@@ -338,10 +315,11 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
                 className="bb-allocation-segment"
                 style={{
                   width: `${posPercent}%`,
-                  background: getAllocColor(pos.tokenSymbol),
+                  background: `linear-gradient(180deg, ${getAllocColor(pos.tokenSymbol)} 0%, ${getAllocColor(pos.tokenSymbol)}88 100%)`,
+                  fontSize: '11px',
                 }}
               >
-                {posPercent > 10 ? `${pos.tokenSymbol} ${posPercent.toFixed(0)}%` : ''}
+                {posPercent > 15 ? pos.tokenSymbol : ''}
               </div>
             );
           })}
@@ -349,32 +327,32 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
       </div>
 
       {/* Holdings Table */}
-      <div style={{ padding: '0 2px' }}>
-        <table className="bb-table">
+      <div style={{ padding: '0 8px 8px' }}>
+        <table className="bb-table" style={{ fontSize: '12px' }}>
           <thead>
             <tr>
-              <th>ASSET</th>
-              <th style={{ textAlign: 'right' }}>AMOUNT</th>
-              <th style={{ textAlign: 'right' }}>VALUE</th>
-              <th style={{ textAlign: 'right' }}>P&L</th>
-              <th style={{ textAlign: 'right' }}>%</th>
+              <th style={{ fontSize: '11px', padding: '8px' }}>ASSET</th>
+              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>AMOUNT</th>
+              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>VALUE (USD)</th>
+              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>P&L</th>
+              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>ALLOC %</th>
             </tr>
           </thead>
           <tbody>
             {/* SOL Row */}
-            <tr>
-              <td>
-                <span style={{ color: '#ff6600', fontWeight: 'bold' }}>SOL</span>
-                <span style={{ color: '#666666', marginLeft: '8px', fontSize: '9px' }}>SOLANA</span>
+            <tr style={{ background: 'rgba(255, 102, 0, 0.1)' }}>
+              <td style={{ padding: '10px 8px' }}>
+                <span style={{ color: '#ff6600', fontWeight: 'bold', fontSize: '14px' }}>SOL</span>
+                <span style={{ color: '#666666', marginLeft: '8px', fontSize: '11px' }}>SOLANA</span>
               </td>
-              <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+              <td style={{ textAlign: 'right', fontFamily: 'Courier New', fontSize: '13px', padding: '10px 8px' }}>
                 {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
               </td>
-              <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff' }}>
+              <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }}>
                 ${formatNumber(solValueUsd)}
               </td>
-              <td style={{ textAlign: 'right', color: '#666666' }}>--</td>
-              <td style={{ textAlign: 'right', color: '#ffaa00' }}>
+              <td style={{ textAlign: 'right', color: '#666666', padding: '10px 8px' }}>--</td>
+              <td style={{ textAlign: 'right', color: '#ff6600', fontWeight: 'bold', padding: '10px 8px' }}>
                 {solPercent.toFixed(1)}%
               </td>
             </tr>
@@ -382,27 +360,26 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
             {/* Token Positions */}
             {positions.map((pos) => {
               const pnlPercent = pos.unrealizedPnlPercent ?? 0;
-              const posPercent = totalValue > 0 ? ((pos.currentValue || 0) / totalValue) * 100 : 0;
+              const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
+              const posValue = pos.currentValue ?? pos.costBasis;
               return (
                 <tr key={pos.tokenAddress}>
-                  <td>
-                    <span style={{ color: getAllocColor(pos.tokenSymbol), fontWeight: 'bold' }}>
+                  <td style={{ padding: '10px 8px' }}>
+                    <span style={{ color: getAllocColor(pos.tokenSymbol), fontWeight: 'bold', fontSize: '14px' }}>
                       {pos.tokenSymbol}
                     </span>
-                    <span style={{ color: '#666666', marginLeft: '8px', fontSize: '9px' }}>
-                      MEMECOIN
-                    </span>
+                    <span style={{ color: '#666666', marginLeft: '8px', fontSize: '11px' }}>MEMECOIN</span>
                   </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'Courier New' }}>
+                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', fontSize: '13px', padding: '10px 8px' }}>
                     {formatNumber(pos.amount, 0)}
                   </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff' }}>
-                    ${formatNumber(pos.currentValue ?? pos.costBasis)}
+                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }}>
+                    ${formatNumber(posValue)}
                   </td>
-                  <td style={{ textAlign: 'right' }} className={pnlPercent >= 0 ? 'bb-positive' : 'bb-negative'}>
+                  <td style={{ textAlign: 'right', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }} className={pnlPercent >= 0 ? 'bb-positive' : 'bb-negative'}>
                     {pnlPercent >= 0 ? '+' : ''}{formatNumber(pnlPercent)}%
                   </td>
-                  <td style={{ textAlign: 'right', color: '#ffaa00' }}>
+                  <td style={{ textAlign: 'right', color: '#ffaa00', fontWeight: 'bold', padding: '10px 8px' }}>
                     {posPercent.toFixed(1)}%
                   </td>
                 </tr>
@@ -411,8 +388,8 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
             {positions.length === 0 && (
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', color: '#666666', padding: '12px' }}>
-                  NO OPEN POSITIONS
+                <td colSpan={5} style={{ textAlign: 'center', color: '#666666', padding: '20px', fontSize: '13px' }}>
+                  NO OPEN MEMECOIN POSITIONS
                 </td>
               </tr>
             )}
@@ -420,70 +397,44 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         </table>
       </div>
 
-      <div className="bb-divider" />
-
-      {/* Chart Area */}
-      <div style={{ padding: '4px 8px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-          <span style={{ color: '#ffaa00', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-            SOL BALANCE CHART
-          </span>
-          <span style={{ color: '#666666', fontSize: '9px' }}>
-            30s INTERVALS
-          </span>
+      {/* Chart */}
+      <div style={{ padding: '8px 12px', background: '#0a0a0a' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+          <span style={{ color: '#ffaa00', fontSize: '11px', letterSpacing: '1px' }}>SOL BALANCE CHART</span>
+          <span style={{ color: '#666666', fontSize: '11px' }}>{balanceHistory.length} DATA POINTS</span>
         </div>
-        <div ref={containerRef} className="bb-chart-container">
+        <div ref={containerRef} className="bb-chart-container" style={{ border: '1px solid #333' }}>
           {balanceHistory.length < 2 ? (
             <div style={{
-              height: '100px',
+              height: '80px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#ff6600',
               fontFamily: 'Courier New',
-              fontSize: '11px',
+              fontSize: '13px',
             }}>
               <span>COLLECTING DATA</span>
               <span className="bb-cursor" style={{ marginLeft: '4px' }}></span>
             </div>
           ) : (
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100px' }} />
+            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '80px' }} />
           )}
         </div>
       </div>
 
       {/* Function Keys */}
       <div className="bb-function-keys">
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F1</span>
-          HELP
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F2</span>
-          CHART
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F3</span>
-          TRADES
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F4</span>
-          NEWS
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F5</span>
-          SCAN
-        </button>
-        <button className="bb-fkey" style={{ marginLeft: 'auto' }}>
-          <span className="bb-fkey-label">F10</span>
-          ACTIONS
-        </button>
+        <button className="bb-fkey"><span className="bb-fkey-label">F1</span>HELP</button>
+        <button className="bb-fkey"><span className="bb-fkey-label">F2</span>CHART</button>
+        <button className="bb-fkey"><span className="bb-fkey-label">F3</span>HISTORY</button>
+        <button className="bb-fkey" style={{ marginLeft: 'auto' }}><span className="bb-fkey-label">F10</span>MENU</button>
       </div>
 
       {/* Command Line */}
       <div className="bb-command">
         <span className="bb-prompt">{'>'}</span>
-        <span style={{ color: '#ff6600' }}>PORTFOLIO GO</span>
+        <span style={{ color: '#ff6600' }}>TREASURY GO</span>
         <span className="bb-cursor"></span>
       </div>
     </div>
