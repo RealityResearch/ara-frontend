@@ -53,8 +53,8 @@ cc/
 │   │   ├── Ticker.tsx          # Scrolling price ticker
 │   │   ├── Hero.tsx            # Hero section with logo/CTA
 │   │   ├── AgentTerminal.tsx   # Live AI thoughts terminal
-│   │   ├── VotingPanel.tsx     # Community voting UI (NEW)
-│   │   ├── PortfolioChart.tsx  # Real-time balance chart (NEW)
+│   │   ├── ChatPanel.tsx       # Community chat with bot (replaces VotingPanel)
+│   │   ├── PortfolioChart.tsx  # Real-time balance chart
 │   │   ├── PerformanceMetrics.tsx # Win rate, PnL stats
 │   │   ├── BotEvolution.tsx    # Agent personality evolution
 │   │   ├── TradeHistory.tsx    # Recent trades table
@@ -75,8 +75,8 @@ cc/
 │   └── src/
 │       ├── index.ts            # Entry point + WebSocket server
 │       ├── agent.ts            # Claude-powered trading agent
-│       ├── websocket.ts        # Thought broadcast + voting
-│       ├── voting.ts           # Community voting system (NEW)
+│       ├── websocket.ts        # Thought broadcast + chat system
+│       ├── voting.ts           # Community voting system (legacy)
 │       ├── state.ts            # Performance/evolution tracking
 │       ├── memory/             # Agent learning system (NEW)
 │       │   ├── index.ts
@@ -147,7 +147,7 @@ Terminal:    'Courier Prime', 'Courier New', monospace
 | Ticker | Complete | Live price updates with flash effects, LIVE badge |
 | Hero | Complete | Under construction banner, spinning stars, fire divider, webring |
 | AgentTerminal | Complete | ASCII art, rainbow status, CRT effects, control panel |
-| VotingPanel | Complete | Community voting for trading styles (APE/DIAMOND/PAPER/RESEARCH/DEGEN) |
+| ChatPanel | Complete | Anonymous community chat with the bot (replaces VotingPanel) |
 | PortfolioChart | Complete | Real-time canvas chart of SOL balance with CRT aesthetic |
 | PerformanceMetrics | Complete | Win rate, PnL, total trades, wallet balance, streak |
 | BotEvolution | Complete | Agent personality traits and evolution over time |
@@ -490,5 +490,65 @@ All placeholder data is in `src/lib/mockData.ts`:
 - `CONTRACT_ADDRESS` — `5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump`
 - `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
 
+## Community Chat System (NEW - Session 3)
+
+Replaced VotingPanel with interactive ChatPanel for open dialogue with the bot.
+
+### How It Works
+1. Users send anonymous messages (auto-generated names like `swift_trader42`)
+2. Messages queue on the server
+3. Each analysis cycle (~30s), agent picks ~3 interesting messages to respond to
+4. Bot responses broadcast to all connected clients
+5. Chat history persisted (last 100 messages)
+
+### WebSocket Messages
+```typescript
+// Send a chat message
+{ type: 'chat_message', message: string, anonId: string, timestamp: number }
+
+// Receive chat messages (user or bot)
+{ type: 'chat_message', id: string, from: 'user' | 'bot', message: string, timestamp: number }
+
+// Chat history on connect
+{ type: 'chat_history', messages: ChatMessage[] }
+
+// Online count
+{ type: 'online_count', count: number }
+```
+
 ---
-*Last updated: Session 2 - Token whitelist, position tracking (SL/TP), Jupiter verification, Helius RPC, portfolio chart WebSocket fix, React hydration fix (#418), null safety for all numeric displays.*
+
+## Next Session Starting Prompt
+
+```
+Continue working on Claude Investments ($ARA) - the AI trading agent memecoin site.
+
+CURRENT STATE:
+- Site: https://cc-lime-alpha.vercel.app
+- Agent: https://web-production-3b844.up.railway.app
+- All components use skeuomorphic styling (skeu-* classes)
+- ChatPanel replaces VotingPanel (may need deployment verification)
+- Agent has POPCAT position open (0.03 SOL)
+
+PRIORITY TASKS:
+1. Verify ChatPanel is live (was deploying, may have cache issues)
+2. Improve Portfolio Balance display:
+   - Show token holdings breakdown (not just SOL)
+   - Show positions with entry prices & P&L
+   - Consider pie chart for allocation
+   - Make total value more prominent
+3. Trade History should pull from actual wallet transactions
+
+KNOWN ISSUES:
+- Portfolio chart shows "Collecting data" until agent sends market_update
+- Need to show memecoin balances in portfolio (currently SOL only)
+
+FILES TO CHECK:
+- src/components/PortfolioChart.tsx - needs token holdings
+- src/components/ChatPanel.tsx - verify deployed
+- agent-service/src/websocket.ts - chat system
+- agent-service/src/agent.ts - chat response logic
+```
+
+---
+*Last updated: Session 3 - Skeuomorphic UI overhaul (all components), ChatPanel replaces VotingPanel, agent chat system, DiscoveryPanel styling fix.*
