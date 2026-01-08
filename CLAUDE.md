@@ -518,6 +518,37 @@ Replaced VotingPanel with interactive ChatPanel for open dialogue with the bot.
 
 ---
 
+## Session 4 Completed
+
+**What we did:**
+- Enhanced PortfolioChart with holdings breakdown, allocation bar, P&L display
+- Fixed Y2K color scheme (removed purple, use gold/navy/green palette)
+- Color-coded terminal output by thought type (trades=gold, tools=orange, etc.)
+- Added trade popup modal for dramatic notifications
+- Removed mock demo data - terminal starts clean, only real agent output
+- Fixed hardcoded SOL price - now uses real price from agent
+- Added position persistence to disk (survives restarts)
+
+---
+
+## TODO LIST FOR NEXT SESSION
+
+### High Priority
+1. **Enforce trading limits in CODE** - 15% max trade & 2 position limit currently only in prompt
+2. **Add WebSocket reconnection** - Frontend doesn't auto-reconnect on disconnect
+3. **Pull trade history from wallet** - Currently uses agent state, not actual on-chain transactions
+
+### Medium Priority
+4. **Add basic test suite** - Zero tests for trading tools
+5. **Add circuit breaker** - Auto-pause after 3 consecutive losses
+6. **Validate env vars on startup** - Fail fast if required config missing
+
+### Nice to Have
+7. **On-chain trade logging** - Store reasoning hashes on-chain for transparency
+8. **Rate limit WebSocket** - Anyone can spam chat messages currently
+
+---
+
 ## Next Session Starting Prompt
 
 ```
@@ -526,29 +557,27 @@ Continue working on Claude Investments ($ARA) - the AI trading agent memecoin si
 CURRENT STATE:
 - Site: https://cc-lime-alpha.vercel.app
 - Agent: https://web-production-3b844.up.railway.app
-- All components use skeuomorphic styling (skeu-* classes)
-- ChatPanel replaces VotingPanel (may need deployment verification)
-- Agent has POPCAT position open (0.03 SOL)
+- Positions persist to disk (data/positions.json)
+- Real SOL price from CoinGecko (no more hardcoded * 140)
+- Terminal starts clean, no demo data
 
-PRIORITY TASKS:
-1. Verify ChatPanel is live (was deploying, may have cache issues)
-2. Improve Portfolio Balance display:
-   - Show token holdings breakdown (not just SOL)
-   - Show positions with entry prices & P&L
-   - Consider pie chart for allocation
-   - Make total value more prominent
-3. Trade History should pull from actual wallet transactions
+PRIORITY TASKS (from TODO list):
+1. Enforce 15% max trade & 2 position limit in CODE (not just prompt)
+2. Add WebSocket reconnection logic to frontend
+3. Pull trade history from actual wallet transactions
+4. Add basic test suite for trading tools
+5. Add circuit breaker - auto-pause after 3 consecutive losses
 
-KNOWN ISSUES:
-- Portfolio chart shows "Collecting data" until agent sends market_update
-- Need to show memecoin balances in portfolio (currently SOL only)
+WHAT'S WORKING:
+- Portfolio shows holdings breakdown with P&L
+- Color-coded terminal output by thought type
+- Trade popup modal on buy/sell
+- Position persistence across restarts
+- Real SOL price for calculations
 
-FILES TO CHECK:
-- src/components/PortfolioChart.tsx - needs token holdings
-- src/components/ChatPanel.tsx - verify deployed
-- agent-service/src/websocket.ts - chat system
-- agent-service/src/agent.ts - chat response logic
+AGENT WALLET:
+4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q
 ```
 
 ---
-*Last updated: Session 3 - Skeuomorphic UI overhaul (all components), ChatPanel replaces VotingPanel, agent chat system, DiscoveryPanel styling fix.*
+*Last updated: Session 4 - Portfolio improvements, Y2K colors, trade popup, position persistence, real SOL price.*
