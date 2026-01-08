@@ -44,7 +44,11 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
         // Extract wallet data from market updates
         if (message.type === 'market_update' && message.marketData) {
-          const { walletSol, walletValue } = message.marketData;
+          const walletSol = message.marketData.walletSol ?? 0;
+          const walletValue = message.marketData.walletValue ?? 0;
+
+          // Skip if both are zero/undefined (invalid data)
+          if (walletSol === 0 && walletValue === 0) return;
 
           const point: BalancePoint = {
             timestamp: message.timestamp || Date.now(),
