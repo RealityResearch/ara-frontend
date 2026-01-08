@@ -1,6 +1,7 @@
 'use client';
 
 import { useAgentThoughts } from '@/hooks/useAgentThoughts';
+import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 
 export function TerminalPreview() {
   const { thoughts, isTyping, currentText, isConnected } = useAgentThoughts();
@@ -16,175 +17,214 @@ export function TerminalPreview() {
   };
 
   return (
-    <div style={{
-      background: '#0a0f0a',
-      border: '2px solid #00ff41',
-      borderRadius: '4px',
-      overflow: 'hidden',
-      boxShadow: '0 0 20px rgba(0, 255, 65, 0.3)',
-    }}>
-      {/* Header */}
-      <div style={{
-        background: 'linear-gradient(to right, #003300 0%, #001a00 100%)',
-        padding: '8px 12px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '1px solid #00ff41',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span
-            className="blink"
-            style={{
-              display: 'inline-block',
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: isConnected ? '#00ff41' : '#ff6600',
-              boxShadow: isConnected ? '0 0 8px #00ff41' : '0 0 8px #ff6600',
-            }}
-          />
-          <span style={{
-            color: '#00ff41',
-            fontFamily: '"Courier New", monospace',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-          }}>
-            AI Brain {isConnected ? 'LIVE' : 'CONNECTING...'}
-          </span>
-        </div>
-        <button
-          onClick={scrollToTerminal}
-          style={{
-            background: 'transparent',
-            border: '1px solid #00ff41',
-            color: '#00ff41',
-            padding: '4px 12px',
-            fontSize: '10px',
-            fontFamily: '"Courier New", monospace',
-            cursor: 'pointer',
-            transition: 'all 0.2s',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = '#00ff41';
-            e.currentTarget.style.color = '#000';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#00ff41';
-          }}
-        >
-          FULL TERMINAL ↓
-        </button>
-      </div>
+    <div style={{ marginBottom: '16px' }}>
+      {/* Section Header - Y2K Style */}
+      <table width="100%" cellPadding={0} cellSpacing={0}>
+        <tbody>
+          <tr>
+            <td className="section-header">
+              AI Brain Preview
+              <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#008800' : '#FF8800' }}>
+                ● {isConnected ? 'LIVE' : 'CONNECTING'}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      {/* Thoughts Display */}
-      <div style={{
-        padding: '12px',
-        minHeight: '120px',
-        maxHeight: '150px',
-        overflow: 'hidden',
-        position: 'relative',
-      }}>
-        {/* Scanline effect */}
-        <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px)',
-          pointerEvents: 'none',
-        }} />
+      {/* Two Column Layout - Matches existing Y2K style */}
+      <table width="100%" cellPadding={0} cellSpacing={0} style={{ border: '1px solid #CCCCCC' }}>
+        <tbody>
+          <tr>
+            {/* Left: Mini Terminal */}
+            <td width="65%" valign="top" style={{ borderRight: '1px solid #CCCCCC' }}>
+              <div style={{ border: '2px outset #CCCCCC', background: '#C0C0C0', padding: '2px' }}>
+                {/* Title Bar - Windows XP Style */}
+                <div style={{
+                  background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
+                  padding: '2px 4px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '11px' }}>
+                    🧠 Live Agent Thoughts
+                  </span>
+                  <div style={{ display: 'flex', gap: '2px' }}>
+                    <button className="btn-y2k" style={{ padding: '0 4px', fontSize: '10px', minWidth: '18px' }}>_</button>
+                    <button className="btn-y2k" style={{ padding: '0 4px', fontSize: '10px', minWidth: '18px' }}>□</button>
+                    <button className="btn-y2k" style={{ padding: '0 4px', fontSize: '10px', minWidth: '18px', color: '#CC0000' }}>×</button>
+                  </div>
+                </div>
 
-        {recentThoughts.length === 0 ? (
-          <div style={{
-            color: '#00aa00',
-            fontFamily: '"Courier New", monospace',
-            fontSize: '12px',
-            textAlign: 'center',
-            padding: '20px',
-          }}>
-            Initializing neural networks...
-            <span className="blink">█</span>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {recentThoughts.map((thought, index) => (
-              <div
-                key={index}
-                style={{
-                  fontFamily: '"Courier New", monospace',
-                  fontSize: '11px',
-                  lineHeight: '1.4',
-                  color: index === recentThoughts.length - 1 ? '#00ff41' : '#00aa00',
-                  opacity: index === 0 ? 0.5 : index === 1 ? 0.75 : 1,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: 'vertical' as const,
-                }}
-              >
-                <span style={{ color: '#666', marginRight: '8px' }}>{thought.timestamp}</span>
-                {thought.message}
+                {/* Terminal Content */}
+                <div
+                  className="terminal"
+                  style={{
+                    height: '120px',
+                    overflow: 'hidden',
+                    padding: '8px',
+                    background: '#0a0f0a',
+                    fontFamily: '"Courier New", monospace',
+                    fontSize: '10px',
+                    position: 'relative',
+                  }}
+                >
+                  {recentThoughts.length === 0 ? (
+                    <div style={{ color: '#00aa00' }}>
+                      Initializing neural networks...
+                      <span className="blink">█</span>
+                    </div>
+                  ) : (
+                    recentThoughts.map((thought, index) => (
+                      <div
+                        key={index}
+                        style={{
+                          marginBottom: '4px',
+                          color: index === recentThoughts.length - 1 ? '#00ff00' : '#00aa00',
+                          opacity: index === 0 ? 0.6 : index === 1 ? 0.8 : 1,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>{' '}
+                        {thought.message.slice(0, 80)}{thought.message.length > 80 ? '...' : ''}
+                      </div>
+                    ))
+                  )}
+
+                  {/* Currently typing */}
+                  {isTyping && currentText && (
+                    <div style={{ color: '#00ff00', marginTop: '4px' }}>
+                      <span style={{ color: '#ffff00' }}>{'>'}</span> {currentText.slice(0, 60)}
+                      <span className="blink">█</span>
+                    </div>
+                  )}
+
+                  {/* Fade overlay */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '20px',
+                    background: 'linear-gradient(to bottom, transparent, #0a0f0a)',
+                    pointerEvents: 'none',
+                  }} />
+                </div>
+
+                {/* Status Bar */}
+                <div style={{
+                  background: '#C0C0C0',
+                  borderTop: '1px solid #808080',
+                  padding: '2px 4px',
+                  fontSize: '9px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}>
+                  <span>MODEL: claude-sonnet-4</span>
+                  <button
+                    onClick={scrollToTerminal}
+                    className="btn-y2k"
+                    style={{ padding: '1px 8px', fontSize: '9px' }}
+                  >
+                    View Full Terminal ↓
+                  </button>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            </td>
 
-        {/* Currently typing indicator */}
-        {isTyping && currentText && (
-          <div style={{
-            fontFamily: '"Courier New", monospace',
-            fontSize: '11px',
-            color: '#00ff41',
-            marginTop: '8px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}>
-            <span style={{ color: '#ffff00' }}>{'>'}</span> {currentText.slice(0, 80)}
-            <span className="blink">█</span>
-          </div>
-        )}
+            {/* Right: Quick Buy - Y2K Style */}
+            <td width="35%" valign="top" style={{ padding: '0', background: '#F8F8F8' }}>
+              <div className="fieldset-y2k" style={{ margin: '8px', marginTop: '12px' }}>
+                <div className="fieldset-y2k-legend" style={{ marginLeft: '-4px', marginTop: '-20px', marginBottom: '8px' }}>
+                  Quick Actions
+                </div>
 
-        {/* Fade overlay at bottom */}
-        <div style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '30px',
-          background: 'linear-gradient(to bottom, transparent, #0a0f0a)',
-          pointerEvents: 'none',
-        }} />
-      </div>
+                {/* Token Display */}
+                <div style={{ textAlign: 'center', marginBottom: '8px' }}>
+                  <div style={{
+                    background: '#001133',
+                    color: '#00FF00',
+                    padding: '8px',
+                    fontFamily: '"Courier New", monospace',
+                    borderRadius: '2px',
+                    border: '1px inset #333',
+                  }}>
+                    <div style={{ fontSize: '8px', color: '#66AAFF' }}>TICKER SYMBOL</div>
+                    <div style={{ fontSize: '20px', fontWeight: 'bold' }}>$ARA</div>
+                    <div style={{ fontSize: '8px', color: '#00CC00' }}>● LIVE ON SOLANA</div>
+                  </div>
+                </div>
 
-      {/* Footer status bar */}
-      <div style={{
-        background: '#001a00',
-        padding: '6px 12px',
-        borderTop: '1px solid #003300',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        fontSize: '9px',
-        fontFamily: '"Courier New", monospace',
-        color: '#00aa00',
-      }}>
-        <span>MODEL: claude-sonnet-4</span>
-        <span>
-          {isConnected ? (
-            <>STREAMING THOUGHTS<span className="blink">...</span></>
-          ) : (
-            'RECONNECTING...'
-          )}
-        </span>
-      </div>
+                {/* Buy Button */}
+                <a
+                  href={SOCIAL_LINKS.pumpfun}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: 'none', display: 'block' }}
+                >
+                  <button
+                    className="btn-buy-y2k"
+                    style={{
+                      width: '100%',
+                      padding: '8px',
+                      fontSize: '11px',
+                      fontWeight: 'bold',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    BUY $ARA NOW
+                  </button>
+                </a>
 
+                {/* Contract Address */}
+                <div style={{
+                  background: '#FFFFFF',
+                  border: '1px inset #999999',
+                  padding: '6px',
+                  marginBottom: '8px',
+                }}>
+                  <div style={{ fontSize: '8px', color: '#666666', marginBottom: '2px' }}>CONTRACT ADDRESS</div>
+                  <div style={{
+                    fontFamily: '"Courier New", monospace',
+                    fontSize: '8px',
+                    wordBreak: 'break-all',
+                    color: '#003399',
+                  }}>
+                    {CONTRACT_ADDRESS.slice(0, 16)}...
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+                  className="btn-y2k"
+                  style={{
+                    width: '100%',
+                    padding: '6px',
+                    fontSize: '10px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  📋 COPY CA
+                </button>
+
+                {/* Quick Links */}
+                <div style={{
+                  marginTop: '8px',
+                  textAlign: 'center',
+                  fontSize: '9px',
+                }}>
+                  <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer">pump.fun</a>
+                  {' | '}
+                  <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer">chart</a>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
