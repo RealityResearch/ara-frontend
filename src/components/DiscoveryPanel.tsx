@@ -48,14 +48,12 @@ export function DiscoveryPanel() {
       try {
         const msg = JSON.parse(event.data);
 
-        // Handle discovery data
         if (msg.type === 'discovery_update') {
           setTokens(msg.tokens || []);
           setLastScan(msg.timestamp);
           setIsScanning(false);
         }
 
-        // Handle discovery thoughts from agent
         if (msg.type === 'discovery_thought') {
           const thought: DiscoveryThought = {
             timestamp: msg.timestamp,
@@ -65,12 +63,10 @@ export function DiscoveryPanel() {
           setThoughts(prev => [...prev.slice(-20), thought]);
         }
 
-        // Handle scanning status
         if (msg.type === 'discovery_scanning') {
           setIsScanning(true);
         }
 
-        // Also capture relevant agent thoughts about discovery
         if (msg.type === 'thought' || msg.type === 'analysis') {
           const content = msg.content || '';
           if (content.toLowerCase().includes('discover') ||
@@ -100,7 +96,6 @@ export function DiscoveryPanel() {
     };
   }, [WS_URL]);
 
-  // Auto-scroll thoughts
   useEffect(() => {
     if (thoughtsRef.current) {
       thoughtsRef.current.scrollTop = thoughtsRef.current.scrollHeight;
@@ -141,66 +136,41 @@ export function DiscoveryPanel() {
   return (
     <div id="discovery" style={{ marginBottom: '16px' }}>
       {/* Section Header */}
-      <table width="100%" cellPadding={0} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="section-header">
-              Token Discovery
-              <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#008800' : '#FF8800' }}>
-                {isScanning ? '● SCANNING...' : isConnected ? '● LIVE' : '● OFFLINE'}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="skeu-section-header">
+        Token Discovery
+        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
+          {isScanning ? 'SCANNING...' : isConnected ? 'LIVE' : 'OFFLINE'}
+        </span>
+      </div>
 
       {/* Main Panel */}
-      <div style={{ border: '2px outset #CCCCCC', background: '#F5F5F5', padding: '2px' }}>
+      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
         {/* Title Bar */}
-        <div style={{
-          background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
-          padding: '2px 4px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '11px' }}>
-            🔍 DexScreener Scanner - 2X Targets
-          </span>
-          <span style={{ color: '#99CCFF', fontSize: '9px' }}>
+        <div className="skeu-window-titlebar">
+          <span>DexScreener Scanner - 2X Targets</span>
+          <span style={{ fontSize: '9px', color: '#99CCFF', fontWeight: 'normal' }}>
             {lastScan ? `Last scan: ${formatTime(lastScan)}` : 'Waiting for data...'}
           </span>
         </div>
 
         {/* Two Column Layout */}
-        <div style={{ display: 'flex', gap: '4px', padding: '4px' }}>
+        <div style={{ display: 'flex', gap: '8px', padding: '8px' }}>
           {/* Left: Agent Thoughts */}
           <div style={{ flex: '1', minWidth: '0' }}>
-            <div style={{
-              background: '#001122',
-              border: '2px inset #333333',
-              height: '200px',
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
-              <div style={{
-                background: '#002244',
-                padding: '2px 6px',
-                fontSize: '9px',
-                color: '#99CCFF',
-                borderBottom: '1px solid #003366'
-              }}>
+            <div className="skeu-panel" style={{ padding: 0, height: '200px', display: 'flex', flexDirection: 'column' }}>
+              <div className="skeu-section-header" style={{ padding: '4px 8px', fontSize: '9px', borderRadius: '4px 4px 0 0' }}>
                 AGENT THOUGHTS
               </div>
               <div
                 ref={thoughtsRef}
+                className="skeu-terminal"
                 style={{
                   flex: 1,
                   overflow: 'auto',
-                  padding: '6px',
+                  padding: '8px',
                   fontFamily: '"Courier New", monospace',
                   fontSize: '10px',
+                  borderRadius: '0 0 4px 4px',
                 }}
               >
                 {thoughts.length === 0 ? (
@@ -224,7 +194,7 @@ export function DiscoveryPanel() {
                 )}
                 {isScanning && (
                   <div style={{ color: '#FFAA00' }}>
-                    <span className="blink">●</span> Scanning DexScreener...
+                    <span className="blink">*</span> Scanning DexScreener...
                   </div>
                 )}
               </div>
@@ -233,21 +203,16 @@ export function DiscoveryPanel() {
 
           {/* Right: Token List */}
           <div style={{ flex: '1.5', minWidth: '0' }}>
-            <div style={{
-              background: '#FFFFFF',
-              border: '2px inset #CCCCCC',
-              height: '200px',
-              overflow: 'auto',
-            }}>
+            <div className="skeu-panel" style={{ padding: 0, height: '200px', overflow: 'auto' }}>
               <table width="100%" cellPadding={2} cellSpacing={0} style={{ fontSize: '9px' }}>
                 <thead>
-                  <tr style={{ background: '#E0E0E0', position: 'sticky', top: 0 }}>
-                    <th style={{ textAlign: 'left', padding: '4px' }}>Token</th>
-                    <th style={{ textAlign: 'right' }}>Score</th>
-                    <th style={{ textAlign: 'right' }}>Price</th>
-                    <th style={{ textAlign: 'right' }}>24h</th>
-                    <th style={{ textAlign: 'right' }}>Vol/Liq</th>
-                    <th style={{ textAlign: 'center' }}>Buy%</th>
+                  <tr className="skeu-metallic" style={{ position: 'sticky', top: 0 }}>
+                    <th style={{ textAlign: 'left', padding: '6px 4px', fontWeight: 'bold' }}>Token</th>
+                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Score</th>
+                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Price</th>
+                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>24h</th>
+                    <th style={{ textAlign: 'right', padding: '6px 4px', fontWeight: 'bold' }}>Vol/Liq</th>
+                    <th style={{ textAlign: 'center', padding: '6px 4px', fontWeight: 'bold' }}>Buy%</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -269,27 +234,29 @@ export function DiscoveryPanel() {
                         <tr
                           key={t.address}
                           style={{
-                            background: i % 2 === 0 ? '#FFFFFF' : '#F8F8F8',
+                            background: i % 2 === 0 ? '#ffffff' : '#f8f8f8',
                             cursor: 'pointer',
                           }}
                           onClick={() => window.open(t.url || `https://dexscreener.com/solana/${t.address}`, '_blank')}
+                          onMouseEnter={(e) => e.currentTarget.style.background = '#e8f0ff'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = i % 2 === 0 ? '#ffffff' : '#f8f8f8'}
                         >
                           <td style={{ padding: '4px' }}>
                             <div style={{ fontWeight: 'bold' }}>
                               {t.symbol}
-                              {hasFlags && <span style={{ color: '#FF6600', marginLeft: '4px' }}>⚠</span>}
+                              {hasFlags && <span style={{ color: '#FF6600', marginLeft: '4px' }}>!</span>}
                             </div>
                             <div style={{ color: '#666666', fontSize: '8px' }}>
                               {(t.name ?? '').slice(0, 15)}{(t.name?.length ?? 0) > 15 ? '...' : ''}
                             </div>
                           </td>
                           <td style={{ textAlign: 'right' }}>
-                            <span style={{
-                              background: getScoreColor(t.score),
-                              color: '#000000',
-                              padding: '1px 4px',
+                            <span className="skeu-btn" style={{
+                              padding: '1px 6px',
+                              fontSize: '9px',
                               fontWeight: 'bold',
-                              fontSize: '10px'
+                              background: `linear-gradient(180deg, ${getScoreColor(t.score)} 0%, ${getScoreColor(t.score)}BB 100%)`,
+                              color: '#000000',
                             }}>
                               {t.score}
                             </span>
@@ -325,14 +292,14 @@ export function DiscoveryPanel() {
         </div>
 
         {/* Filter Info */}
-        <div style={{
-          background: '#E8E8E8',
-          borderTop: '1px solid #CCCCCC',
-          padding: '4px 8px',
+        <div className="skeu-metallic" style={{
+          borderTop: '1px solid #a0a0a0',
+          padding: '6px 8px',
           fontSize: '9px',
           color: '#666666',
           display: 'flex',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          borderRadius: '0 0 8px 8px'
         }}>
           <span>Filters: &gt;$50K liq | &gt;$100K vol | &gt;50% buys | Not dumping</span>
           <span>Click token to open DexScreener</span>
