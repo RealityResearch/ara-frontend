@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { mockThoughts, AgentThought } from '@/lib/mockData';
+import { AgentThought } from '@/lib/mockData';
 
 const WS_URL = process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
 
@@ -54,13 +54,8 @@ function formatTimestamp(timestamp?: number): string {
 }
 
 export function useAgentThoughts() {
-  // Use static initial state to avoid hydration mismatch
-  const [thoughts, setThoughts] = useState<EnhancedThought[]>(() => {
-    return mockThoughts.slice(0, 3).map((thought) => ({
-      ...thought,
-      timestamp: '--:--:--', // Static placeholder until client hydrates
-    }));
-  });
+  // Start with empty thoughts - only show real agent output
+  const [thoughts, setThoughts] = useState<EnhancedThought[]>([]);
   const [isTyping, setIsTyping] = useState(false);
   const [currentText, setCurrentText] = useState('');
   const [isConnected, setIsConnected] = useState(false);
@@ -68,28 +63,10 @@ export function useAgentThoughts() {
   const [model, setModel] = useState<string | null>(null);
   const [lastLatency, setLastLatency] = useState<number | null>(null);
   const [questionStatus, setQuestionStatus] = useState<string | null>(null);
-  const [hydrated, setHydrated] = useState(false);
-
-  // Hydrate timestamps on client
-  useEffect(() => {
-    if (!hydrated) {
-      setHydrated(true);
-      setThoughts(prev => prev.map((thought, i) => {
-        const now = new Date();
-        now.setSeconds(now.getSeconds() - (prev.length - i) * 15);
-        return {
-          ...thought,
-          timestamp: formatTimestamp(now.getTime()),
-        };
-      }));
-    }
-  }, [hydrated]);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const mockIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const mockIndexRef = useRef(3);
   const hasConnectedRef = useRef(false);
 
   const submitQuestion = useCallback((question: string, from: string) => {
@@ -148,10 +125,6 @@ export function useAgentThoughts() {
         ws.onopen = () => {
           console.log('Connected to agent service');
           setIsConnected(true);
-          if (mockIntervalRef.current) {
-            clearInterval(mockIntervalRef.current);
-            mockIntervalRef.current = null;
-          }
         };
 
         ws.onmessage = (event) => {
@@ -220,35 +193,11 @@ export function useAgentThoughts() {
       }
     };
 
-    const startMockMode = () => {
-      if (mockIntervalRef.current) return;
-
-      console.log('Agent service not available, using mock mode');
-      mockIntervalRef.current = setInterval(() => {
-        if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-          const thought = mockThoughts[mockIndexRef.current % mockThoughts.length];
-          addThought({
-            ...thought,
-            timestamp: formatTimestamp(),
-          });
-          mockIndexRef.current++;
-        }
-      }, 5000);
-    };
-
     connectWebSocket();
-
-    const mockFallbackTimeout = setTimeout(() => {
-      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-        startMockMode();
-      }
-    }, 2000);
 
     return () => {
       hasConnectedRef.current = false;
-      clearTimeout(mockFallbackTimeout);
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-      if (mockIntervalRef.current) clearInterval(mockIntervalRef.current);
       if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
       if (wsRef.current) wsRef.current.close();
     };
