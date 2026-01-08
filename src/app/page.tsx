@@ -2,7 +2,7 @@
 
 import { Ticker } from '@/components/Ticker';
 import { TerminalPreview } from '@/components/TerminalPreview';
-import { VotingPanel } from '@/components/VotingPanel';
+import { ChatPanel } from '@/components/ChatPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
 import { DiscoveryPanel } from '@/components/DiscoveryPanel';
 import { PerformanceMetrics } from '@/components/PerformanceMetrics';
@@ -105,8 +105,8 @@ export default function Home() {
           <a href="#terminal" className="sidebar-nav-item">
             Terminal <span style={{ fontSize: '7px', color: '#008800' }}>● LIVE</span>
           </a>
-          <a href="#voting" className="sidebar-nav-item">
-            Voting <span style={{ fontSize: '7px', color: '#FF6B35' }}>● VOTE</span>
+          <a href="#chat" className="sidebar-nav-item">
+            Chat <span style={{ fontSize: '7px', color: '#00AAFF' }}>● LIVE</span>
           </a>
           <a href="#discovery" className="sidebar-nav-item">
             Discovery <span style={{ fontSize: '7px', color: '#00CCFF' }}>● SCAN</span>
@@ -168,9 +168,9 @@ export default function Home() {
           {/* Trade History - Right Below Terminal for Live Updates */}
           <TradeHistory trades={tradeHistory} />
 
-          {/* Voting Panel */}
-          <div id="voting" style={{ marginBottom: '16px' }}>
-            <VotingPanel />
+          {/* Chat Panel */}
+          <div id="chat" style={{ marginBottom: '16px' }}>
+            <ChatPanel />
           </div>
 
           {/* Discovery Panel - Token Scanner */}
