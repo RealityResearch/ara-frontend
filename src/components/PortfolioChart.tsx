@@ -17,6 +17,7 @@ interface BalancePoint {
   timestamp: number;
   sol: number;
   usdValue: number;
+  solPrice?: number;
 }
 
 interface PortfolioChartProps {
@@ -51,6 +52,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
   const [currentBalance, setCurrentBalance] = useState<{ sol: number; usdValue: number } | null>(null);
   const [positions, setPositions] = useState<PositionData[]>([]);
   const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
+  const [solPrice, setSolPrice] = useState<number>(0);  // Real SOL price from agent
   const [isConnected, setIsConnected] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -76,6 +78,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           const walletValue = message.marketData.walletValue ?? 0;
           const positionsData = message.marketData.positions ?? [];
           const positionValue = message.marketData.totalPositionValue ?? 0;
+          const solPriceUsd = message.marketData.solPrice ?? 0;
 
           // Skip if both are zero/undefined (invalid data)
           if (walletSol === 0 && walletValue === 0) return;
@@ -84,11 +87,13 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
             timestamp: message.timestamp || Date.now(),
             sol: walletSol,
             usdValue: walletValue,
+            solPrice: solPriceUsd,
           };
 
           setCurrentBalance({ sol: walletSol, usdValue: walletValue });
           setPositions(positionsData);
           setTotalPositionValue(positionValue);
+          if (solPriceUsd > 0) setSolPrice(solPriceUsd);
           setBalanceHistory(prev => {
             const newHistory = [...prev, point];
             // Keep last 50 points (about 25 minutes at 30s intervals)
@@ -220,8 +225,8 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
   const isPositive = changePercent >= 0;
 
-  // Calculate allocation percentages
-  const solValueUsd = currentBalance ? currentBalance.sol * 140 : 0; // Approximate SOL price
+  // Calculate allocation percentages using real SOL price
+  const solValueUsd = currentBalance && solPrice > 0 ? currentBalance.sol * solPrice : 0;
   const totalValue = solValueUsd + totalPositionValue;
   const solPercent = totalValue > 0 ? (solValueUsd / totalValue) * 100 : 100;
 
