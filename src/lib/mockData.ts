@@ -3,7 +3,7 @@
 export interface AgentThought {
   timestamp: string;
   message: string;
-  type: 'analysis' | 'decision' | 'trade' | 'info' | 'alert';
+  type: 'analysis' | 'decision' | 'trade' | 'info' | 'alert' | 'action' | 'reflection' | 'hypothesis' | 'status';
 }
 
 export const mockThoughts: AgentThought[] = [

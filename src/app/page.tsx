@@ -15,6 +15,7 @@ import { ComingSoon } from '@/components/ComingSoon';
 import { Footer } from '@/components/Footer';
 import { LiveClock } from '@/components/LiveClock';
 import { StickyCA } from '@/components/StickyCA';
+import { TradePopup } from '@/components/TradePopup';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 import { useAgentStats } from '@/hooks/useAgentStats';
 
@@ -201,6 +202,9 @@ export default function Home() {
 
       {/* Sticky CA Button */}
       <StickyCA />
+
+      {/* Trade Notification Popup */}
+      <TradePopup />
     </div>
   );
 }

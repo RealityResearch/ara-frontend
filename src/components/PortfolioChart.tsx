@@ -31,14 +31,15 @@ function formatTime(timestamp: number): string {
   });
 }
 
-// Token colors for allocation bar
+// Token colors for allocation bar - Y2K Financial Palette
 const TOKEN_COLORS: Record<string, string> = {
-  SOL: '#9945FF',
-  BONK: '#F7931A',
-  WIF: '#00D4AA',
-  POPCAT: '#FF69B4',
-  JUP: '#00A3FF',
-  DEFAULT: '#FFD700',
+  SOL: '#D4A574',      // Gold/amber - classic finance
+  BONK: '#F7931A',     // Orange
+  WIF: '#006600',      // Money green
+  POPCAT: '#CC0000',   // Alert red
+  JUP: '#003399',      // Web blue
+  ARA: '#D98D6C',      // Claude coral
+  DEFAULT: '#CCAA00',  // Gold
 };
 
 function getTokenColor(symbol: string): string {

@@ -23,15 +23,22 @@ export interface EnhancedThought extends AgentThought {
   questionFrom?: string;
 }
 
-function mapMessageType(type: string): AgentThought['type'] {
-  const mapping: Record<string, AgentThought['type']> = {
+// Extended type for more granular coloring
+export type ThoughtType = 'analysis' | 'trade' | 'info' | 'decision' | 'alert' | 'reflection' | 'hypothesis' | 'action' | 'status';
+
+function mapMessageType(type: string): ThoughtType {
+  const mapping: Record<string, ThoughtType> = {
     thought: 'analysis',
     analysis: 'analysis',
-    action: 'trade',
-    status: 'info',
+    action: 'action',         // Tool usage - distinct from trade
+    trade: 'trade',           // Actual trade execution
+    status: 'status',
     question_answer: 'decision',
-    user_question: 'alert', // User questions show as alert (different color)
+    user_question: 'alert',
     market_update: 'info',
+    reflection: 'reflection', // Agent self-reflection
+    hypothesis: 'hypothesis', // Agent forming theories
+    learning: 'analysis',
   };
   return mapping[type] || 'info';
 }

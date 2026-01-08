@@ -3,25 +3,34 @@
 import { useEffect, useRef, useState } from 'react';
 import { useAgentThoughts, EnhancedThought } from '@/hooks/useAgentThoughts';
 
-function getTypeColor(type: EnhancedThought['type'], isUserQuestion?: boolean): string {
+// Y2K Financial Terminal Colors
+function getTypeColor(type: string, isUserQuestion?: boolean): string {
   if (isUserQuestion) return '#FF66FF'; // Magenta for user questions
   switch (type) {
-    case 'analysis': return '#00CC00'; // Green for thoughts
-    case 'decision': return '#00CCCC'; // Cyan for answers
-    case 'trade': return '#CCCC00';
-    case 'alert': return '#FF66FF'; // Magenta for questions
+    case 'analysis': return '#00CC00';    // Matrix green - thinking
+    case 'decision': return '#00CCCC';    // Cyan - answers
+    case 'trade': return '#FFD700';       // Gold - TRADE EXECUTION
+    case 'action': return '#FF8C00';      // Orange - tool usage
+    case 'alert': return '#FF66FF';       // Magenta - questions
+    case 'reflection': return '#9999FF';  // Light blue - self-reflection
+    case 'hypothesis': return '#FF99CC';  // Pink - theories
+    case 'status': return '#666666';      // Gray - status updates
     case 'info':
     default: return '#888888';
   }
 }
 
-function getTypePrefix(type: EnhancedThought['type'], isUserQuestion?: boolean): string {
+function getTypePrefix(type: string, isUserQuestion?: boolean): string {
   if (isUserQuestion) return 'Q';
   switch (type) {
     case 'analysis': return 'THINK';
-    case 'decision': return 'A'; // Answer
-    case 'trade': return 'TRADE';
-    case 'alert': return 'Q'; // Question
+    case 'decision': return 'ANS';
+    case 'trade': return '$$$ TRADE';     // Make trades stand out
+    case 'action': return 'TOOL';
+    case 'alert': return 'Q';
+    case 'reflection': return 'REFLECT';
+    case 'hypothesis': return 'THEORY';
+    case 'status': return 'SYS';
     case 'info':
     default: return 'INFO';
   }
@@ -114,20 +123,73 @@ export function AgentTerminal() {
                 {thoughts.map((thought, index) => {
                   const isQuestion = thought.type === 'alert';
                   const isAnswer = thought.type === 'decision';
+                  const isTrade = thought.type === 'trade';
+                  const isAction = thought.type === 'action';
+                  const isReflection = thought.type === 'reflection';
+                  const isHypothesis = thought.type === 'hypothesis';
+
+                  // Get background and border colors based on type
+                  const getThoughtStyle = () => {
+                    if (isTrade) return {
+                      background: 'rgba(255, 215, 0, 0.15)',
+                      borderLeft: '3px solid #FFD700',
+                      padding: '6px 8px',
+                    };
+                    if (isAction) return {
+                      background: 'rgba(255, 140, 0, 0.1)',
+                      borderLeft: '2px solid #FF8C00',
+                      padding: '4px 6px',
+                    };
+                    if (isQuestion) return {
+                      background: 'rgba(255, 102, 255, 0.1)',
+                      borderLeft: '2px solid #FF66FF',
+                      padding: '4px 6px',
+                    };
+                    if (isAnswer) return {
+                      background: 'rgba(0, 204, 204, 0.1)',
+                      borderLeft: '2px solid #00CCCC',
+                      padding: '4px 6px',
+                    };
+                    if (isReflection) return {
+                      background: 'rgba(153, 153, 255, 0.1)',
+                      borderLeft: '2px solid #9999FF',
+                      padding: '4px 6px',
+                    };
+                    if (isHypothesis) return {
+                      background: 'rgba(255, 153, 204, 0.1)',
+                      borderLeft: '2px solid #FF99CC',
+                      padding: '4px 6px',
+                    };
+                    return { background: 'transparent', borderLeft: 'none', padding: '0' };
+                  };
+
+                  const thoughtStyle = getThoughtStyle();
+
+                  // Get message color based on type
+                  const getMessageColor = () => {
+                    if (isTrade) return '#FFD700';     // Gold for trades
+                    if (isAction) return '#FF8C00';   // Orange for tools
+                    if (isQuestion) return '#FF99FF';
+                    if (isAnswer) return '#00CCCC';
+                    if (isReflection) return '#9999FF';
+                    if (isHypothesis) return '#FF99CC';
+                    return '#00AA00';
+                  };
 
                   return (
                     <div
                       key={`${thought.timestamp}-${index}`}
                       style={{
                         marginBottom: '6px',
-                        padding: isQuestion || isAnswer ? '4px 6px' : '0',
-                        background: isQuestion ? 'rgba(255, 102, 255, 0.1)' : isAnswer ? 'rgba(0, 204, 204, 0.1)' : 'transparent',
-                        borderLeft: isQuestion ? '2px solid #FF66FF' : isAnswer ? '2px solid #00CCCC' : 'none'
+                        ...thoughtStyle,
                       }}
                     >
                       <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>
                       {' '}
-                      <span style={{ color: getTypeColor(thought.type, isQuestion) }}>
+                      <span style={{
+                        color: getTypeColor(thought.type, isQuestion),
+                        fontWeight: isTrade ? 'bold' : 'normal',
+                      }}>
                         [{getTypePrefix(thought.type, isQuestion)}]
                       </span>
                       {thought.questionFrom && (
@@ -135,7 +197,8 @@ export function AgentTerminal() {
                       )}
                       {' '}
                       <span style={{
-                        color: isQuestion ? '#FF99FF' : isAnswer ? '#00CCCC' : '#00AA00'
+                        color: getMessageColor(),
+                        fontWeight: isTrade ? 'bold' : 'normal',
                       }}>
                         {thought.message}
                       </span>
