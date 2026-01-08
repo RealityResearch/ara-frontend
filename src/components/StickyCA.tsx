@@ -27,84 +27,74 @@ export function StickyCA() {
       gap: '8px'
     }}>
       {/* CA Copy Box */}
-      <div style={{
-        background: 'linear-gradient(to bottom, #003366 0%, #001133 100%)',
-        border: '2px outset #003366',
-        borderRadius: '4px',
-        padding: '8px 12px',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
-        minWidth: '180px'
+      <div className="skeu-window" style={{
+        minWidth: '180px',
+        boxShadow: '0 4px 16px rgba(0,0,0,0.4)'
       }}>
         {/* Header */}
-        <div style={{
-          fontSize: '9px',
-          color: '#99CCFF',
-          marginBottom: '4px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span>CONTRACT ADDRESS</span>
-          <span style={{ color: '#00FF00' }}>● LIVE</span>
+        <div className="skeu-window-titlebar" style={{ padding: '4px 8px' }}>
+          <span style={{ fontSize: '9px' }}>CONTRACT ADDRESS</span>
+          <span style={{ fontSize: '9px', color: '#66FF66', fontWeight: 'normal' }}>* LIVE</span>
         </div>
 
-        {/* CA Display */}
-        <div style={{
-          fontFamily: 'Courier New, monospace',
-          fontSize: '12px',
-          color: '#00FFFF',
-          marginBottom: '8px',
-          letterSpacing: '0.5px'
-        }}>
-          {displayCA}
-        </div>
+        <div style={{ padding: '8px', background: 'linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%)' }}>
+          {/* CA Display */}
+          <div className="skeu-terminal" style={{
+            fontFamily: 'Courier New, monospace',
+            fontSize: '12px',
+            color: '#00FFFF',
+            padding: '6px',
+            marginBottom: '8px',
+            textAlign: 'center',
+            borderRadius: '4px'
+          }}>
+            {displayCA}
+          </div>
 
-        {/* Copy Button */}
-        <button
-          onClick={copyToClipboard}
-          style={{
-            width: '100%',
-            background: copied
-              ? 'linear-gradient(to bottom, #66CC66 0%, #339933 100%)'
-              : 'linear-gradient(to bottom, #FFCC00 0%, #FF9900 100%)',
-            border: '2px outset ' + (copied ? '#66CC66' : '#FFCC00'),
-            color: copied ? '#FFFFFF' : '#000000',
-            fontFamily: 'Arial, sans-serif',
-            fontSize: '11px',
-            fontWeight: 'bold',
-            padding: '6px 12px',
-            cursor: 'pointer',
-            transition: 'all 0.2s'
-          }}
-        >
-          {copied ? '✓ COPIED!' : '📋 COPY CA'}
-        </button>
+          {/* Copy Button */}
+          <button
+            onClick={copyToClipboard}
+            className={copied ? 'skeu-btn-green skeu-btn' : 'skeu-btn'}
+            style={{
+              width: '100%',
+              fontSize: '11px',
+              fontWeight: 'bold',
+              background: copied
+                ? undefined
+                : 'linear-gradient(180deg, #FFCC00 0%, #FF9900 50%, #DD8800 100%)',
+              color: copied ? undefined : '#000000',
+              textShadow: copied ? undefined : 'none'
+            }}
+          >
+            {copied ? 'COPIED!' : 'COPY CA'}
+          </button>
 
-        {/* Quick Links */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: '8px',
-          marginTop: '8px',
-          fontSize: '9px'
-        }}>
-          <a
-            href={`https://pump.fun/coin/${CONTRACT_ADDRESS}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#99CCFF', textDecoration: 'none' }}
-          >
-            pump.fun
-          </a>
-          <span style={{ color: '#666666' }}>|</span>
-          <a
-            href={`https://dexscreener.com/solana/${CONTRACT_ADDRESS}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#99CCFF', textDecoration: 'none' }}
-          >
-            chart
-          </a>
+          {/* Quick Links */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '8px',
+            marginTop: '8px',
+            fontSize: '9px'
+          }}>
+            <a
+              href={`https://pump.fun/coin/${CONTRACT_ADDRESS}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#0066CC', textDecoration: 'none' }}
+            >
+              pump.fun
+            </a>
+            <span style={{ color: '#666666' }}>|</span>
+            <a
+              href={`https://dexscreener.com/solana/${CONTRACT_ADDRESS}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#0066CC', textDecoration: 'none' }}
+            >
+              chart
+            </a>
+          </div>
         </div>
       </div>
     </div>

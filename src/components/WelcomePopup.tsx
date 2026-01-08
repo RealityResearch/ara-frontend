@@ -44,35 +44,27 @@ export function WelcomePopup() {
       justifyContent: 'center',
       padding: '20px'
     }}>
-      <div style={{
-        background: '#C0C0C0',
-        border: '2px outset #FFFFFF',
+      <div className="skeu-window" style={{
         maxWidth: '450px',
         width: '100%',
-        boxShadow: '4px 4px 0 rgba(0,0,0,0.5)'
+        boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
       }}>
         {/* Title Bar */}
-        <div style={{
-          background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
-          padding: '4px 8px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '12px' }}>
-            <span className="spin-slow">🎉</span> Welcome to Claude Investments!
+        <div className="skeu-window-titlebar">
+          <span>
+            <span className="spin-slow">*</span> Welcome to Claude Investments!
           </span>
           <button
             onClick={() => setIsVisible(false)}
-            className="btn-y2k"
-            style={{ padding: '0 6px', fontSize: '12px', lineHeight: '1.2' }}
+            className="skeu-btn"
+            style={{ padding: '0 8px', fontSize: '12px', lineHeight: '1.2' }}
           >
-            ×
+            X
           </button>
         </div>
 
         {/* Content */}
-        <div style={{ padding: '16px' }}>
+        <div style={{ padding: '16px', background: 'linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%)' }}>
           {/* Logo Area */}
           <div style={{ textAlign: 'center', marginBottom: '12px' }}>
             <div className="rainbow-text" style={{
@@ -90,15 +82,15 @@ export function WelcomePopup() {
           </div>
 
           {/* Announcement Box */}
-          <div style={{
-            background: '#FFFFCC',
-            border: '2px dashed #CC0000',
+          <div className="skeu-panel" style={{
             padding: '12px',
             marginBottom: '12px',
-            textAlign: 'center'
+            textAlign: 'center',
+            background: 'linear-gradient(180deg, #fffde8 0%, #fff8d0 100%)',
+            border: '2px dashed #CC0000'
           }}>
             <div className="blink" style={{ color: '#CC0000', fontWeight: 'bold', fontSize: '14px' }}>
-              🚨 AI AGENT NOW LIVE! 🚨
+              ! AI AGENT NOW LIVE !
             </div>
             <div style={{ fontSize: '11px', marginTop: '8px' }}>
               The autonomous trading agent is actively managing<br />
@@ -107,14 +99,12 @@ export function WelcomePopup() {
           </div>
 
           {/* Tip of the Day */}
-          <div style={{
-            background: '#FFFFFF',
-            border: '1px solid #CCCCCC',
+          <div className="skeu-panel" style={{
             padding: '8px',
             marginBottom: '12px'
           }}>
             <div style={{ fontSize: '10px', fontWeight: 'bold', color: '#003399', marginBottom: '4px' }}>
-              <span className="sparkle">💡</span> Tip of the Day:
+              <span className="sparkle">*</span> Tip of the Day:
             </div>
             <div style={{ fontSize: '11px', fontStyle: 'italic', minHeight: '32px' }}>
               &quot;{tips[tipIndex]}&quot;
@@ -125,20 +115,20 @@ export function WelcomePopup() {
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
             <button
               onClick={() => setIsVisible(false)}
-              className="btn-buy-y2k bounce"
+              className="skeu-btn-green skeu-btn bounce"
               style={{ fontSize: '12px' }}
             >
-              🚀 ENTER SITE
+              ENTER SITE
             </button>
             <button
               onClick={() => {
                 setIsVisible(false);
                 document.getElementById('terminal')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="btn-action"
+              className="skeu-btn"
               style={{ fontSize: '11px' }}
             >
-              📟 VIEW TERMINAL
+              VIEW TERMINAL
             </button>
           </div>
 
@@ -152,15 +142,14 @@ export function WelcomePopup() {
         </div>
 
         {/* Footer */}
-        <div style={{
-          background: '#E0E0E0',
-          borderTop: '1px solid #999999',
+        <div className="skeu-metallic" style={{
           padding: '6px 12px',
           fontSize: '9px',
           color: '#666666',
-          textAlign: 'center'
+          textAlign: 'center',
+          borderRadius: '0 0 8px 8px'
         }}>
-          <span className="spin-slow">🌐</span> Best viewed with Netscape Navigator 4.0 or higher <span className="spin-slow">🌐</span>
+          <span className="spin-slow">~</span> Best viewed with Netscape Navigator 4.0 or higher <span className="spin-slow">~</span>
         </div>
       </div>
     </div>

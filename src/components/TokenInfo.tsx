@@ -15,134 +15,107 @@ export function TokenInfo() {
   return (
     <div id="token" style={{ marginBottom: '16px' }}>
       {/* Section Header */}
-      <table width="100%" cellPadding={0} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="section-header">
-              🪙 TOKEN INFORMATION
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="skeu-section-header">
+        TOKEN INFORMATION
+      </div>
 
       {/* Main Content */}
-      <div style={{ border: '1px solid #CCCCCC', borderTop: 'none', padding: '12px', background: '#FFFFFF' }}>
-        <table width="100%" cellPadding={0} cellSpacing={0}>
-          <tbody>
-            <tr>
-              <td valign="top" width="65%">
-                {/* Contract Address */}
-                <div className="fieldset-y2k" style={{ marginBottom: '12px' }}>
-                  <div className="fieldset-y2k-legend" style={{ marginLeft: '-4px', marginTop: '-20px', marginBottom: '8px' }}>
-                    Contract Address (CA)
-                  </div>
-                  <table width="100%" cellPadding={0} cellSpacing={4}>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <input
-                            type="text"
-                            className="input-y2k"
-                            value={CONTRACT_ADDRESS}
-                            readOnly
-                            style={{ width: '100%', fontFamily: 'Courier New, monospace' }}
-                          />
-                        </td>
-                        <td width="80">
-                          <button className="btn-y2k" onClick={copyToClipboard} style={{ width: '100%' }}>
-                            {copied ? '✓ Copied!' : 'Copy'}
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+      <div className="skeu-panel" style={{ borderRadius: '0 0 6px 6px', padding: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ flex: '0 0 65%' }}>
+            {/* Contract Address */}
+            <div className="skeu-panel" style={{ marginBottom: '12px', padding: '12px' }}>
+              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
+                Contract Address (CA)
+              </div>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <input
+                  type="text"
+                  className="skeu-input"
+                  value={CONTRACT_ADDRESS}
+                  readOnly
+                  style={{ flex: 1, fontFamily: 'Courier New, monospace', fontSize: '10px' }}
+                />
+                <button className="skeu-btn" onClick={copyToClipboard} style={{ minWidth: '70px' }}>
+                  {copied ? 'Copied!' : 'Copy'}
+                </button>
+              </div>
+            </div>
 
-                {/* Buy Links */}
-                <div className="fieldset-y2k">
-                  <div className="fieldset-y2k-legend" style={{ marginLeft: '-4px', marginTop: '-20px', marginBottom: '8px' }}>
-                    Buy $ARA
-                  </div>
-                  <table width="100%" cellPadding={4} cellSpacing={4}>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer">
-                            <button className="btn-buy-y2k" style={{ width: '100%' }}>
-                              🚀 pump.fun
-                            </button>
-                          </a>
-                        </td>
-                        <td>
-                          <a href={SOCIAL_LINKS.jupiter} target="_blank" rel="noopener noreferrer">
-                            <button className="btn-action" style={{ width: '100%' }}>
-                              🪐 Jupiter
-                            </button>
-                          </a>
-                        </td>
-                        <td>
-                          <a href={SOCIAL_LINKS.raydium} target="_blank" rel="noopener noreferrer">
-                            <button className="btn-action" style={{ width: '100%' }}>
-                              💧 Raydium
-                            </button>
-                          </a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </td>
+            {/* Buy Links */}
+            <div className="skeu-panel" style={{ padding: '12px' }}>
+              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
+                Buy $ARA
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
+                  <button className="skeu-btn-green skeu-btn" style={{ width: '100%' }}>
+                    pump.fun
+                  </button>
+                </a>
+                <a href={SOCIAL_LINKS.jupiter} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
+                  <button className="skeu-btn" style={{ width: '100%' }}>
+                    Jupiter
+                  </button>
+                </a>
+                <a href={SOCIAL_LINKS.raydium} target="_blank" rel="noopener noreferrer" style={{ flex: 1 }}>
+                  <button className="skeu-btn" style={{ width: '100%' }}>
+                    Raydium
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
 
-              <td width="10"></td>
+          <div style={{ flex: '0 0 35%' }}>
+            {/* Token Stats */}
+            <div className="skeu-panel" style={{ padding: '12px', height: '100%', boxSizing: 'border-box' }}>
+              <div className="skeu-section-header" style={{ marginBottom: '8px', fontSize: '10px' }}>
+                Token Details
+              </div>
+              <table style={{ width: '100%', fontSize: '10px' }}>
+                <tbody>
+                  <tr>
+                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Network</td>
+                    <td style={{ padding: '4px 0' }}>
+                      <span style={{ color: '#9945FF' }}>*</span> Solana
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Token Type</td>
+                    <td style={{ padding: '4px 0' }}>SPL Token</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Total Supply</td>
+                    <td style={{ padding: '4px 0' }}>1,000,000,000</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '4px 0', fontWeight: 'bold' }}>Tax</td>
+                    <td style={{ padding: '4px 0', color: '#008800', fontWeight: 'bold' }}>0%</td>
+                  </tr>
+                </tbody>
+              </table>
 
-              <td valign="top" width="35%">
-                {/* Token Stats */}
-                <div className="fieldset-y2k">
-                  <div className="fieldset-y2k-legend" style={{ marginLeft: '-4px', marginTop: '-20px', marginBottom: '8px' }}>
-                    Token Details
-                  </div>
-                  <table className="table-y2k">
-                    <tbody>
-                      <tr>
-                        <td style={{ fontWeight: 'bold' }}>Network</td>
-                        <td>
-                          <span style={{ color: '#9945FF' }}>◎</span> Solana
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ fontWeight: 'bold' }}>Token Type</td>
-                        <td>SPL Token</td>
-                      </tr>
-                      <tr>
-                        <td style={{ fontWeight: 'bold' }}>Total Supply</td>
-                        <td>1,000,000,000</td>
-                      </tr>
-                      <tr>
-                        <td style={{ fontWeight: 'bold' }}>Tax</td>
-                        <td style={{ color: '#008800' }}>0%</td>
-                      </tr>
-                    </tbody>
-                  </table>
-
-                  <div style={{ marginTop: '12px', textAlign: 'center' }}>
-                    <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="click-here">
-                      📊 View Chart on DexScreener
-                    </a>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              <div style={{ marginTop: '12px', textAlign: 'center' }}>
+                <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="skeu-btn" style={{
+                  display: 'inline-block',
+                  textDecoration: 'none',
+                  fontSize: '10px'
+                }}>
+                  View Chart on DexScreener
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Powered by Solana */}
-        <div style={{
+        <div className="skeu-metallic" style={{
           marginTop: '12px',
           padding: '8px',
-          background: 'linear-gradient(to right, #9945FF22 0%, #14F19522 100%)',
-          border: '1px solid #9945FF44',
           textAlign: 'center',
-          fontSize: '10px'
+          fontSize: '10px',
+          borderRadius: '4px'
         }}>
           <span style={{ fontWeight: 'bold' }}>Powered by</span>{' '}
           <span style={{
@@ -153,7 +126,7 @@ export function TokenInfo() {
           }}>
             SOLANA
           </span>
-          {' '} • Fast • Secure • Decentralized
+          {' '} | Fast | Secure | Decentralized
         </div>
       </div>
     </div>

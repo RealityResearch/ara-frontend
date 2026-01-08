@@ -204,40 +204,26 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
   return (
     <div style={{ marginBottom: '16px' }}>
       {/* Section Header */}
-      <table width="100%" cellPadding={0} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="section-header">
-              Portfolio Balance
-              <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#008800' : '#FF8800' }}>
-                ● {isConnected ? 'LIVE' : 'OFFLINE'}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="skeu-section-header">
+        Portfolio Balance
+        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
+          {isConnected ? 'LIVE' : 'OFFLINE'}
+        </span>
+      </div>
 
       {/* Chart Panel */}
-      <div style={{ border: '2px outset #CCCCCC', background: '#C0C0C0', padding: '2px' }}>
+      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
         {/* Title Bar */}
-        <div style={{
-          background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
-          padding: '2px 4px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '11px' }}>
-            Treasury Balance (SOL)
-          </span>
+        <div className="skeu-window-titlebar">
+          <span>Treasury Balance (SOL)</span>
           <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
             {currentBalance && (
               <>
-                <span style={{ color: '#FFCC00' }}>
+                <span style={{ color: '#FFCC00', fontWeight: 'bold' }}>
                   {(currentBalance.sol ?? 0).toFixed(4)} SOL
                 </span>
-                <span style={{ color: isPositive ? '#00FF00' : '#FF6666' }}>
-                  {isPositive ? '▲' : '▼'} {Math.abs(changePercent ?? 0).toFixed(1)}%
+                <span style={{ color: isPositive ? '#66FF66' : '#FF6666', fontWeight: 'bold' }}>
+                  {isPositive ? '+' : ''}{Math.abs(changePercent ?? 0).toFixed(1)}%
                 </span>
               </>
             )}
@@ -247,10 +233,10 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         {/* Chart Area */}
         <div
           ref={containerRef}
+          className="skeu-terminal"
           style={{
-            background: '#0a0f0a',
-            border: '2px inset #666666',
             padding: '2px',
+            borderRadius: 0
           }}
         >
           {balanceHistory.length < 2 ? (
@@ -264,7 +250,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
               fontSize: '11px',
             }}>
               <span>Collecting data</span>
-              <span className="cursor-blink">█</span>
+              <span className="cursor-blink"></span>
             </div>
           ) : (
             <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '180px' }} />
@@ -272,13 +258,12 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         </div>
 
         {/* Stats Row */}
-        <div style={{
+        <div className="skeu-metallic" style={{
           display: 'flex',
           justifyContent: 'space-around',
-          padding: '6px',
-          background: '#E8E8E8',
-          borderTop: '1px solid #999999',
+          padding: '8px',
           fontSize: '10px',
+          borderRadius: 0
         }}>
           <div style={{ textAlign: 'center' }}>
             <div style={{ color: '#666666', fontSize: '9px' }}>Current</div>
@@ -312,14 +297,15 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
 
         {/* Info Bar */}
         <div style={{
-          background: '#E0E0E0',
-          borderTop: '1px solid #999999',
-          padding: '2px 8px',
+          background: 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)',
+          borderTop: '1px solid #a0a0a0',
+          padding: '4px 8px',
           fontSize: '9px',
           color: '#666666',
-          textAlign: 'center'
+          textAlign: 'center',
+          borderRadius: '0 0 8px 8px'
         }}>
-          Updates every ~30s • Shows last 25 minutes of balance data
+          Updates every ~30s | Shows last 25 minutes of balance data
         </div>
       </div>
     </div>

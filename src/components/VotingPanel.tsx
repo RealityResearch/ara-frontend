@@ -19,11 +19,11 @@ interface VotingPanelProps {
 }
 
 const TRADING_STYLES = {
-  APE: { name: 'APE MODE', emoji: '🦍', color: '#FF6B35' },
-  DIAMOND: { name: 'DIAMOND HANDS', emoji: '💎', color: '#00D4FF' },
-  PAPER: { name: 'PAPER HANDS', emoji: '📄', color: '#AAAAAA' },
-  RESEARCH: { name: 'RESEARCH MODE', emoji: '🔬', color: '#00CC66' },
-  DEGEN: { name: 'FULL DEGEN', emoji: '🎰', color: '#FF00FF' },
+  APE: { name: 'APE MODE', emoji: '...', color: '#FF6B35' },
+  DIAMOND: { name: 'DIAMOND HANDS', emoji: '...', color: '#00D4FF' },
+  PAPER: { name: 'PAPER HANDS', emoji: '...', color: '#AAAAAA' },
+  RESEARCH: { name: 'RESEARCH MODE', emoji: '...', color: '#00CC66' },
+  DEGEN: { name: 'FULL DEGEN', emoji: '...', color: '#FF00FF' },
 };
 
 function getVisitorId(): string {
@@ -126,45 +126,30 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
   return (
     <div style={{ marginBottom: '16px' }}>
       {/* Section Header */}
-      <table width="100%" cellPadding={0} cellSpacing={0}>
-        <tbody>
-          <tr>
-            <td className="section-header">
-              Community Voting
-              <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#008800' : '#FF8800' }}>
-                ● {isConnected ? 'LIVE' : 'OFFLINE'}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="skeu-section-header">
+        Community Voting
+        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
+          {isConnected ? 'LIVE' : 'OFFLINE'}
+        </span>
+      </div>
 
       {/* Main Panel */}
-      <div style={{ border: '2px outset #CCCCCC', background: '#F5F5F5', padding: '2px' }}>
+      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
         {/* Title Bar */}
-        <div style={{
-          background: 'linear-gradient(to right, #000080 0%, #1084D0 100%)',
-          padding: '2px 4px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{ color: '#FFFFFF', fontWeight: 'bold', fontSize: '11px' }}>
-            🗳️ Vote for Agent Trading Style
-          </span>
-          <span style={{ color: '#FFCC00', fontSize: '10px' }}>
-            {voteStatus ? `⏱️ ${formatTimeRemaining(voteStatus.timeRemaining)}` : '--:--'}
+        <div className="skeu-window-titlebar">
+          <span>Vote for Agent Trading Style</span>
+          <span style={{ color: '#FFCC00', fontSize: '10px', fontWeight: 'normal' }}>
+            {voteStatus ? `${formatTimeRemaining(voteStatus.timeRemaining)}` : '--:--'}
           </span>
         </div>
 
         {/* Current Style Display */}
         {voteStatus && (
-          <div style={{
-            background: '#003366',
-            padding: '8px',
+          <div className="skeu-section-header" style={{
+            margin: '8px',
+            borderRadius: '4px',
             textAlign: 'center',
-            margin: '4px',
-            border: '2px inset #CCCCCC'
+            padding: '12px'
           }}>
             <div style={{ fontSize: '10px', color: '#99CCFF' }}>CURRENT MODE</div>
             <div style={{ fontSize: '24px', margin: '4px 0' }}>
@@ -187,10 +172,10 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
         {/* Vote Buttons */}
         <div style={{ padding: '8px' }}>
           <div style={{ fontSize: '10px', color: '#666666', marginBottom: '6px', textAlign: 'center' }}>
-            Click to vote • {totalVotes} total vote{totalVotes !== 1 ? 's' : ''} this round
+            Click to vote | {totalVotes} total vote{totalVotes !== 1 ? 's' : ''} this round
           </div>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', justifyContent: 'center' }}>
             {Object.entries(TRADING_STYLES).map(([key, style]) => {
               const votes = voteStatus?.voteCounts[key] || 0;
               const isSelected = myVote === key;
@@ -201,24 +186,29 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
                   key={key}
                   onClick={() => handleVote(key)}
                   disabled={!isConnected}
-                  className="btn-y2k"
+                  className="skeu-btn"
                   style={{
-                    padding: '6px 10px',
+                    padding: '8px 12px',
                     fontSize: '10px',
-                    minWidth: '80px',
-                    background: isSelected ? style.color : isCurrent ? '#E0E0E0' : undefined,
+                    minWidth: '90px',
+                    background: isSelected
+                      ? `linear-gradient(180deg, ${style.color} 0%, ${style.color}CC 50%, ${style.color}AA 100%)`
+                      : isCurrent
+                        ? 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)'
+                        : undefined,
                     color: isSelected ? '#FFFFFF' : undefined,
                     border: isCurrent ? `2px solid ${style.color}` : undefined,
                     opacity: isConnected ? 1 : 0.5,
+                    textShadow: isSelected ? '0 -1px 0 rgba(0,0,0,0.3)' : undefined
                   }}
                 >
-                  <span style={{ fontSize: '14px' }}>{style.emoji}</span>
-                  <br />
-                  <span style={{ fontSize: '9px' }}>{style.name}</span>
-                  <br />
+                  <span style={{ fontSize: '16px', display: 'block' }}>{style.emoji}</span>
+                  <span style={{ fontSize: '8px', display: 'block', marginTop: '2px' }}>{style.name}</span>
                   <span style={{
-                    fontSize: '10px',
+                    fontSize: '11px',
                     fontWeight: 'bold',
+                    display: 'block',
+                    marginTop: '2px',
                     color: isSelected ? '#FFFFFF' : style.color
                   }}>
                     {votes}
@@ -230,14 +220,12 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
 
           {/* Vote Message */}
           {voteMessage && (
-            <div style={{
+            <div className="skeu-btn-green" style={{
               marginTop: '8px',
-              padding: '4px 8px',
-              background: '#00AA00',
-              color: '#FFFFFF',
+              padding: '6px 12px',
               fontSize: '10px',
               textAlign: 'center',
-              borderRadius: '2px'
+              borderRadius: '4px'
             }}>
               {voteMessage}
             </div>
@@ -259,14 +247,18 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
                   </div>
                   <div style={{
                     height: '8px',
-                    background: '#CCCCCC',
-                    border: '1px inset #999999'
+                    background: 'linear-gradient(180deg, #e0e0e0 0%, #c8c8c8 100%)',
+                    border: '1px solid #a0a0a0',
+                    borderRadius: '2px',
+                    overflow: 'hidden',
+                    boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.15)'
                   }}>
                     <div style={{
                       height: '100%',
                       width: `${percent}%`,
-                      background: `linear-gradient(to bottom, ${style.color}, ${style.color}88)`,
-                      transition: 'width 0.3s ease'
+                      background: `linear-gradient(180deg, ${style.color} 0%, ${style.color}AA 100%)`,
+                      transition: 'width 0.3s ease',
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.3)'
                     }} />
                   </div>
                 </div>
@@ -277,14 +269,15 @@ export function VotingPanel({ wsUrl }: VotingPanelProps) {
 
         {/* Info Bar */}
         <div style={{
-          background: '#E0E0E0',
-          borderTop: '1px solid #999999',
-          padding: '4px 8px',
+          background: 'linear-gradient(180deg, #e8e8e8 0%, #d0d0d0 100%)',
+          borderTop: '1px solid #a0a0a0',
+          padding: '6px 8px',
           fontSize: '9px',
           color: '#666666',
-          textAlign: 'center'
+          textAlign: 'center',
+          borderRadius: '0 0 8px 8px'
         }}>
-          Votes reset every 30 minutes • Your vote influences the agent&apos;s trading behavior
+          Votes reset every 30 minutes | Your vote influences the agent&apos;s trading behavior
         </div>
       </div>
     </div>
