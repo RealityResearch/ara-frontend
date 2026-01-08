@@ -55,9 +55,9 @@ interface Props {
 }
 
 export function BotEvolution({ data = mockEvolution }: Props) {
-  const currentLevel = getCurrentLevel(data.currentXp);
-  const progress = getLevelProgress(data.currentXp);
-  const nextLevel = BOT_LEVELS.find(l => l.minXp > data.currentXp);
+  const currentLevel = getCurrentLevel(data?.currentXp ?? 0);
+  const progress = getLevelProgress(data?.currentXp ?? 0) ?? 0;
+  const nextLevel = BOT_LEVELS.find(l => l.minXp > (data?.currentXp ?? 0));
 
   return (
     <div id="evolution" style={{ marginBottom: '16px' }}>
@@ -142,10 +142,10 @@ export function BotEvolution({ data = mockEvolution }: Props) {
                           transform: 'translate(-50%, -50%)',
                           fontSize: '10px',
                           fontWeight: 'bold',
-                          color: progress > 50 ? '#FFFFFF' : '#333333',
-                          textShadow: progress > 50 ? '1px 1px 0 #00000066' : 'none'
+                          color: (progress ?? 0) > 50 ? '#FFFFFF' : '#333333',
+                          textShadow: (progress ?? 0) > 50 ? '1px 1px 0 #00000066' : 'none'
                         }}>
-                          {progress.toFixed(1)}%
+                          {(progress ?? 0).toFixed(1)}%
                         </div>
                       </div>
                       <div style={{
@@ -155,8 +155,8 @@ export function BotEvolution({ data = mockEvolution }: Props) {
                         color: '#999999',
                         marginTop: '2px'
                       }}>
-                        <span>{currentLevel.minXp.toLocaleString()} XP</span>
-                        <span>{nextLevel ? nextLevel.minXp.toLocaleString() : '∞'} XP</span>
+                        <span>{(currentLevel?.minXp ?? 0).toLocaleString()} XP</span>
+                        <span>{nextLevel ? (nextLevel.minXp ?? 0).toLocaleString() : '∞'} XP</span>
                       </div>
                     </div>
 

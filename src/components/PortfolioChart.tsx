@@ -113,8 +113,9 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
       ctx.stroke();
     }
 
-    // Calculate data range
-    const values = balanceHistory.map(p => p.sol);
+    // Calculate data range (filter out undefined values)
+    const values = balanceHistory.map(p => p.sol ?? 0).filter(v => !isNaN(v) && v > 0);
+    if (values.length === 0) return; // No valid data
     const minVal = Math.min(...values) * 0.95;
     const maxVal = Math.max(...values) * 1.05;
     const range = maxVal - minVal || 0.01;
@@ -233,10 +234,10 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
             {currentBalance && (
               <>
                 <span style={{ color: '#FFCC00' }}>
-                  {currentBalance.sol.toFixed(4)} SOL
+                  {(currentBalance.sol ?? 0).toFixed(4)} SOL
                 </span>
                 <span style={{ color: isPositive ? '#00FF00' : '#FF6666' }}>
-                  {isPositive ? '▲' : '▼'} {Math.abs(changePercent).toFixed(1)}%
+                  {isPositive ? '▲' : '▼'} {Math.abs(changePercent ?? 0).toFixed(1)}%
                 </span>
               </>
             )}
@@ -282,13 +283,13 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           <div style={{ textAlign: 'center' }}>
             <div style={{ color: '#666666', fontSize: '9px' }}>Current</div>
             <div style={{ fontFamily: 'Courier New', fontWeight: 'bold' }}>
-              {currentBalance ? `${currentBalance.sol.toFixed(4)} SOL` : '--'}
+              {currentBalance ? `${(currentBalance.sol ?? 0).toFixed(4)} SOL` : '--'}
             </div>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ color: '#666666', fontSize: '9px' }}>USD Value</div>
             <div style={{ fontFamily: 'Courier New', fontWeight: 'bold' }}>
-              {currentBalance ? `$${currentBalance.usdValue.toFixed(2)}` : '--'}
+              {currentBalance ? `$${(currentBalance.usdValue ?? 0).toFixed(2)}` : '--'}
             </div>
           </div>
           <div style={{ textAlign: 'center' }}>
@@ -298,7 +299,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
               fontWeight: 'bold',
               color: isPositive ? '#008800' : '#CC0000'
             }}>
-              {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${changePercent.toFixed(2)}%` : '--'}
+              {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${(changePercent ?? 0).toFixed(2)}%` : '--'}
             </div>
           </div>
           <div style={{ textAlign: 'center' }}>
