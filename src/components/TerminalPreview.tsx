@@ -6,15 +6,8 @@ import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 export function TerminalPreview() {
   const { thoughts, isTyping, currentText, isConnected } = useAgentThoughts();
 
-  // Get last 3 thoughts
-  const recentThoughts = thoughts.slice(-3);
-
-  const scrollToTerminal = () => {
-    const terminal = document.getElementById('terminal');
-    if (terminal) {
-      terminal.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // Get last 8 thoughts
+  const recentThoughts = thoughts.slice(-8);
 
   return (
     <div style={{ marginBottom: '16px' }}>
@@ -23,7 +16,7 @@ export function TerminalPreview() {
         <tbody>
           <tr>
             <td className="section-header">
-              AI Brain Preview
+              AI Trading Brain
               <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#008800' : '#FF8800' }}>
                 ● {isConnected ? 'LIVE' : 'CONNECTING'}
               </span>
@@ -61,8 +54,8 @@ export function TerminalPreview() {
                 <div
                   className="terminal"
                   style={{
-                    height: '120px',
-                    overflow: 'hidden',
+                    height: '180px',
+                    overflow: 'auto',
                     padding: '8px',
                     background: '#0a0f0a',
                     fontFamily: '"Courier New", monospace',
@@ -80,16 +73,13 @@ export function TerminalPreview() {
                       <div
                         key={index}
                         style={{
-                          marginBottom: '4px',
-                          color: index === recentThoughts.length - 1 ? '#00ff00' : '#00aa00',
-                          opacity: index === 0 ? 0.6 : index === 1 ? 0.8 : 1,
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
+                          marginBottom: '6px',
+                          color: index === recentThoughts.length - 1 ? '#00ff00' : '#00cc00',
+                          lineHeight: '1.3',
                         }}
                       >
                         <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>{' '}
-                        {thought.message.slice(0, 80)}{thought.message.length > 80 ? '...' : ''}
+                        {thought.message}
                       </div>
                     ))
                   )}
@@ -97,21 +87,10 @@ export function TerminalPreview() {
                   {/* Currently typing */}
                   {isTyping && currentText && (
                     <div style={{ color: '#00ff00', marginTop: '4px' }}>
-                      <span style={{ color: '#ffff00' }}>{'>'}</span> {currentText.slice(0, 60)}
+                      <span style={{ color: '#ffff00' }}>{'>'}</span> {currentText}
                       <span className="blink">█</span>
                     </div>
                   )}
-
-                  {/* Fade overlay */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: '20px',
-                    background: 'linear-gradient(to bottom, transparent, #0a0f0a)',
-                    pointerEvents: 'none',
-                  }} />
                 </div>
 
                 {/* Status Bar */}
@@ -124,13 +103,9 @@ export function TerminalPreview() {
                   justifyContent: 'space-between',
                 }}>
                   <span>MODEL: claude-sonnet-4</span>
-                  <button
-                    onClick={scrollToTerminal}
-                    className="btn-y2k"
-                    style={{ padding: '1px 8px', fontSize: '9px' }}
-                  >
-                    View Full Terminal ↓
-                  </button>
+                  <span style={{ color: isConnected ? '#008800' : '#CC8800' }}>
+                    {isConnected ? '● STREAMING' : '○ CONNECTING'}
+                  </span>
                 </div>
               </div>
             </td>

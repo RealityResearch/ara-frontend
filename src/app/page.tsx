@@ -2,7 +2,6 @@
 
 import { Ticker } from '@/components/Ticker';
 import { Hero } from '@/components/Hero';
-import { AgentTerminal } from '@/components/AgentTerminal';
 import { TerminalPreview } from '@/components/TerminalPreview';
 import { VotingPanel } from '@/components/VotingPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
@@ -162,8 +161,10 @@ export default function Home() {
 
         {/* Main Content */}
         <div className="main-content">
-          {/* AI Brain Preview - Above the Fold */}
-          <TerminalPreview />
+          {/* AI Brain Terminal - Above the Fold */}
+          <div id="terminal">
+            <TerminalPreview />
+          </div>
 
           {/* Hero Section */}
           <Hero />
@@ -172,9 +173,6 @@ export default function Home() {
           <div style={{ marginBottom: '16px' }}>
             <PortfolioChart />
           </div>
-
-          {/* Agent Terminal */}
-          <AgentTerminal />
 
           {/* Trade History - Right Below Terminal for Live Updates */}
           <TradeHistory trades={tradeHistory} />
