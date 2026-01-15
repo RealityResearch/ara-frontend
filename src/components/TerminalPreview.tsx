@@ -103,10 +103,10 @@ export function TerminalPreview() {
         </div>
       </div>
 
-      {/* Two Column Layout */}
-      <div style={{ display: 'flex' }}>
+      {/* Two Column Layout - Stacks on mobile */}
+      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
         {/* Left: Terminal Output */}
-        <div style={{ flex: 1, background: '#1A1918' }}>
+        <div style={{ flex: '1 1 300px', background: '#1A1918', minWidth: 0 }}>
           {/* Sub-header */}
           <div style={{
             background: '#252321',
@@ -194,13 +194,14 @@ export function TerminalPreview() {
           </div>
         </div>
 
-        {/* Right: Info Panel */}
+        {/* Right: Info Panel - Full width on mobile */}
         <div style={{
-          width: '220px',
+          flex: '0 0 220px',
           background: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
-          borderLeft: '1px solid #E8E5E0'
+          borderLeft: '1px solid #E8E5E0',
+          minWidth: '220px',
         }}>
           {/* Token Display */}
           <div style={{

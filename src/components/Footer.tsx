@@ -6,128 +6,138 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer style={{ padding: '8px' }}>
+    <footer style={{ padding: '24px', background: '#FAF9F6' }}>
       {/* Disclaimer */}
-      <div className="bb-terminal" style={{ marginBottom: '8px' }}>
-        <div className="bb-header" style={{ background: '#331100' }}>
-          <span style={{ color: '#ff6600', fontWeight: 'bold', fontSize: '10px' }}>! IMPORTANT DISCLAIMER</span>
-        </div>
-        <div style={{ padding: '12px', background: '#1a0a00', borderBottom: '2px solid #ff6600' }}>
-          <span style={{ fontSize: '10px', color: '#999999', lineHeight: '1.5' }}>
-            $ARA is a memecoin on the Solana blockchain. This is <span style={{ color: '#ff6600', fontWeight: 'bold' }}>NOT</span> a real
+      <div className="card" style={{ marginBottom: '24px', maxWidth: '1200px', margin: '0 auto 24px' }}>
+        <div style={{
+          background: '#FFF8F6',
+          border: '1px solid #E8D0C8',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{
+            color: '#C45C5C',
+            fontWeight: '600',
+            fontSize: '12px',
+            marginBottom: '8px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            Important Disclaimer
+          </div>
+          <p style={{ fontSize: '12px', color: '#6B6860', lineHeight: '1.6', margin: 0 }}>
+            $ARA is a memecoin on the Solana blockchain. This is <strong style={{ color: '#C45C5C' }}>NOT</strong> a real
             investment product, retirement account, or financial instrument. There is no FDIC insurance, SEC registration, or regulatory
             oversight of any kind. The &quot;AI agent&quot; is for entertainment purposes only.
-            <span style={{ color: '#ff3333', fontWeight: 'bold' }}> You will probably lose money.</span> Do not invest more than you can
+            <strong style={{ color: '#C45C5C' }}> You will probably lose money.</strong> Do not invest more than you can
             afford to lose completely. This is not financial advice. DYOR.
-          </span>
+          </p>
         </div>
       </div>
 
       {/* Main Footer */}
-      <div className="bb-terminal">
-        <div className="bb-header">
-          <span className="bb-brand">CLAUDE INVESTMENTS</span>
-          <span style={{ color: '#00ff00', fontSize: '9px' }}>● AGENT ONLINE</span>
-        </div>
-
-        <div style={{ display: 'flex', gap: '2px', padding: '2px' }}>
+      <div className="card" style={{ maxWidth: '1200px', margin: '0 auto', padding: '24px' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '32px',
+          marginBottom: '24px'
+        }}>
           {/* Logo Column */}
-          <div style={{ flex: 1 }} className="bb-panel">
-            <div style={{ padding: '12px' }}>
-              <img
-                src="/logos/claude-investments.png"
-                alt="Claude Investments"
-                style={{ height: '32px', width: 'auto', marginBottom: '8px', filter: 'brightness(1.1)' }}
-              />
-              <div style={{ fontSize: '9px', color: '#666666', lineHeight: '1.4' }}>
-                The first fully autonomous AI-powered<br />
-                retirement fund on Solana.
-              </div>
-            </div>
+          <div>
+            <img
+              src="/logos/claude-investments.png"
+              alt="Claude Investments"
+              style={{ height: '36px', width: 'auto', marginBottom: '12px' }}
+            />
+            <p style={{ fontSize: '13px', color: '#6B6860', lineHeight: '1.5', margin: 0 }}>
+              The first fully autonomous AI-powered retirement fund on Solana.
+            </p>
           </div>
 
           {/* Quick Links */}
-          <div style={{ flex: 1 }} className="bb-panel">
-            <div style={{ padding: '12px' }}>
-              <div style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px', marginBottom: '8px' }}>QUICK LINKS</div>
-              <div style={{ fontSize: '10px', lineHeight: '1.8' }}>
-                <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ color: '#3399ff', display: 'block' }}>* Buy on pump.fun</a>
-                <a href={SOCIAL_LINKS.jupiter} target="_blank" rel="noopener noreferrer" style={{ color: '#3399ff', display: 'block' }}>* Swap on Jupiter</a>
-                <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" style={{ color: '#3399ff', display: 'block' }}>* View Chart</a>
-                <a href="#terminal" style={{ color: '#3399ff', display: 'block' }}>* Live Terminal</a>
-                <a href="#roadmap" style={{ color: '#3399ff', display: 'block' }}>* Roadmap</a>
-              </div>
+          <div>
+            <div style={{
+              color: '#9A958C',
+              fontSize: '11px',
+              letterSpacing: '1px',
+              marginBottom: '12px',
+              textTransform: 'uppercase',
+              fontWeight: '600'
+            }}>
+              Quick Links
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ color: '#D4775C', fontSize: '13px' }}>Buy on pump.fun</a>
+              <a href={SOCIAL_LINKS.jupiter} target="_blank" rel="noopener noreferrer" style={{ color: '#D4775C', fontSize: '13px' }}>Swap on Jupiter</a>
+              <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" style={{ color: '#D4775C', fontSize: '13px' }}>View Chart</a>
+              <a href="#terminal" style={{ color: '#D4775C', fontSize: '13px' }}>Live Terminal</a>
             </div>
           </div>
 
           {/* Connect */}
-          <div style={{ flex: 1 }} className="bb-panel">
-            <div style={{ padding: '12px' }}>
-              <div style={{ color: '#ffaa00', fontSize: '9px', letterSpacing: '1px', marginBottom: '8px' }}>CONNECT</div>
-              <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer">
-                <button style={{
-                  background: 'linear-gradient(180deg, #1da1f2 0%, #0d8bd9 100%)',
-                  border: '1px solid #3399ff',
-                  color: '#ffffff',
-                  padding: '8px 16px',
-                  fontFamily: 'Courier New',
-                  fontSize: '10px',
-                  cursor: 'pointer',
-                  width: '100%',
-                }}>
-                  FOLLOW @CLAUDECAPITAL
-                </button>
-              </a>
-              <div style={{ fontSize: '8px', color: '#666666', marginTop: '8px', textAlign: 'center' }}>
-                All updates posted on X/Twitter
-              </div>
+          <div>
+            <div style={{
+              color: '#9A958C',
+              fontSize: '11px',
+              letterSpacing: '1px',
+              marginBottom: '12px',
+              textTransform: 'uppercase',
+              fontWeight: '600'
+            }}>
+              Connect
             </div>
+            <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <button className="btn-primary" style={{ width: '100%', maxWidth: '200px' }}>
+                Follow @ClaudeCapital
+              </button>
+            </a>
+            <p style={{ fontSize: '11px', color: '#9A958C', marginTop: '8px' }}>
+              All updates posted on X/Twitter
+            </p>
           </div>
         </div>
 
-        <div className="bb-divider" />
+        {/* Divider */}
+        <div style={{ height: '1px', background: '#E8E5E0', margin: '24px 0' }} />
 
-        {/* Bottom Links */}
-        <div style={{ padding: '8px', textAlign: 'center' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '10px', marginBottom: '8px' }}>
-            <a href="#" style={{ color: '#3399ff' }}>HOME</a>
-            <a href="#terminal" style={{ color: '#3399ff' }}>TERMINAL</a>
-            <a href="#how-it-works" style={{ color: '#3399ff' }}>HOW IT WORKS</a>
-            <a href="#chart" style={{ color: '#3399ff' }}>CHART</a>
-            <a href="#token" style={{ color: '#3399ff' }}>TOKEN</a>
-            <a href="#roadmap" style={{ color: '#3399ff' }}>ROADMAP</a>
+        {/* Bottom */}
+        <div style={{ textAlign: 'center' }}>
+          {/* Nav Links */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '16px',
+            fontSize: '12px',
+            marginBottom: '16px'
+          }}>
+            <a href="#" style={{ color: '#6B6860' }}>Home</a>
+            <a href="#terminal" style={{ color: '#6B6860' }}>Terminal</a>
+            <a href="#how-it-works" style={{ color: '#6B6860' }}>How It Works</a>
+            <a href="#chart" style={{ color: '#6B6860' }}>Chart</a>
+            <a href="#token" style={{ color: '#6B6860' }}>Token</a>
           </div>
 
-          {/* Trust Badges */}
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
-            <span className="bb-fkey" style={{ padding: '2px 8px', fontSize: '8px' }}>SSL SECURED</span>
-            <span className="bb-fkey" style={{ padding: '2px 8px', fontSize: '8px' }}>
-              <span style={{ color: '#9945FF' }}>*</span> SOLANA
-            </span>
-            <span style={{
-              padding: '2px 8px',
-              fontSize: '8px',
-              background: '#00aa00',
-              border: '1px solid #00ff00',
-              color: '#ffffff',
-            }}>
-              <span style={{ color: '#00ff00' }}>●</span> LIVE
-            </span>
+          {/* Badges */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+            gap: '8px',
+            marginBottom: '16px'
+          }}>
+            <span className="badge badge-muted">SSL Secured</span>
+            <span className="badge badge-muted">Solana</span>
+            <span className="badge badge-live">Live</span>
           </div>
 
           {/* Copyright */}
-          <div style={{ fontSize: '9px', color: '#666666' }}>
+          <p style={{ fontSize: '12px', color: '#9A958C', margin: 0 }}>
             &copy; {currentYear} Claude Investments. All rights reserved.
             <br />
-            <span style={{ color: '#ff6600' }}>Powered by Claude AI</span>
-          </div>
-        </div>
-
-        {/* Command Line */}
-        <div className="bb-command">
-          <span className="bb-prompt">{'>'}</span>
-          <span style={{ color: '#ff6600' }}>END OF TRANSMISSION</span>
-          <span className="bb-cursor"></span>
+            <span style={{ color: '#D4775C' }}>Powered by Claude AI</span>
+          </p>
         </div>
       </div>
     </footer>
