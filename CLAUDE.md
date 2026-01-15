@@ -139,4 +139,36 @@ The project previously had a full agent-service backend with:
 This has been removed in favor of the theatrical mode. All backend code was deleted.
 
 ---
-*Last updated: Theatrical mode conversion - removed agent-service, converted to scripted frontend.*
+
+## Session Log
+
+### Session 5 - January 15, 2026: Theatrical Mode Conversion
+**Goal:** Convert from real AI agent to theatrical "front" site
+
+**Changes Made:**
+1. **Deleted `agent-service/` entirely** - removed all backend code, Claude API integration, Jupiter trading, WebSocket server
+2. **Created `src/lib/scriptedThoughts.ts`** - 70 pre-written AI thoughts that loop every ~6 minutes
+3. **Deleted WebSocket-dependent components:**
+   - ChatPanel.tsx (community chat)
+   - DiscoveryPanel.tsx (token scanner)
+   - TradePopup.tsx (trade notifications)
+   - VotingPanel.tsx (legacy voting)
+4. **Rewrote hooks:**
+   - `useAgentThoughts.ts` - now cycles through scripted thoughts with typing animation
+   - `useAgentStats.ts` - returns static mock data only
+5. **Simplified `PortfolioChart.tsx`** - static fake treasury with generated chart data
+6. **Simplified `AgentTerminal.tsx`** - removed question form, just displays thoughts
+7. **Updated `page.tsx`** - removed deleted component imports
+8. **Cleared `.env.local`** - no WebSocket URL needed
+9. **Shut down Railway service** - no more backend hosting costs
+
+**Result:**
+- Pure static frontend, deployable anywhere
+- $0 ongoing costs (no API, no server)
+- Terminal shows animated "AI thoughts" on infinite loop
+- Looks live, is actually pre-scripted theater
+
+**Commit:** `f27da1a` - pushed to main, deployed to Vercel
+
+---
+*Last updated: Session 5 - Theatrical mode conversion complete.*
