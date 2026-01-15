@@ -67,23 +67,6 @@ export const mockWalletStats: WalletStats = {
   winRate: 67.6,
 };
 
-export interface TickerItem {
-  symbol: string;
-  price: number;
-  change: number;
-}
-
-export const mockTickerData: TickerItem[] = [
-  { symbol: 'SOL', price: 94.95, change: 2.34 },
-  { symbol: 'BTC', price: 43521, change: 1.12 },
-  { symbol: 'ETH', price: 2284, change: -0.45 },
-  { symbol: '$ARA', price: 0.000042, change: 156.7 },
-  { symbol: 'BONK', price: 0.0000089, change: 8.9 },
-  { symbol: 'JUP', price: 0.82, change: -2.1 },
-  { symbol: 'WIF', price: 0.54, change: 12.3 },
-  { symbol: 'PYTH', price: 0.38, change: 4.5 },
-];
-
 // $ARA - Claude Investments Automated Retirement Account
 export const CONTRACT_ADDRESS = '5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump';
 
