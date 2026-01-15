@@ -68,14 +68,15 @@ export const mockWalletStats: WalletStats = {
 };
 
 // $ARA - Claude Investments Automated Retirement Account
-export const CONTRACT_ADDRESS = '5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump';
+// TODO: Replace with real contract address after pump.fun launch
+export const CONTRACT_ADDRESS = '';
 
 export const SOCIAL_LINKS = {
   twitter: 'https://x.com/ClaudeCapital',
-  pumpfun: `https://pump.fun/coin/${CONTRACT_ADDRESS}`,
-  jupiter: `https://jup.ag/swap/SOL-${CONTRACT_ADDRESS}`,
-  raydium: `https://raydium.io/swap/?inputCurrency=SOL&outputCurrency=${CONTRACT_ADDRESS}`,
-  dexscreener: `https://dexscreener.com/solana/${CONTRACT_ADDRESS}`,
+  pumpfun: CONTRACT_ADDRESS ? `https://pump.fun/coin/${CONTRACT_ADDRESS}` : 'https://pump.fun',
+  jupiter: CONTRACT_ADDRESS ? `https://jup.ag/swap/SOL-${CONTRACT_ADDRESS}` : 'https://jup.ag',
+  raydium: CONTRACT_ADDRESS ? `https://raydium.io/swap/?inputCurrency=SOL&outputCurrency=${CONTRACT_ADDRESS}` : 'https://raydium.io',
+  dexscreener: CONTRACT_ADDRESS ? `https://dexscreener.com/solana/${CONTRACT_ADDRESS}` : 'https://dexscreener.com',
 };
 
 // ============================================

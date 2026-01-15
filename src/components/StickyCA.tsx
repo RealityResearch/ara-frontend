@@ -7,12 +7,15 @@ export function StickyCA() {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
+    if (CONTRACT_ADDRESS.length === 0) return;
     await navigator.clipboard.writeText(CONTRACT_ADDRESS);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const displayCA = `${CONTRACT_ADDRESS.slice(0, 6)}...${CONTRACT_ADDRESS.slice(-4)}`;
+  const displayCA = CONTRACT_ADDRESS.length > 0
+    ? `${CONTRACT_ADDRESS.slice(0, 6)}...${CONTRACT_ADDRESS.slice(-4)}`
+    : 'Coming soon';
 
   return (
     <div className="sticky-ca">
@@ -22,17 +25,20 @@ export function StickyCA() {
           <span className="sticky-ca-label">Contract</span>
           <div className="sticky-ca-live">
             <span className="live-dot"></span>
-            <span className="live-text">LIVE</span>
+            <span className="live-text">{CONTRACT_ADDRESS.length > 0 ? 'LIVE' : 'SOON'}</span>
           </div>
         </div>
 
         {/* CA Display */}
-        <div className="sticky-ca-display">{displayCA}</div>
+        <div className="sticky-ca-display" style={{ color: CONTRACT_ADDRESS.length > 0 ? undefined : 'var(--text-muted)' }}>
+          {displayCA}
+        </div>
 
         {/* Copy Button */}
         <button
           onClick={copyToClipboard}
           className={`btn btn-primary sticky-ca-btn ${copied ? 'btn-success' : ''}`}
+          disabled={CONTRACT_ADDRESS.length === 0}
         >
           {copied ? 'Copied!' : 'Copy CA'}
         </button>

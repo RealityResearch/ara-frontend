@@ -27,12 +27,14 @@ export function TokenInfo() {
             <input
               type="text"
               className="input input-mono"
-              value={CONTRACT_ADDRESS}
+              value={CONTRACT_ADDRESS || 'Launching soon...'}
               readOnly
+              style={{ color: CONTRACT_ADDRESS ? undefined : 'var(--text-muted)' }}
             />
             <button
               onClick={copyToClipboard}
               className={`btn ${copied ? 'btn-success' : 'btn-secondary'}`}
+              disabled={!CONTRACT_ADDRESS}
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>
