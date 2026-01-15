@@ -4,20 +4,20 @@ import { useState, useEffect } from 'react';
 import { useAgentThoughts, ThoughtType } from '@/hooks/useAgentThoughts';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 
-// Map thought types to Bloomberg colors
+// Map thought types to colors
 function getThoughtColor(type: ThoughtType): string {
   const colors: Record<ThoughtType, string> = {
-    analysis: '#ffaa00',   // Amber - thinking
-    trade: '#00ff00',      // Green - action
-    info: '#999999',       // Gray - info
-    decision: '#ffffff',   // White - decisions
-    alert: '#ff3333',      // Red - alerts
-    reflection: '#3399ff', // Blue - reflection
-    hypothesis: '#ffff00', // Yellow - hypothesis
-    action: '#ff6600',     // Orange - action
-    status: '#666666',     // Dark gray - status
+    analysis: '#D4775C',   // Terracotta - thinking
+    trade: '#5C8A5C',      // Green - action
+    info: '#9A958C',       // Gray - info
+    decision: '#E8E5E0',   // Cream - decisions
+    alert: '#C45C5C',      // Red - alerts
+    reflection: '#5C7A8A', // Blue - reflection
+    hypothesis: '#D4A75C', // Gold - hypothesis
+    action: '#D4775C',     // Terracotta - action
+    status: '#6B6860',     // Dark gray - status
   };
-  return colors[type] || '#ff6600';
+  return colors[type] || '#D4775C';
 }
 
 function getThoughtPrefix(type: ThoughtType): string {
@@ -56,16 +56,48 @@ export function TerminalPreview() {
   }, []);
 
   return (
-    <div className="bb-terminal" style={{ marginBottom: '16px' }}>
-      {/* Bloomberg Header */}
-      <div className="bb-header">
+    <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: '24px' }}>
+      {/* Header */}
+      <div style={{
+        background: '#1A1918',
+        padding: '12px 16px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottom: '1px solid #3A3836'
+      }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span className="bb-brand">AGENT BRAIN</span>
-          <span style={{ color: '#ffaa00', fontSize: '10px' }}>CLAUDE-SONNET-4</span>
+          <span style={{
+            color: '#D4775C',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            fontFamily: 'Courier New',
+            letterSpacing: '1px'
+          }}>
+            AGENT BRAIN
+          </span>
+          <span style={{ color: '#9A958C', fontSize: '11px', fontFamily: 'Courier New' }}>
+            CLAUDE-SONNET-4
+          </span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="bb-time">{currentTime}</span>
-          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'}>
+          <span style={{
+            color: '#5C8A5C',
+            fontSize: '11px',
+            fontFamily: 'Courier New',
+            fontWeight: 'bold'
+          }}>
+            {currentTime}
+          </span>
+          <span style={{
+            background: isConnected ? '#5C8A5C' : '#C45C5C',
+            color: 'white',
+            padding: '3px 10px',
+            borderRadius: '4px',
+            fontSize: '10px',
+            fontWeight: 'bold',
+            textTransform: 'uppercase'
+          }}>
             {isConnected ? 'STREAMING' : connectionState.toUpperCase()}
           </span>
         </div>
@@ -74,39 +106,45 @@ export function TerminalPreview() {
       {/* Two Column Layout */}
       <div style={{ display: 'flex' }}>
         {/* Left: Terminal Output */}
-        <div style={{ flex: 1, borderRight: '1px solid #333333' }}>
+        <div style={{ flex: 1, background: '#1A1918' }}>
           {/* Sub-header */}
           <div style={{
-            background: '#0d0d0d',
-            padding: '4px 8px',
-            borderBottom: '1px solid #333333',
+            background: '#252321',
+            padding: '8px 12px',
+            borderBottom: '1px solid #3A3836',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}>
-            <span style={{ color: '#ffaa00', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-              LIVE AGENT THOUGHTS
+            <span style={{
+              color: '#D4775C',
+              fontSize: '10px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              fontFamily: 'Courier New'
+            }}>
+              Live Agent Thoughts
             </span>
-            <span style={{ color: '#666666', fontSize: '9px' }}>
-              {recentThoughts.length} MSGS
+            <span style={{ color: '#6B6860', fontSize: '10px', fontFamily: 'Courier New' }}>
+              {recentThoughts.length} msgs
             </span>
           </div>
 
           {/* Terminal Output */}
           <div style={{
-            background: '#000000',
-            height: '220px',
+            background: '#1A1918',
+            height: '240px',
             overflow: 'auto',
-            padding: '8px',
-            fontFamily: '"Courier New", monospace',
-            fontSize: '10px',
-            lineHeight: '1.5',
+            padding: '12px',
+            fontFamily: 'Courier New',
+            fontSize: '11px',
+            lineHeight: '1.6',
           }}>
             {/* Show initializing only when no thoughts and not typing */}
             {recentThoughts.length === 0 && !isTyping && (
-              <div style={{ color: '#ff6600' }}>
-                <span style={{ color: '#ffaa00' }}>{'>'}</span> Initializing neural networks...
-                <span className="bb-cursor" style={{ marginLeft: '4px' }}></span>
+              <div style={{ color: '#D4775C' }}>
+                <span style={{ color: '#5C8A5C' }}>{'>'}</span> Initializing neural networks...
+                <span className="cursor-blink" style={{ marginLeft: '4px' }}></span>
               </div>
             )}
 
@@ -117,12 +155,12 @@ export function TerminalPreview() {
               const isLatest = index === recentThoughts.length - 1;
               return (
                 <div key={index} style={{
-                  marginBottom: '6px',
-                  opacity: isLatest ? 1 : 0.8,
+                  marginBottom: '8px',
+                  opacity: isLatest ? 1 : 0.85,
                 }}>
-                  <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>
-                  <span style={{ color: '#ffaa00', marginLeft: '4px' }}>{prefix}</span>
-                  <span style={{ color: '#333333' }}> | </span>
+                  <span style={{ color: '#6B6860' }}>[{thought.timestamp}]</span>
+                  <span style={{ color: '#D4775C', marginLeft: '8px', fontWeight: 'bold' }}>{prefix}</span>
+                  <span style={{ color: '#3A3836' }}> | </span>
                   <span style={{ color, wordBreak: 'break-word' }}>{thought.message}</span>
                 </div>
               );
@@ -131,143 +169,167 @@ export function TerminalPreview() {
             {/* Show currently typing thought */}
             {isTyping && currentText && (
               <div style={{ marginTop: recentThoughts.length > 0 ? '8px' : '0' }}>
-                <span style={{ color: '#00ff00' }}>{'>'}</span>
-                <span style={{ color: '#ffaa00', marginLeft: '4px' }}>{currentText}</span>
-                <span className="bb-cursor" style={{ marginLeft: '2px' }}></span>
+                <span style={{ color: '#5C8A5C' }}>{'>'}</span>
+                <span style={{ color: '#D4775C', marginLeft: '8px' }}>{currentText}</span>
+                <span className="cursor-blink" style={{ marginLeft: '2px' }}></span>
               </div>
             )}
           </div>
 
           {/* Status Bar */}
           <div style={{
-            background: '#0d0d0d',
-            padding: '4px 8px',
-            borderTop: '1px solid #333333',
+            background: '#252321',
+            padding: '8px 12px',
+            borderTop: '1px solid #3A3836',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            fontSize: '9px',
+            fontSize: '10px',
+            fontFamily: 'Courier New'
           }}>
-            <span style={{ color: '#666666' }}>MODEL: claude-sonnet-4-20250514</span>
-            <span style={{ color: isConnected ? '#00ff00' : '#ff6600' }}>
+            <span style={{ color: '#6B6860' }}>MODEL: claude-sonnet-4-20250514</span>
+            <span style={{ color: isConnected ? '#5C8A5C' : '#C45C5C' }}>
               {isConnected ? '● CONNECTED' : '○ ' + connectionState.toUpperCase()}
             </span>
           </div>
         </div>
 
-        {/* Right: Quick Actions Panel */}
+        {/* Right: Info Panel */}
         <div style={{
-          width: '200px',
-          background: '#0d0d0d',
+          width: '220px',
+          background: '#FFFFFF',
           display: 'flex',
           flexDirection: 'column',
+          borderLeft: '1px solid #E8E5E0'
         }}>
           {/* Token Display */}
           <div style={{
-            padding: '12px',
-            borderBottom: '1px solid #333333',
+            padding: '20px',
+            borderBottom: '1px solid #E8E5E0',
             textAlign: 'center',
           }}>
-            <div style={{ color: '#666666', fontSize: '8px', letterSpacing: '1px', marginBottom: '4px' }}>
-              TICKER
+            <div style={{
+              color: '#9A958C',
+              fontSize: '10px',
+              letterSpacing: '1px',
+              marginBottom: '8px',
+              textTransform: 'uppercase'
+            }}>
+              Ticker
             </div>
-            <div style={{ color: '#00ff00', fontSize: '28px', fontWeight: 'bold', fontFamily: 'Courier New' }}>
+            <div style={{
+              color: '#D4775C',
+              fontSize: '32px',
+              fontWeight: 'bold',
+              fontFamily: 'Georgia'
+            }}>
               $ARA
             </div>
-            <div style={{ color: '#666666', fontSize: '9px', marginTop: '4px' }}>
-              ● LIVE ON SOLANA
+            <div style={{
+              color: '#5C8A5C',
+              fontSize: '11px',
+              marginTop: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}>
+              <span style={{
+                width: '6px',
+                height: '6px',
+                background: '#5C8A5C',
+                borderRadius: '50%'
+              }}></span>
+              Live on Solana
             </div>
           </div>
 
           {/* Stats */}
-          <div className="bb-grid bb-grid-2" style={{ padding: '2px' }}>
-            <div className="bb-stat-box" style={{ padding: '6px' }}>
-              <div className="bb-stat-label" style={{ fontSize: '7px' }}>STATUS</div>
-              <div style={{ color: '#00ff00', fontSize: '11px', fontWeight: 'bold' }}>ACTIVE</div>
+          <div style={{ padding: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div className="stat-box" style={{ padding: '12px' }}>
+              <div className="stat-label" style={{ fontSize: '9px' }}>Status</div>
+              <div style={{ color: '#5C8A5C', fontSize: '13px', fontWeight: 'bold', fontFamily: 'Courier New' }}>ACTIVE</div>
             </div>
-            <div className="bb-stat-box" style={{ padding: '6px' }}>
-              <div className="bb-stat-label" style={{ fontSize: '7px' }}>CHAIN</div>
-              <div style={{ color: '#ffaa00', fontSize: '11px', fontWeight: 'bold' }}>SOL</div>
+            <div className="stat-box" style={{ padding: '12px' }}>
+              <div className="stat-label" style={{ fontSize: '9px' }}>Chain</div>
+              <div style={{ color: '#D4775C', fontSize: '13px', fontWeight: 'bold', fontFamily: 'Courier New' }}>SOL</div>
             </div>
           </div>
 
           {/* Buy Button */}
-          <div style={{ padding: '8px' }}>
+          <div style={{ padding: '12px 16px' }}>
             <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <button style={{
+              <button className="btn-primary" style={{
                 width: '100%',
-                background: 'linear-gradient(180deg, #00aa00 0%, #006600 100%)',
-                border: '1px solid #00ff00',
-                color: '#ffffff',
-                padding: '10px',
-                fontFamily: 'Courier New',
-                fontWeight: 'bold',
-                fontSize: '12px',
-                cursor: 'pointer',
-                textShadow: '0 1px 2px rgba(0,0,0,0.5)',
+                padding: '12px',
+                fontSize: '14px',
+                fontWeight: '600',
               }}>
-                BUY $ARA
+                Buy $ARA
               </button>
             </a>
           </div>
 
           {/* Contract Address */}
-          <div style={{ padding: '0 8px 8px' }}>
-            <div style={{ color: '#666666', fontSize: '8px', letterSpacing: '1px', marginBottom: '4px' }}>
-              CONTRACT
+          <div style={{ padding: '0 16px 16px' }}>
+            <div style={{
+              color: '#9A958C',
+              fontSize: '9px',
+              letterSpacing: '1px',
+              marginBottom: '6px',
+              textTransform: 'uppercase'
+            }}>
+              Contract
             </div>
             <div style={{
-              background: '#000000',
-              border: '1px solid #333333',
-              padding: '6px',
-              fontSize: '8px',
-              color: '#ff6600',
+              background: '#FAF9F6',
+              border: '1px solid #E8E5E0',
+              borderRadius: '6px',
+              padding: '8px',
+              fontSize: '9px',
+              color: '#3D3929',
               wordBreak: 'break-all',
               fontFamily: 'Courier New',
             }}>
-              {CONTRACT_ADDRESS.slice(0, 16)}...
+              {CONTRACT_ADDRESS.slice(0, 20)}...
             </div>
             <button
               onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+              className="btn-secondary"
               style={{
                 width: '100%',
-                marginTop: '4px',
-                background: '#1a1a1a',
-                border: '1px solid #333333',
-                color: '#ffaa00',
-                padding: '6px',
-                fontSize: '9px',
-                cursor: 'pointer',
-                fontFamily: 'Courier New',
+                marginTop: '8px',
+                padding: '8px',
+                fontSize: '11px',
               }}
             >
-              COPY CA
+              Copy CA
             </button>
           </div>
 
           {/* Links */}
           <div style={{
             marginTop: 'auto',
-            padding: '8px',
-            borderTop: '1px solid #333333',
+            padding: '12px',
+            borderTop: '1px solid #E8E5E0',
             display: 'flex',
-            gap: '4px',
+            gap: '6px',
           }}>
             <a
               href={SOCIAL_LINKS.pumpfun}
               target="_blank"
               rel="noopener noreferrer"
-              className="bb-fkey"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '4px', fontSize: '8px' }}
+              className="btn-secondary"
+              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
             >
-              PUMP
+              Pump
             </a>
             <a
               href={SOCIAL_LINKS.dexscreener}
               target="_blank"
               rel="noopener noreferrer"
-              className="bb-fkey"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '4px', fontSize: '8px' }}
+              className="btn-secondary"
+              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
             >
               DEX
             </a>
@@ -275,48 +337,13 @@ export function TerminalPreview() {
               href={SOCIAL_LINKS.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="bb-fkey"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '4px', fontSize: '8px' }}
+              className="btn-secondary"
+              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
             >
               X
             </a>
           </div>
         </div>
-      </div>
-
-      {/* Function Keys */}
-      <div className="bb-function-keys">
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F1</span>
-          HELP
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F2</span>
-          MARKET
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F3</span>
-          HISTORY
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F4</span>
-          ALERTS
-        </button>
-        <button className="bb-fkey" onClick={reconnect} style={{ marginLeft: 'auto' }}>
-          <span className="bb-fkey-label">F9</span>
-          RECONNECT
-        </button>
-        <button className="bb-fkey">
-          <span className="bb-fkey-label">F10</span>
-          MENU
-        </button>
-      </div>
-
-      {/* Command Line */}
-      <div className="bb-command">
-        <span className="bb-prompt">{'>'}</span>
-        <span style={{ color: '#ff6600' }}>AGENT THOUGHTS GO</span>
-        <span className="bb-cursor"></span>
       </div>
     </div>
   );

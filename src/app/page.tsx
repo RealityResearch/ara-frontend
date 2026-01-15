@@ -43,99 +43,145 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ background: '#000000', minHeight: '100vh', color: '#ff6600' }}>
+    <div style={{ background: '#FAF9F6', minHeight: '100vh', color: '#3D3929' }}>
 
-      {/* Bloomberg Header Bar */}
-      <div style={{
-        background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)',
-        borderBottom: '2px solid #333333',
-        padding: '8px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+      {/* Clean Header */}
+      <header style={{
+        background: '#FFFFFF',
+        borderBottom: '1px solid #E8E5E0',
+        padding: '16px 24px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <img
-            src="/logos/claude-investments.png"
-            alt="Claude Investments"
-            style={{ height: '36px', width: 'auto', filter: 'brightness(1.1)' }}
-          />
-          <span className="hide-mobile" style={{ color: '#ffaa00', fontSize: '10px', fontStyle: 'italic' }}>
-            "The Future of Investing is Here"
-          </span>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <img
+              src="/logos/claude-investments.png"
+              alt="Claude Investments"
+              style={{ height: '40px', width: 'auto' }}
+            />
+            <span className="hide-mobile" style={{ color: '#6B6860', fontSize: '14px', fontStyle: 'italic' }}>
+              The Future of Investing is Here
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{
+              color: '#5C8A5C',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}>
+              <span style={{
+                width: '8px',
+                height: '8px',
+                background: '#5C8A5C',
+                borderRadius: '50%',
+                animation: 'pulse 2s infinite'
+              }}></span>
+              AGENT LIVE
+            </span>
+            <span style={{
+              fontFamily: 'Courier New',
+              color: '#6B6860',
+              fontSize: '13px'
+            }}>
+              {currentTime}
+            </span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: '#00ff00', fontSize: '10px' }}>
-            <span style={{ animation: 'bb-blink 1s infinite' }}>●</span> AGENT LIVE
-          </span>
-          <span className="bb-time">{currentTime}</span>
-          <span className="bb-badge bb-badge-live">LIVE</span>
-        </div>
-      </div>
+      </header>
 
-      {/* Scrolling Ticker */}
+      {/* Scrolling Ticker - keep dark for contrast */}
       <Ticker />
 
-      {/* Bloomberg Navigation */}
-      <div style={{
-        background: '#0d0d0d',
-        borderBottom: '1px solid #333333',
-        padding: '4px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+      {/* Navigation */}
+      <nav style={{
+        background: '#FFFFFF',
+        borderBottom: '1px solid #E8E5E0',
+        padding: '8px 24px',
       }}>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {[
-            { label: 'TERMINAL', href: '#terminal', live: true },
-            { label: 'PORTFOLIO', href: '#portfolio' },
-            { label: 'TRADES', href: '#trades' },
-            { label: 'STATS', href: '#performance' },
-            { label: 'CHART', href: '#chart', live: true },
-            { label: 'TOKEN', href: '#token' },
-          ].map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="bb-fkey"
-              style={{
-                textDecoration: 'none',
-                fontSize: '9px',
-                padding: '4px 12px',
-              }}
-            >
-              {item.label}
-              {item.live && <span style={{ color: '#00ff00', marginLeft: '4px' }}>●</span>}
-            </a>
-          ))}
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {[
+              { label: 'Terminal', href: '#terminal', live: true },
+              { label: 'Portfolio', href: '#portfolio' },
+              { label: 'Trades', href: '#trades' },
+              { label: 'Stats', href: '#performance' },
+              { label: 'Chart', href: '#chart', live: true },
+              { label: 'Token', href: '#token' },
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                className="nav-link"
+                style={{
+                  textDecoration: 'none',
+                  fontSize: '13px',
+                  padding: '8px 16px',
+                  borderRadius: '6px',
+                  color: '#6B6860',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {item.label}
+                {item.live && <span style={{ color: '#5C8A5C', marginLeft: '6px', fontSize: '8px' }}>●</span>}
+              </a>
+            ))}
+          </div>
+          <div className="hide-mobile" style={{ fontSize: '12px', color: '#9A958C' }}>
+            Analyzing: <span style={{ color: '#D4775C', fontWeight: '600' }}>$ARA</span>
+          </div>
         </div>
-        <div className="hide-mobile" style={{ fontSize: '9px', color: '#666666' }}>
-          <span style={{ color: '#00ff00' }}>●</span> Connected | Analyzing: <span style={{ color: '#ffaa00' }}>$ARA</span>
-        </div>
-      </div>
+      </nav>
 
       {/* Main Content Area */}
-      <div style={{ display: 'flex', padding: '8px', gap: '8px' }}>
+      <main style={{
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '24px',
+        display: 'flex',
+        gap: '24px'
+      }}>
         {/* Sidebar - Desktop Only */}
-        <div className="hide-mobile" style={{
-          width: '160px',
+        <aside className="hide-mobile" style={{
+          width: '200px',
           flexShrink: 0,
           display: 'flex',
           flexDirection: 'column',
-          gap: '2px',
+          gap: '16px',
         }}>
-          {/* Navigation Panel */}
-          <div className="bb-terminal" style={{ padding: 0 }}>
-            <div className="bb-header" style={{ padding: '4px 8px' }}>
-              <span style={{ color: '#ffaa00', fontSize: '9px', fontWeight: 'bold' }}>NAVIGATION</span>
+          {/* Navigation Card */}
+          <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+            <div style={{
+              background: '#F0EDE8',
+              padding: '12px 16px',
+              borderBottom: '1px solid #E8E5E0',
+              fontWeight: '600',
+              fontSize: '12px',
+              color: '#6B6860',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Navigation
             </div>
             {[
-              { label: 'Terminal', href: '#terminal', badge: 'LIVE', badgeColor: '#00ff00' },
+              { label: 'Terminal', href: '#terminal', badge: 'LIVE' },
               { label: 'Portfolio', href: '#portfolio' },
               { label: 'Performance', href: '#performance' },
               { label: 'Evolution', href: '#evolution' },
               { label: 'Trade History', href: '#trades' },
-              { label: 'Chart', href: '#chart', badge: 'LIVE', badgeColor: '#00ff00' },
+              { label: 'Chart', href: '#chart', badge: 'LIVE' },
               { label: 'How It Works', href: '#how-it-works' },
               { label: 'Token Info', href: '#token' },
               { label: 'Roadmap', href: '#roadmap' },
@@ -145,22 +191,23 @@ export default function Home() {
                 href={item.href}
                 style={{
                   display: 'block',
-                  padding: '6px 8px',
-                  color: '#ff6600',
+                  padding: '10px 16px',
+                  color: '#3D3929',
                   textDecoration: 'none',
-                  fontSize: '10px',
-                  borderBottom: '1px solid #1a1a1a',
-                  transition: 'background 0.1s',
+                  fontSize: '13px',
+                  borderBottom: '1px solid #F0EDE8',
+                  transition: 'background 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 102, 0, 0.1)'}
+                onMouseEnter={(e) => e.currentTarget.style.background = '#FAF9F6'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 {item.label}
                 {item.badge && (
                   <span style={{
-                    marginLeft: '4px',
-                    fontSize: '7px',
-                    color: item.badgeColor,
+                    marginLeft: '8px',
+                    fontSize: '9px',
+                    color: '#5C8A5C',
+                    fontWeight: '600'
                   }}>● {item.badge}</span>
                 )}
               </a>
@@ -168,51 +215,72 @@ export default function Home() {
           </div>
 
           {/* Quick Links */}
-          <div className="bb-terminal" style={{ padding: 0 }}>
-            <div className="bb-header" style={{ padding: '4px 8px' }}>
-              <span style={{ color: '#ffaa00', fontSize: '9px', fontWeight: 'bold' }}>LINKS</span>
+          <div className="card" style={{ padding: '16px' }}>
+            <div style={{
+              fontWeight: '600',
+              fontSize: '12px',
+              color: '#6B6860',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+              marginBottom: '12px'
+            }}>
+              Links
             </div>
-            <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <a href={SOCIAL_LINKS.twitter} target="_blank" rel="noopener noreferrer" className="bb-fkey" style={{ textAlign: 'center', textDecoration: 'none', fontSize: '9px' }}>
-                TWITTER/X
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <a
+                href={SOCIAL_LINKS.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+                style={{
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  fontSize: '12px',
+                  padding: '8px'
+                }}
+              >
+                Twitter/X
               </a>
-              <a href={SOCIAL_LINKS.dexscreener} target="_blank" rel="noopener noreferrer" className="bb-fkey" style={{ textAlign: 'center', textDecoration: 'none', fontSize: '9px' }}>
-                DEXSCREENER
+              <a
+                href={SOCIAL_LINKS.dexscreener}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+                style={{
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  fontSize: '12px',
+                  padding: '8px'
+                }}
+              >
+                DexScreener
               </a>
             </div>
           </div>
 
           {/* Buy CTA */}
-          <div className="bb-terminal" style={{ padding: '8px', textAlign: 'center' }}>
-            <div style={{ color: '#ffaa00', fontSize: '9px', marginBottom: '8px', fontWeight: 'bold' }}>BUY $ARA</div>
+          <div className="card" style={{ padding: '16px', textAlign: 'center' }}>
+            <div style={{
+              color: '#6B6860',
+              fontSize: '12px',
+              marginBottom: '12px',
+              fontWeight: '600',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Buy $ARA
+            </div>
             <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <button style={{
+              <button className="btn-primary" style={{
                 width: '100%',
-                background: 'linear-gradient(180deg, #00aa00 0%, #006600 100%)',
-                border: '1px solid #00ff00',
-                color: '#ffffff',
-                padding: '8px',
-                fontFamily: 'Courier New',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                cursor: 'pointer',
+                fontSize: '13px',
+                fontWeight: '600',
               }}>
-                PUMP.FUN
+                Pump.fun
               </button>
             </a>
           </div>
-
-          {/* System Status */}
-          <div className="bb-terminal" style={{ padding: '8px' }}>
-            <div style={{ color: '#666666', fontSize: '8px', textAlign: 'center', marginBottom: '4px' }}>SYSTEM STATUS</div>
-            <div style={{ fontSize: '9px', color: '#00ff00', textAlign: 'center' }}>
-              ● ALL SYSTEMS NOMINAL
-            </div>
-            <div style={{ fontSize: '8px', color: '#666666', textAlign: 'center', marginTop: '4px' }}>
-              {currentTime} UTC
-            </div>
-          </div>
-        </div>
+        </aside>
 
         {/* Main Content */}
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -247,13 +315,20 @@ export default function Home() {
           {/* Coming Soon / Roadmap */}
           <ComingSoon />
         </div>
-      </div>
+      </main>
 
       {/* Footer */}
       <Footer />
 
       {/* Sticky CA Button */}
       <StickyCA />
+
+      <style jsx global>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
