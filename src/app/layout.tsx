@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://claudeinvestments.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://claude-capital.com'),
   title: "Claude Investments | $ARA - Automated Retirement Account on Solana",
   description: "Watch an AI manage a treasury in real-time. Every thought, every trade, fully transparent. The first autonomous AI trading agent on Solana.",
   keywords: ["solana", "memecoin", "ai agent", "trading bot", "crypto", "ara", "claude investments", "pump.fun", "defi"],
