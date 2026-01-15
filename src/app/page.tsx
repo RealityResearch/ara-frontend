@@ -20,6 +20,14 @@ export default function Home() {
   const { performance, evolution, tradeHistory } = useAgentStats();
   const [currentTime, setCurrentTime] = useState('--:--:--');
 
+  // Scroll to top on page load (prevent browser scroll restoration)
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  }, []);
+
   useEffect(() => {
     const updateTime = () => {
       setCurrentTime(new Date().toLocaleTimeString('en-US', {

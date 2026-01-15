@@ -102,31 +102,35 @@ export function TerminalPreview() {
             fontSize: '10px',
             lineHeight: '1.5',
           }}>
-            {recentThoughts.length === 0 ? (
+            {/* Show initializing only when no thoughts and not typing */}
+            {recentThoughts.length === 0 && !isTyping && (
               <div style={{ color: '#ff6600' }}>
                 <span style={{ color: '#ffaa00' }}>{'>'}</span> Initializing neural networks...
                 <span className="bb-cursor" style={{ marginLeft: '4px' }}></span>
               </div>
-            ) : (
-              recentThoughts.map((thought, index) => {
-                const color = getThoughtColor(thought.type as ThoughtType);
-                const prefix = getThoughtPrefix(thought.type as ThoughtType);
-                const isLatest = index === recentThoughts.length - 1;
-                return (
-                  <div key={index} style={{
-                    marginBottom: '6px',
-                    opacity: isLatest ? 1 : 0.8,
-                  }}>
-                    <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>
-                    <span style={{ color: '#ffaa00', marginLeft: '4px' }}>{prefix}</span>
-                    <span style={{ color: '#333333' }}> | </span>
-                    <span style={{ color, wordBreak: 'break-word' }}>{thought.message}</span>
-                  </div>
-                );
-              })
             )}
+
+            {/* Show existing thoughts */}
+            {recentThoughts.map((thought, index) => {
+              const color = getThoughtColor(thought.type as ThoughtType);
+              const prefix = getThoughtPrefix(thought.type as ThoughtType);
+              const isLatest = index === recentThoughts.length - 1;
+              return (
+                <div key={index} style={{
+                  marginBottom: '6px',
+                  opacity: isLatest ? 1 : 0.8,
+                }}>
+                  <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>
+                  <span style={{ color: '#ffaa00', marginLeft: '4px' }}>{prefix}</span>
+                  <span style={{ color: '#333333' }}> | </span>
+                  <span style={{ color, wordBreak: 'break-word' }}>{thought.message}</span>
+                </div>
+              );
+            })}
+
+            {/* Show currently typing thought */}
             {isTyping && currentText && (
-              <div style={{ marginTop: '8px' }}>
+              <div style={{ marginTop: recentThoughts.length > 0 ? '8px' : '0' }}>
                 <span style={{ color: '#00ff00' }}>{'>'}</span>
                 <span style={{ color: '#ffaa00', marginLeft: '4px' }}>{currentText}</span>
                 <span className="bb-cursor" style={{ marginLeft: '2px' }}></span>
