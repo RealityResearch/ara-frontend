@@ -2,26 +2,36 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-interface PositionData {
-  tokenAddress: string;
-  tokenSymbol: string;
-  entryPrice: number;
-  currentPrice?: number;
-  amount: number;
-  costBasis: number;
-  currentValue?: number;
-  unrealizedPnlPercent?: number;
-}
+// Static fake data for theatrical display
+const FAKE_BALANCE = {
+  sol: 8.4237,
+  usdValue: 1199.85,
+};
 
-interface BalancePoint {
-  timestamp: number;
-  sol: number;
-  usdValue: number;
-  solPrice?: number;
-}
+const FAKE_SOL_PRICE = 142.50;
 
-interface PortfolioChartProps {
-  wsUrl?: string;
+const FAKE_POSITIONS = [
+  { tokenSymbol: 'BONK', amount: 15420000, currentValue: 137.24, unrealizedPnlPercent: 12.4 },
+];
+
+// Generate fake historical data for the chart
+function generateFakeHistory(): { timestamp: number; sol: number; usdValue: number }[] {
+  const now = Date.now();
+  const history = [];
+  let baseSol = 8.2;
+
+  for (let i = 30; i >= 0; i--) {
+    const variation = (Math.random() - 0.5) * 0.15;
+    baseSol = Math.max(7.8, Math.min(8.8, baseSol + variation));
+    history.push({
+      timestamp: now - i * 60000, // Every minute
+      sol: baseSol,
+      usdValue: baseSol * FAKE_SOL_PRICE,
+    });
+  }
+  // End at our static balance
+  history[history.length - 1].sol = FAKE_BALANCE.sol;
+  return history;
 }
 
 function formatNumber(num: number, decimals: number = 2): string {
@@ -46,18 +56,11 @@ function getAllocColor(symbol: string): string {
   return ALLOC_COLORS[symbol.toUpperCase()] || ALLOC_COLORS.DEFAULT;
 }
 
-export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
-  const [balanceHistory, setBalanceHistory] = useState<BalancePoint[]>([]);
-  const [currentBalance, setCurrentBalance] = useState<{ sol: number; usdValue: number } | null>(null);
-  const [positions, setPositions] = useState<PositionData[]>([]);
-  const [totalPositionValue, setTotalPositionValue] = useState<number>(0);
-  const [solPrice, setSolPrice] = useState<number>(0);
-  const [isConnected, setIsConnected] = useState(false);
+export function PortfolioChart() {
   const [currentTime, setCurrentTime] = useState<string>('--:--:--');
+  const [balanceHistory] = useState(generateFakeHistory);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const WS_URL = wsUrl || process.env.NEXT_PUBLIC_AGENT_WS_URL || 'ws://localhost:8080';
 
   useEffect(() => {
     const updateTime = () => {
@@ -72,58 +75,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const socket = new WebSocket(WS_URL);
-
-    socket.onopen = () => {
-      setIsConnected(true);
-    };
-
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-
-        if (message.type === 'market_update' && message.marketData) {
-          const walletSol = message.marketData.walletSol ?? 0;
-          const walletValue = message.marketData.walletValue ?? 0;
-          const positionsData = message.marketData.positions ?? [];
-          const positionValue = message.marketData.totalPositionValue ?? 0;
-          const solPriceUsd = message.marketData.solPrice ?? 0;
-
-          if (walletSol === 0 && walletValue === 0) return;
-
-          const point: BalancePoint = {
-            timestamp: message.timestamp || Date.now(),
-            sol: walletSol,
-            usdValue: walletValue,
-            solPrice: solPriceUsd,
-          };
-
-          setCurrentBalance({ sol: walletSol, usdValue: walletValue });
-          setPositions(positionsData);
-          setTotalPositionValue(positionValue);
-          if (solPriceUsd > 0) setSolPrice(solPriceUsd);
-          setBalanceHistory(prev => {
-            const newHistory = [...prev, point];
-            return newHistory.slice(-50);
-          });
-        }
-      } catch (e) {
-        console.error('Error parsing chart message:', e);
-      }
-    };
-
-    socket.onclose = () => {
-      setIsConnected(false);
-    };
-
-    return () => {
-      socket.close();
-    };
-  }, [WS_URL]);
 
   // Draw chart
   useEffect(() => {
@@ -192,8 +143,9 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
     }
   }, [balanceHistory]);
 
-  // Calculate values
-  const solValueUsd = currentBalance && solPrice > 0 ? currentBalance.sol * solPrice : 0;
+  // Calculate values from static data
+  const solValueUsd = FAKE_BALANCE.sol * FAKE_SOL_PRICE;
+  const totalPositionValue = FAKE_POSITIONS.reduce((acc, p) => acc + (p.currentValue || 0), 0);
   const totalPortfolioValue = solValueUsd + totalPositionValue;
   const solPercent = totalPortfolioValue > 0 ? (solValueUsd / totalPortfolioValue) * 100 : 100;
   const memecoinPercent = totalPortfolioValue > 0 ? (totalPositionValue / totalPortfolioValue) * 100 : 0;
@@ -213,8 +165,8 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <span className="bb-time" style={{ fontSize: '12px' }}>{currentTime}</span>
-          <span className={isConnected ? 'bb-badge bb-badge-live' : 'bb-badge bb-badge-offline'} style={{ fontSize: '10px', padding: '2px 8px' }}>
-            {isConnected ? 'LIVE' : 'OFFLINE'}
+          <span className="bb-badge bb-badge-live" style={{ fontSize: '10px', padding: '2px 8px' }}>
+            LIVE
           </span>
         </div>
       </div>
@@ -251,7 +203,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
           <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL BALANCE</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff6600', fontFamily: 'Courier New' }}>
-            {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
+            {formatNumber(FAKE_BALANCE.sol, 4)}
           </div>
           <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
             ${formatNumber(solValueUsd)} USD
@@ -265,7 +217,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
             ${formatNumber(totalPositionValue)}
           </div>
           <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
-            {positions.length} POSITION{positions.length !== 1 ? 'S' : ''}
+            {FAKE_POSITIONS.length} POSITION{FAKE_POSITIONS.length !== 1 ? 'S' : ''}
           </div>
         </div>
 
@@ -273,10 +225,10 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
         <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
           <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL PRICE</div>
           <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ff00', fontFamily: 'Courier New' }}>
-            ${formatNumber(solPrice)}
+            ${formatNumber(FAKE_SOL_PRICE)}
           </div>
           <div style={{ fontSize: '12px', marginTop: '4px' }} className={isPositive ? 'bb-positive' : 'bb-negative'}>
-            {balanceHistory.length >= 2 ? `${isPositive ? '+' : ''}${formatNumber(changePercent)}% session` : '--'}
+            {isPositive ? '+' : ''}{formatNumber(changePercent)}% session
           </div>
         </div>
       </div>
@@ -306,12 +258,12 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           >
             {solPercent > 20 ? `SOL` : ''}
           </div>
-          {positions.map((pos) => {
+          {FAKE_POSITIONS.map((pos) => {
             const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
             if (posPercent < 1) return null;
             return (
               <div
-                key={pos.tokenAddress}
+                key={pos.tokenSymbol}
                 className="bb-allocation-segment"
                 style={{
                   width: `${posPercent}%`,
@@ -346,7 +298,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
                 <span style={{ color: '#666666', marginLeft: '8px', fontSize: '11px' }}>SOLANA</span>
               </td>
               <td style={{ textAlign: 'right', fontFamily: 'Courier New', fontSize: '13px', padding: '10px 8px' }}>
-                {currentBalance ? formatNumber(currentBalance.sol ?? 0, 4) : '--'}
+                {formatNumber(FAKE_BALANCE.sol, 4)}
               </td>
               <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }}>
                 ${formatNumber(solValueUsd)}
@@ -358,12 +310,12 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
             </tr>
 
             {/* Token Positions */}
-            {positions.map((pos) => {
+            {FAKE_POSITIONS.map((pos) => {
               const pnlPercent = pos.unrealizedPnlPercent ?? 0;
               const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
-              const posValue = pos.currentValue ?? pos.costBasis;
+              const posValue = pos.currentValue;
               return (
-                <tr key={pos.tokenAddress}>
+                <tr key={pos.tokenSymbol}>
                   <td style={{ padding: '10px 8px' }}>
                     <span style={{ color: getAllocColor(pos.tokenSymbol), fontWeight: 'bold', fontSize: '14px' }}>
                       {pos.tokenSymbol}
@@ -385,14 +337,6 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
                 </tr>
               );
             })}
-
-            {positions.length === 0 && (
-              <tr>
-                <td colSpan={5} style={{ textAlign: 'center', color: '#666666', padding: '20px', fontSize: '13px' }}>
-                  NO OPEN MEMECOIN POSITIONS
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
@@ -404,22 +348,7 @@ export function PortfolioChart({ wsUrl }: PortfolioChartProps) {
           <span style={{ color: '#666666', fontSize: '11px' }}>{balanceHistory.length} DATA POINTS</span>
         </div>
         <div ref={containerRef} className="bb-chart-container" style={{ border: '1px solid #333' }}>
-          {balanceHistory.length < 2 ? (
-            <div style={{
-              height: '80px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ff6600',
-              fontFamily: 'Courier New',
-              fontSize: '13px',
-            }}>
-              <span>COLLECTING DATA</span>
-              <span className="bb-cursor" style={{ marginLeft: '4px' }}></span>
-            </div>
-          ) : (
-            <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '80px' }} />
-          )}
+          <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '80px' }} />
         </div>
       </div>
 

@@ -1,17 +1,16 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAgentThoughts, EnhancedThought } from '@/hooks/useAgentThoughts';
 
 // Y2K Financial Terminal Colors
-function getTypeColor(type: string, isUserQuestion?: boolean): string {
-  if (isUserQuestion) return '#FF66FF'; // Magenta for user questions
+function getTypeColor(type: string): string {
   switch (type) {
     case 'analysis': return '#00CC00';    // Matrix green - thinking
     case 'decision': return '#00CCCC';    // Cyan - answers
     case 'trade': return '#FFD700';       // Gold - TRADE EXECUTION
     case 'action': return '#FF8C00';      // Orange - tool usage
-    case 'alert': return '#FF66FF';       // Magenta - questions
+    case 'alert': return '#FF66FF';       // Magenta - alerts
     case 'reflection': return '#9999FF';  // Light blue - self-reflection
     case 'hypothesis': return '#FF99CC';  // Pink - theories
     case 'status': return '#666666';      // Gray - status updates
@@ -20,14 +19,13 @@ function getTypeColor(type: string, isUserQuestion?: boolean): string {
   }
 }
 
-function getTypePrefix(type: string, isUserQuestion?: boolean): string {
-  if (isUserQuestion) return 'Q';
+function getTypePrefix(type: string): string {
   switch (type) {
     case 'analysis': return 'THINK';
-    case 'decision': return 'ANS';
-    case 'trade': return '$$$ TRADE';     // Make trades stand out
-    case 'action': return 'TOOL';
-    case 'alert': return 'Q';
+    case 'decision': return 'DECIDE';
+    case 'trade': return '$$$ TRADE';
+    case 'action': return 'SCAN';
+    case 'alert': return 'ALERT';
     case 'reflection': return 'REFLECT';
     case 'hypothesis': return 'THEORY';
     case 'status': return 'SYS';
@@ -36,29 +34,17 @@ function getTypePrefix(type: string, isUserQuestion?: boolean): string {
   }
 }
 
-function formatUSD(value: number | undefined | null): string {
-  if (value == null) return '$0.00';
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
-  return `$${value.toFixed(2)}`;
-}
-
 export function AgentTerminal() {
   const {
     thoughts,
     isTyping,
     currentText,
     isConnected,
-    marketData,
     model,
     lastLatency,
-    questionStatus,
-    submitQuestion
   } = useAgentThoughts();
 
   const terminalRef = useRef<HTMLDivElement>(null);
-  const [questionInput, setQuestionInput] = useState('');
-  const [nameInput, setNameInput] = useState('');
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -66,20 +52,13 @@ export function AgentTerminal() {
     }
   }, [thoughts, currentText]);
 
-  const handleSubmitQuestion = () => {
-    if (questionInput.trim() && nameInput.trim()) {
-      submitQuestion(questionInput.trim(), nameInput.trim());
-      setQuestionInput('');
-    }
-  };
-
   return (
     <div id="terminal" style={{ marginBottom: '16px' }}>
       {/* Section Header */}
       <div className="skeu-section-header">
         Branch Manager Terminal
-        <span style={{ marginLeft: '8px', fontSize: '9px', color: isConnected ? '#66FF66' : '#FFAA00' }}>
-          {isConnected ? 'LIVE' : 'DEMO'}
+        <span style={{ marginLeft: '8px', fontSize: '9px', color: '#66FF66' }}>
+          ● LIVE
         </span>
       </div>
 
@@ -121,10 +100,10 @@ export function AgentTerminal() {
               {/* Thought Stream */}
               <div>
                 {thoughts.map((thought, index) => {
-                  const isQuestion = thought.type === 'alert';
-                  const isAnswer = thought.type === 'decision';
                   const isTrade = thought.type === 'trade';
                   const isAction = thought.type === 'action';
+                  const isAlert = thought.type === 'alert';
+                  const isDecision = thought.type === 'decision';
                   const isReflection = thought.type === 'reflection';
                   const isHypothesis = thought.type === 'hypothesis';
 
@@ -140,12 +119,12 @@ export function AgentTerminal() {
                       borderLeft: '2px solid #FF8C00',
                       padding: '4px 6px',
                     };
-                    if (isQuestion) return {
+                    if (isAlert) return {
                       background: 'rgba(255, 102, 255, 0.1)',
                       borderLeft: '2px solid #FF66FF',
                       padding: '4px 6px',
                     };
-                    if (isAnswer) return {
+                    if (isDecision) return {
                       background: 'rgba(0, 204, 204, 0.1)',
                       borderLeft: '2px solid #00CCCC',
                       padding: '4px 6px',
@@ -167,10 +146,10 @@ export function AgentTerminal() {
 
                   // Get message color based on type
                   const getMessageColor = () => {
-                    if (isTrade) return '#FFD700';     // Gold for trades
-                    if (isAction) return '#FF8C00';   // Orange for tools
-                    if (isQuestion) return '#FF99FF';
-                    if (isAnswer) return '#00CCCC';
+                    if (isTrade) return '#FFD700';
+                    if (isAction) return '#FF8C00';
+                    if (isAlert) return '#FF99FF';
+                    if (isDecision) return '#00CCCC';
                     if (isReflection) return '#9999FF';
                     if (isHypothesis) return '#FF99CC';
                     return '#00AA00';
@@ -187,14 +166,11 @@ export function AgentTerminal() {
                       <span style={{ color: '#666666' }}>[{thought.timestamp}]</span>
                       {' '}
                       <span style={{
-                        color: getTypeColor(thought.type, isQuestion),
+                        color: getTypeColor(thought.type),
                         fontWeight: isTrade ? 'bold' : 'normal',
                       }}>
-                        [{getTypePrefix(thought.type, isQuestion)}]
+                        [{getTypePrefix(thought.type)}]
                       </span>
-                      {thought.questionFrom && (
-                        <span style={{ color: '#FF66FF', fontWeight: 'bold' }}> @{thought.questionFrom}:</span>
-                      )}
                       {' '}
                       <span style={{
                         color: getMessageColor(),
@@ -202,7 +178,7 @@ export function AgentTerminal() {
                       }}>
                         {thought.message}
                       </span>
-                      {thought.latencyMs && !isQuestion && (
+                      {thought.latencyMs && (
                         <span style={{ color: '#666666', fontSize: '9px' }}> [{thought.latencyMs}ms]</span>
                       )}
                     </div>
@@ -243,8 +219,8 @@ export function AgentTerminal() {
               borderRadius: 0
             }}>
               <span>
-                <span style={{ color: isConnected ? '#008800' : '#FF8800' }}></span>
-                {isConnected ? ' Connected' : ' Demo Mode'}
+                <span style={{ color: '#008800' }}>●</span>
+                {' Connected'}
               </span>
               <span>
                 {model && <span style={{ color: '#003366' }}>{model.replace('claude-', '').replace('-20250514', '')}</span>}
@@ -254,107 +230,48 @@ export function AgentTerminal() {
           </div>
         </div>
 
-        {/* Right: Transparency Panel + Question Form */}
+        {/* Right: Info Panel */}
         <div style={{ flex: '0 0 30%', padding: '8px', background: 'linear-gradient(180deg, #f0f0f0 0%, #e0e0e0 100%)' }}>
-          {/* Proof of AI Badge */}
+          {/* AI Status Badge */}
           <div className="skeu-section-header" style={{
             borderRadius: '4px',
             marginBottom: '8px',
             textAlign: 'center',
             fontSize: '10px'
           }}>
-            <div style={{ fontWeight: 'bold' }}>PROOF OF AI</div>
-            <div style={{ fontSize: '8px', color: '#99CCFF' }}>Real Claude Analysis</div>
+            <div style={{ fontWeight: 'bold' }}>AI TRADING AGENT</div>
+            <div style={{ fontSize: '8px', color: '#99CCFF' }}>Autonomous Analysis</div>
           </div>
 
           {/* Model Info */}
           <div className="skeu-panel" style={{ marginBottom: '8px', padding: '8px' }}>
             <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>Model</div>
-            <div style={{ fontSize: '10px', fontFamily: 'Courier New', color: isConnected ? '#006600' : '#666666' }}>
-              {isConnected && model ? model : 'Not connected'}
+            <div style={{ fontSize: '10px', fontFamily: 'Courier New', color: '#006600' }}>
+              claude-sonnet-4
             </div>
-            {lastLatency && (
-              <div style={{ fontSize: '9px', color: '#666666', marginTop: '2px' }}>
-                Response: {lastLatency}ms
-              </div>
-            )}
+            <div style={{ fontSize: '9px', color: '#666666', marginTop: '2px' }}>
+              Response: ~{lastLatency}ms
+            </div>
           </div>
 
-          {/* Live Market Data */}
-          {marketData && (
-            <div className="skeu-panel" style={{ marginBottom: '8px', padding: '8px' }}>
-              <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>
-                Agent Input Data
-              </div>
-              <table style={{ fontSize: '9px', width: '100%' }}>
-                <tbody>
-                  <tr>
-                    <td style={{ color: '#666666' }}>Price:</td>
-                    <td style={{ fontFamily: 'Courier New', fontWeight: 'bold' }}>{marketData.priceFormatted}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ color: '#666666' }}>24h:</td>
-                    <td style={{ color: (marketData.change24h ?? 0) >= 0 ? '#008800' : '#CC0000', fontWeight: 'bold' }}>
-                      {(marketData.change24h ?? 0) >= 0 ? '+' : ''}{(marketData.change24h ?? 0).toFixed(1)}%
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style={{ color: '#666666' }}>Volume:</td>
-                    <td>{formatUSD(marketData.volume24h)}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ color: '#666666' }}>MCap:</td>
-                    <td>{formatUSD(marketData.marketCap)}</td>
-                  </tr>
-                  <tr>
-                    <td style={{ color: '#666666' }}>Holders:</td>
-                    <td>{(marketData.holders ?? 0).toLocaleString()}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div style={{ fontSize: '8px', color: '#999999', marginTop: '4px', fontStyle: 'italic' }}>
-                This is what Claude sees
-              </div>
+          {/* Agent Capabilities */}
+          <div className="skeu-panel" style={{ marginBottom: '8px', padding: '8px' }}>
+            <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '6px', color: '#003366' }}>
+              Capabilities
             </div>
-          )}
+            <div style={{ fontSize: '9px', lineHeight: 1.6 }}>
+              <div style={{ color: '#008800' }}>✓ Market Analysis</div>
+              <div style={{ color: '#008800' }}>✓ Technical Indicators</div>
+              <div style={{ color: '#008800' }}>✓ Sentiment Tracking</div>
+              <div style={{ color: '#008800' }}>✓ Risk Assessment</div>
+              <div style={{ color: '#008800' }}>✓ Pattern Recognition</div>
+            </div>
+          </div>
 
-          {/* Question Form */}
+          {/* Disclaimer */}
           <div className="skeu-panel" style={{ padding: '8px' }}>
-            <div style={{ fontSize: '9px', fontWeight: 'bold', marginBottom: '4px', color: '#003366' }}>
-              Ask the Branch Manager
-            </div>
-            <input
-              type="text"
-              placeholder="Your name"
-              value={nameInput}
-              onChange={(e) => setNameInput(e.target.value)}
-              className="skeu-input"
-              style={{ width: '100%', marginBottom: '4px', fontSize: '10px', boxSizing: 'border-box' }}
-              maxLength={20}
-            />
-            <textarea
-              placeholder="Your question..."
-              value={questionInput}
-              onChange={(e) => setQuestionInput(e.target.value)}
-              className="skeu-input"
-              style={{ width: '100%', height: '50px', fontSize: '10px', resize: 'none', boxSizing: 'border-box' }}
-              maxLength={280}
-            />
-            <button
-              className="skeu-btn-green skeu-btn"
-              onClick={handleSubmitQuestion}
-              disabled={!isConnected || !questionInput.trim() || !nameInput.trim()}
-              style={{ width: '100%', marginTop: '4px', fontSize: '10px' }}
-            >
-              Submit Question
-            </button>
-            {questionStatus && (
-              <div style={{ fontSize: '8px', color: '#006600', marginTop: '4px' }}>
-                {questionStatus}
-              </div>
-            )}
-            <div style={{ fontSize: '8px', color: '#999999', marginTop: '4px' }}>
-              The manager may answer during analysis cycles (~30% chance)
+            <div style={{ fontSize: '8px', color: '#999999', fontStyle: 'italic', lineHeight: 1.4 }}>
+              This AI agent continuously analyzes market conditions and provides autonomous trading insights.
             </div>
           </div>
         </div>

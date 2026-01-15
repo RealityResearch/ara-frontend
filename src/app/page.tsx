@@ -3,9 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Ticker } from '@/components/Ticker';
 import { TerminalPreview } from '@/components/TerminalPreview';
-import { ChatPanel } from '@/components/ChatPanel';
 import { PortfolioChart } from '@/components/PortfolioChart';
-import { DiscoveryPanel } from '@/components/DiscoveryPanel';
 import { PerformanceMetrics } from '@/components/PerformanceMetrics';
 import { BotEvolution } from '@/components/BotEvolution';
 import { TradeHistory } from '@/components/TradeHistory';
@@ -15,12 +13,11 @@ import { TokenInfo } from '@/components/TokenInfo';
 import { ComingSoon } from '@/components/ComingSoon';
 import { Footer } from '@/components/Footer';
 import { StickyCA } from '@/components/StickyCA';
-import { TradePopup } from '@/components/TradePopup';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 import { useAgentStats } from '@/hooks/useAgentStats';
 
 export default function Home() {
-  const { performance, evolution, tradeHistory, isLive } = useAgentStats();
+  const { performance, evolution, tradeHistory } = useAgentStats();
   const [currentTime, setCurrentTime] = useState('--:--:--');
 
   useEffect(() => {
@@ -127,8 +124,6 @@ export default function Home() {
             {[
               { label: 'Terminal', href: '#terminal', badge: 'LIVE', badgeColor: '#00ff00' },
               { label: 'Portfolio', href: '#portfolio' },
-              { label: 'Chat', href: '#chat', badge: 'LIVE', badgeColor: '#3399ff' },
-              { label: 'Discovery', href: '#discovery', badge: 'SCAN', badgeColor: '#ffaa00' },
               { label: 'Performance', href: '#performance' },
               { label: 'Evolution', href: '#evolution' },
               { label: 'Trade History', href: '#trades' },
@@ -223,16 +218,8 @@ export default function Home() {
             <PortfolioChart />
           </div>
 
-          {/* Trade History - Right Below Terminal for Live Updates */}
+          {/* Trade History */}
           <TradeHistory trades={tradeHistory} />
-
-          {/* Chat Panel */}
-          <div id="chat">
-            <ChatPanel />
-          </div>
-
-          {/* Discovery Panel - Token Scanner */}
-          <DiscoveryPanel />
 
           {/* Performance Metrics */}
           <PerformanceMetrics data={performance} />
@@ -259,9 +246,6 @@ export default function Home() {
 
       {/* Sticky CA Button */}
       <StickyCA />
-
-      {/* Trade Notification Popup */}
-      <TradePopup />
     </div>
   );
 }

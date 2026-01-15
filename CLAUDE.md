@@ -1,583 +1,142 @@
 # Claude Investments — ARA (Automated Retirement Account)
 
 ## Project Overview
-A memecoin on Solana launched via pump.fun featuring a landing page that displays the LIVE THOUGHTS of an AI trading agent. The agent controls the dev wallet and autonomously trades creator fees. Users watch the agent think, analyze, and execute trades in real-time.
+A memecoin on Solana launched via pump.fun featuring a landing page with **theatrical AI agent animations**. The terminal displays pre-scripted "AI thoughts" on a ~6 minute loop, creating the illusion of a live AI trading agent.
 
 - **Name:** Claude Investments
 - **Ticker:** $ARA
 - **Slogan:** "The Future of Investing is Here"
-- **Core Hook:** Transparent AI agent trading with all reasoning visible
+- **Mode:** Theatrical (no real AI backend)
 
-## Aesthetic Direction
-**"Y2K Financial Trust Terminal"** — Early 2000s online brokerage vibes (E*Trade, Charles Schwab, Fidelity circa 2001-2005) meets modern memecoin culture.
+## Architecture
 
-**Visual Elements:**
-- Chunky beveled buttons with 3D gradient effects
-- XP-style window frames with blue gradient title bars
-- Inset shadow panels for "sunken" data displays
-- Scrolling stock ticker strip
-- CRT scanline overlay on terminal
-- Blinking cursors and typing animations
-- Data-dense table layouts with alternating rows
-
-**Paradox:** Looks like serious finance, obviously a memecoin.
+**THEATRICAL MODE** - Pure frontend, no backend required:
+- Pre-scripted thoughts loop every ~6 minutes
+- Typing animations create "live" illusion
+- Static mock data for portfolio/trades/stats
+- No WebSocket, no API costs, no server
 
 ## Tech Stack
 - **Framework:** Next.js 16+ (App Router, Turbopack)
 - **Styling:** Tailwind CSS v4
-- **Animations:** Framer Motion
-- **Fonts:** Playfair Display (serif/trust) + Courier Prime (terminal) + Tahoma (UI)
-- **Live Data:** DexScreener + CoinGecko APIs (free, no key), WebSocket for agent
-- **Deployment:** Vercel
+- **Fonts:** Playfair Display + Courier Prime + Tahoma
+- **Live Data:** DexScreener + CoinGecko APIs (ticker prices only)
+- **Deployment:** Vercel (static site)
 
 ## File Structure
 ```
 cc/
-├── CLAUDE.md                    # This file - source of truth
+├── CLAUDE.md                    # This file
 ├── package.json
 ├── next.config.ts
-├── tsconfig.json
-├── .env.local.example           # Frontend env vars
 ├── public/
 │   └── logos/
-│       ├── Claude Circle 4x.png
-│       └── claude-investments.png
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx          # Root layout with fonts
 │   │   ├── page.tsx            # Main landing page
-│   │   ├── globals.css         # Y2K design system
+│   │   ├── globals.css         # Bloomberg terminal design system
 │   │   └── api/
-│   │       └── ticker/route.ts # Live price ticker API (DexScreener + CoinGecko)
+│   │       └── ticker/route.ts # Live price ticker API
 │   ├── components/
 │   │   ├── Ticker.tsx          # Scrolling price ticker
-│   │   ├── Hero.tsx            # Hero section with logo/CTA
-│   │   ├── AgentTerminal.tsx   # Live AI thoughts terminal
-│   │   ├── ChatPanel.tsx       # Community chat with bot (replaces VotingPanel)
-│   │   ├── PortfolioChart.tsx  # Real-time balance chart
-│   │   ├── PerformanceMetrics.tsx # Win rate, PnL stats
-│   │   ├── BotEvolution.tsx    # Agent personality evolution
-│   │   ├── TradeHistory.tsx    # Recent trades table
-│   │   ├── TokenInfo.tsx       # Contract address, buy links
-│   │   ├── ComingSoon.tsx      # Roadmap features
-│   │   └── Footer.tsx          # Socials & disclaimer
+│   │   ├── TerminalPreview.tsx # Bloomberg-style terminal display
+│   │   ├── AgentTerminal.tsx   # AI thoughts terminal
+│   │   ├── PortfolioChart.tsx  # Static treasury display
+│   │   ├── PerformanceMetrics.tsx
+│   │   ├── BotEvolution.tsx
+│   │   ├── TradeHistory.tsx
+│   │   ├── ChartEmbed.tsx      # DEXScreener embed
+│   │   ├── HowItWorks.tsx
+│   │   ├── TokenInfo.tsx
+│   │   ├── ComingSoon.tsx
+│   │   ├── Footer.tsx
+│   │   └── StickyCA.tsx
 │   ├── hooks/
-│   │   ├── useAgentThoughts.ts # WebSocket + mock fallback hook
-│   │   └── useAgentStats.ts    # Performance/evolution stats hook
+│   │   ├── useAgentThoughts.ts # Scripted thought loop (no WebSocket)
+│   │   └── useAgentStats.ts    # Static mock data
 │   └── lib/
-│       └── mockData.ts         # Mock data for demo
-├── agent-service/               # Trading agent backend
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── .env.example            # Agent env vars (API key)
-│   ├── data/
-│   │   └── agent-memory.json   # Persistent agent memory
-│   └── src/
-│       ├── index.ts            # Entry point + WebSocket server
-│       ├── agent.ts            # Claude-powered trading agent
-│       ├── websocket.ts        # Thought broadcast + chat system
-│       ├── voting.ts           # Community voting system (legacy)
-│       ├── state.ts            # Performance/evolution tracking
-│       ├── memory/             # Agent learning system (NEW)
-│       │   ├── index.ts
-│       │   ├── manager.ts
-│       │   └── types.ts
-│       └── tools/
-│           ├── market.ts       # Price/wallet/trade tools
-│           ├── wallet.ts       # Solana wallet management
-│           ├── trading.ts      # Jupiter swap execution + position mgmt
-│           ├── tokens.ts       # Token whitelist + PositionManager
-│           ├── discovery.ts    # DexScreener token discovery
-│           ├── technical.ts    # RSI, SMA, momentum analysis
-│           └── research.ts     # Firecrawl web research
+│       ├── mockData.ts         # Static mock data
+│       └── scriptedThoughts.ts # Pre-written AI thoughts (~70 entries)
 ```
 
-## Design System
+## How It Works
 
-### Colors
-```css
-/* Y2K Financial Palette */
---navy-deep: #0a1628;       /* Main background */
---navy-mid: #152238;        /* Elevated surfaces */
---navy-light: #1e3a5f;      /* Panel backgrounds */
---navy-bright: #2563eb;     /* Primary actions */
+### Scripted Thoughts System
+The terminal displays pre-written thoughts from `src/lib/scriptedThoughts.ts`:
+- ~70 unique thought messages
+- Each has a type (analysis, decision, trade, alert, etc.)
+- Each has a delay (2-6 seconds between thoughts)
+- Total loop time: ~6 minutes
+- Loop repeats indefinitely
 
-/* Windows XP Chrome */
---xp-silver: #c0c0c0;       /* Classic borders */
---xp-gray: #808080;         /* Secondary text */
---xp-dark: #404040;         /* Shadows */
+### Thought Types
+| Type | Color | Description |
+|------|-------|-------------|
+| analysis | Green | Market analysis, thinking |
+| decision | Cyan | Trading decisions |
+| trade | Gold | Trade executions |
+| action | Orange | Tool usage, scanning |
+| alert | Magenta | Alerts, warnings |
+| reflection | Light Blue | Self-analysis |
+| hypothesis | Pink | Market theories |
+| status | Gray | System status |
 
-/* Financial Status */
---money-green: #22c55e;     /* Gains, success */
---blood-red: #dc2626;       /* Losses, warnings */
---gold-accent: #d4a574;     /* Premium highlights */
---ticker-amber: #fbbf24;    /* Attention, data */
-
-/* Terminal */
---terminal-green: #00ff41;  /* Matrix-style text */
---terminal-bg: #0a0f0a;     /* Dark terminal bg */
-
-/* Brand */
---claude-coral: #d98d6c;    /* Claude accent color */
-```
-
-### Typography
-```
-Headings:    'Playfair Display', Georgia, serif
-Body/UI:     Tahoma, Verdana, sans-serif
-Terminal:    'Courier Prime', 'Courier New', monospace
-```
-
-### Component Classes
-```css
-.btn-xp       /* Classic Windows XP button */
-.btn-primary  /* Blue action button */
-.btn-buy      /* Green buy/CTA button */
-.panel-xp     /* Raised XP-style panel */
-.panel-inset  /* Sunken data display */
-.title-bar    /* Blue gradient window title */
-.terminal     /* CRT terminal with scanlines */
-.data-table   /* Financial data table */
-```
-
-## Component Inventory
-
-| Component | Status | Description |
-|-----------|--------|-------------|
-| Ticker | Complete | Live price updates with flash effects, LIVE badge |
-| Hero | Complete | Under construction banner, spinning stars, fire divider, webring |
-| AgentTerminal | Complete | ASCII art, rainbow status, CRT effects, control panel |
-| ChatPanel | Complete | Anonymous community chat with the bot (replaces VotingPanel) |
-| PortfolioChart | Complete | Real-time canvas chart of SOL balance with CRT aesthetic |
-| PerformanceMetrics | Complete | Win rate, PnL, total trades, wallet balance, streak |
-| BotEvolution | Complete | Agent personality traits and evolution over time |
-| TradeHistory | Complete | Recent trades table with reasoning |
-| HowItWorks | Complete | 5-step explainer of agent flow |
-| ChartEmbed | Complete | DEXScreener iframe with Y2K styling |
-| StickyCA | Complete | Floating copy CA button (bottom-right) |
-| TokenInfo | Complete | Contract address copy, buy links, token stats |
-| ComingSoon | Complete | Roadmap features grid (Phase 1/2/3), progress bar |
-| Footer | Complete | Disclaimer, quick links, social buttons |
-| LiveClock | Complete | Real-time HH:MM:SS in header |
-
-## Key Decisions
-1. **Dark mode default** — Degens trade at night
-2. **Desktop-first** — Primary trading device (mobile responsive)
-3. **Mock data for Phase 1** — Structure ready for real WebSocket
-4. **Next.js App Router** — Modern, performant, easy Vercel deploy
-5. **Google Fonts via `<link>`** — Loaded in layout.tsx head
-
-## Current Status
-- [x] Project brief received
-- [x] CLAUDE.md created
-- [x] Design direction established (Y2K Financial Trust Terminal)
-- [x] Next.js 16 project scaffolded
-- [x] Design system implemented (globals.css)
-- [x] All components built
-- [x] Framer Motion animations added
-- [x] Logos integrated
-- [x] **CHAOS MODE COMPLETE** - Full Y2K aesthetic overhaul
-- [x] Mobile responsive (sidebar hides, touch-friendly buttons)
-- [x] **AGENT SERVICE BUILT** - Claude-powered trading agent with WebSocket
-- [x] Frontend WebSocket integration (auto-fallback to mock)
-- [x] **VERCEL DEPLOYED** - https://cc-lime-alpha.vercel.app
-- [x] **RAILWAY DEPLOYED** - https://web-production-3b844.up.railway.app
-- [x] Real contract address set
-- [x] Social links updated (@ClaudeCapital)
-- [x] Pump.fun API integration (real price/volume data)
-- [x] **LIVE DATA FEEDS** - DexScreener + CoinGecko APIs for real prices
-- [x] **REAL TRADING** - Jupiter swap integration, agent can execute trades
-- [x] **COMMUNITY VOTING** - 5 trading styles, 30-min voting rounds
-- [x] **MEMORY SYSTEM** - Agent learns from trades, forms hypotheses
-- [x] **RESEARCH TOOLS** - Firecrawl web search for market intel
-- [x] **PORTFOLIO CHART** - Real-time canvas chart of treasury balance
-- [x] **AUTONOMOUS TRADING** - Agent trades ANY memecoin, not just $ARA
-- [x] **GENERIC TOOLS** - Trading tools accept token_address parameter
-- [x] **DISCOVERY SCANNER** - DexScreener scan every 2 min for opportunities
-- [x] **RISK MANAGEMENT** - 15% max/trade, 2 max positions, 5% slippage
-- [x] **JUPITER OPTIMIZED** - lite-api, dynamicComputeUnitLimit, veryHigh priority fees
-- [x] **TOKEN-2022 HANDLING** - check_token_tradable tool, pre-trade validation
-- [x] **FIRST REAL TRADE** - Successfully bought BONK via Jupiter (TX: 5CfFjrmQvY...)
-- [x] **TECHNICAL ANALYSIS** - analyze_technicals tool with RSI, SMA, volume spikes
-- [x] **LAYOUT UPDATE** - Treasury at top (180px), Trade History below terminal (● LIVE)
-- [x] **TOKEN WHITELIST** - Hardcoded 20+ verified tradable tokens (BONK, WIF, JUP, etc.)
-- [x] **POSITION TRACKING** - Stop loss (15%) + take profit (50%) automation
-- [x] **JUPITER VERIFICATION** - discover_tokens now verifies Jupiter tradability
-- [x] **HELIUS RPC SUPPORT** - Optional premium RPC to avoid rate limits
-- [x] **PORTFOLIO CHART FIX** - WebSocket caches market data for instant load
-- [x] **HYDRATION FIX** - Fixed React #418 error (static initial state, client-side timestamp hydration)
-- [x] **NULL SAFETY** - Added null checks for all toFixed/toLocaleString calls across components
-
-## Chaos Mode Animations (globals.css)
-```css
-.blink           /* Classic forbidden blink effect */
-.rainbow-text    /* Cycling rainbow colors */
-.rainbow-bg      /* Animated rainbow background */
-.fire-divider    /* Animated fire with 🔥 emojis */
-.spin / .spin-slow  /* Rotating elements */
-.bounce / .shake / .sparkle  /* Movement effects */
-.starburst       /* Pulsing star badge */
-.glow-border     /* Green glowing border */
-.crt-effect      /* CRT monitor flicker */
-.scanlines       /* CRT scanline overlay */
-.hit-counter     /* Y2K visitor counter */
-.under-construction  /* Yellow/black striped banner */
-.webring         /* Classic webring box */
-.click-here-btn  /* Bouncing Comic Sans button */
-.hide-mobile     /* Hide on mobile screens */
-```
+### Mock Data
+Static data in `src/lib/mockData.ts` provides:
+- Fake trade history (7 trades)
+- Fake performance stats (67.6% win rate, etc.)
+- Fake evolution/XP data
+- Contract address and social links
 
 ## Running Locally
 
-### Frontend Only (Demo Mode)
 ```bash
 npm install
 npm run dev
 # Open http://localhost:3000
-# Terminal shows simulated thoughts
 ```
 
-### With Live Agent
+No backend or API keys required. Terminal automatically shows animated thoughts.
+
+## Deployment
+
 ```bash
-# Terminal 1: Start agent service
-cd agent-service
-cp .env.example .env
-# Add your ANTHROPIC_API_KEY to .env
-npm install
-npm run dev
-
-# Terminal 2: Start frontend
-cd ..
-cp .env.local.example .env.local
-# Uncomment NEXT_PUBLIC_AGENT_WS_URL in .env.local
-npm run dev
-# Open http://localhost:3000
-# Terminal now shows LIVE Claude thoughts!
+# Deploy to Vercel (or any static host)
+npm run build
+# Site is fully static, deploys anywhere
 ```
 
-## Agent Architecture
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     AGENT SERVICE (Node.js)                      │
-├─────────────────────────────────────────────────────────────────┤
-│  Anthropic SDK (claude-sonnet-4-20250514)                        │
-│  ├── System Prompt: Trading personality + strategy              │
-│  ├── Streaming: Real-time thought output                        │
-│  └── Analysis Loop: Every 30s by default                        │
-│                                                                  │
-│  Market Tools (src/tools/market.ts):                            │
-│  ├── getTokenPrice()     → Price, volume, market cap            │
-│  ├── getRecentTrades()   → Last 5 trades on token               │
-│  └── getWalletBalance()  → SOL + $ARA holdings                  │
-│                                                                  │
-│  WebSocket Server (ws://localhost:8080)                         │
-│  └── Broadcasts: { type, content, timestamp, metadata }         │
-└─────────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                     NEXT.JS FRONTEND                             │
-│  useAgentThoughts.ts                                            │
-│  ├── Connects to WebSocket                                      │
-│  ├── Falls back to mock if agent unavailable                    │
-│  └── Shows LIVE/DEMO status in terminal                         │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Live URLs
+- **Site:** https://cc-lime-alpha.vercel.app
+- **Contract:** `5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump`
+- **Twitter:** @ClaudeCapital
 
-## Data Feed APIs (Free, No Key Required)
+## Customizing Thoughts
 
-| API | Usage | Rate Limit |
-|-----|-------|------------|
-| DexScreener | SOL, $ARA, BONK, WIF, JUP, PYTH prices | 300 req/min |
-| CoinGecko | BTC, ETH prices | 30 req/min |
-| Pump.fun | $ARA bonding curve data, volume | ~60 req/min |
-| Solana RPC | Wallet balances | Varies |
+Edit `src/lib/scriptedThoughts.ts` to change the AI's "personality":
 
-**Caching:** 15-30s TTL to stay within limits.
-
-## Community Voting System
-
-The community controls the agent's trading personality via real-time voting.
-
-### Trading Styles
-| Style | Emoji | Description |
-|-------|-------|-------------|
-| APE MODE | 🦍 | Aggressive, FOMO-driven, ape into pumps |
-| DIAMOND HANDS | 💎 | Never sell, accumulate, HODL forever |
-| PAPER HANDS | 📄 | Quick profits, risk-averse, secure gains |
-| RESEARCH MODE | 🔬 | Data-driven, web search before trading |
-| FULL DEGEN | 🎰 | Max risk, YOLO, this is a casino |
-
-### How It Works
-1. Votes reset every 30 minutes
-2. Winning style becomes the agent's personality
-3. Style prompt is injected into Claude's system prompt
-4. One vote per browser (localStorage visitor ID)
-5. Real-time vote counts broadcast via WebSocket
-
-### WebSocket Messages
 ```typescript
-// Vote status (sent on connect + after votes)
-{ type: 'vote_status', currentStyle, styleConfig, voteCounts, timeRemaining, totalVotes }
-
-// Cast a vote
-{ type: 'vote', visitorId: string, style: 'APE' | 'DIAMOND' | 'PAPER' | 'RESEARCH' | 'DEGEN' }
-
-// Vote confirmation
-{ type: 'vote_confirmed', success: boolean, message: string }
+export const SCRIPTED_THOUGHTS: ScriptedThought[] = [
+  { message: 'Your custom message here...', type: 'analysis', delay: 3000 },
+  // Add more thoughts...
+];
 ```
 
-## Autonomous Trading System
-
-The agent is an **autonomous memecoin hunter** - it discovers, analyzes, and trades ANY Solana token via Jupiter (not just $ARA).
-
-### Agent Wallet
-- **Address:** `4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q`
-- **Solscan:** https://solscan.io/account/4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q
-
-### Trading Tools (Generic - Any Token)
-| Tool | Description |
-|------|-------------|
-| `check_balance` | Get SOL balance + all token positions |
-| `get_price(token_address)` | Get any token's price from DexScreener |
-| `get_swap_quote(token_address, direction, amount)` | Jupiter quote for any token |
-| `execute_trade(token_address, direction, amount, reasoning)` | Trade any token via Jupiter |
-| `check_can_trade` | Verify trading is allowed |
-| `check_token_tradable` | Pre-check if token has Jupiter route |
-
-### Position Management Tools
-| Tool | Description |
-|------|-------------|
-| `get_positions` | View all open positions with P&L, SL/TP levels |
-| `check_stop_loss_take_profit` | Check if any positions hit SL/TP triggers |
-| `set_stop_loss(token, percent)` | Update stop loss % for a position |
-| `set_take_profit(token, percent)` | Update take profit % for a position |
-
-### Discovery Tools
-| Tool | Description |
-|------|-------------|
-| `get_known_tokens` | **START HERE!** Get verified tradable tokens with live prices |
-| `discover_tokens` | Scan DexScreener for trending/boosted tokens (auto-verifies Jupiter) |
-| `search_tokens(query)` | Search tokens by name, symbol, or theme |
-
-### Known Tradable Tokens (src/tools/tokens.ts)
-Hardcoded tokens verified to work on Jupiter:
-- **Memecoins:** BONK, WIF, POPCAT, MEW, PNUT, FARTCOIN, GOAT, CHILLGUY, MOODENG
-- **DeFi:** JUP, RAY, ORCA, PYTH, JTO
-- **AI/Agent:** AI16Z, GRIFFAIN, ZEREBRO
-
-### Trading Philosophy
-- Call `get_known_tokens` FIRST for verified tradable tokens
-- Agent analyzes candidates, picks TOP one with high conviction
-- Quality over quantity - OK to pass if nothing looks good
-
-### Risk Management
-| Rule | Value |
-|------|-------|
-| Max per trade | 15% of portfolio |
-| Max positions | 2 open at once |
-| Slippage | 5% (for memecoins) |
-| Daily loss limit | 1 SOL |
-| Cooldown | 1 min between trades |
-| **Stop Loss** | 15% below entry (auto-set) |
-| **Take Profit** | 50% above entry (auto-set) |
-
-### Token Tradability Note
-**Pump.fun tokens must "graduate"** (complete bonding curve) before Jupiter can trade them. The agent now verifies Jupiter tradability before reporting tokens in `discover_tokens`. The `get_known_tokens` tool provides guaranteed-tradable tokens.
-
-### Position Tracking
-When the agent buys a token:
-1. Position is tracked with entry price and cost basis
-2. Stop loss (15% below) and take profit (50% above) are auto-set
-3. Agent calls `check_stop_loss_take_profit` each cycle
-4. When SL/TP triggers, agent is alerted to sell
-
-### Research Tools (Firecrawl)
-| Tool | Description |
-|------|-------------|
-| `web_search` | Search web for crypto news/sentiment |
-| `scrape_page` | Read content from any webpage |
-| `search_crypto_twitter` | Find crypto sentiment on Twitter/X |
-
-## Agent Memory System
-
-The agent learns from experience and persists knowledge across restarts.
-
-### Memory Features
-- **Trade History**: Records all trades with reasoning and outcomes
-- **Hypotheses**: Agent forms and tests trading theories
-- **Market Snapshots**: Historical price/volume data
-- **Reflections**: Periodic self-analysis (every 10 cycles)
-
-### Memory File
-Stored in `agent-service/data/agent-memory.json`
-
-## Discovery Filters
-
-The agent uses DexScreener to find opportunities. Current filters:
-
-| Filter | Value | Purpose |
-|--------|-------|---------|
-| Min Liquidity | $10,000 | Tradeable on Jupiter |
-| Min Volume 24h | $20,000 | Shows activity |
-| Max Age | 7 days | Catch newer plays |
-| Min Buys 24h | 50 | Some interest |
-| Min Score | 50 | Let agent evaluate |
-| Buy Ratio | >40% | Not dumping |
-| Chain | Solana only | Focus |
-
-Scanner runs every 2 minutes via `setInterval`.
-
-## Technical Analysis Tools
-
-The agent now has data-driven trading signals via `analyze_technicals`:
-
-| Indicator | Description | Signal |
-|-----------|-------------|--------|
-| RSI | Relative Strength Index (14-period) | <30 = oversold (buy), >70 = overbought (sell) |
-| SMA20 | 20-period Simple Moving Average | Price above = bullish, below = bearish |
-| Volume Spike | Current vs average volume | >2x = significant activity |
-| Momentum | Derived from price vs SMA | bullish / neutral / bearish |
-
-**Recommendation Output:**
-- `strong_buy` / `buy` / `hold` / `sell` / `strong_sell`
-- Confidence score (0-100%)
-- Analysis summary string
-
-**Usage:** Agent runs `analyze_technicals(token_address)` before trading decisions.
-
-## Phase 3: Future Enhancements
-1. **On-chain logs** — Store reasoning hashes on-chain
-2. **Jupiter Ultra API** — Better routing, more token support
-3. **Advanced charting** — More detailed portfolio analytics
-4. **Social features** — Chat between viewers
-
-## Live Deployment
-
-### URLs
-- **Frontend:** https://cc-lime-alpha.vercel.app
-- **Agent API:** https://web-production-3b844.up.railway.app
-- **GitHub (Agent):** https://github.com/RealityResearch/ara-agent-service
-
-### Environment Variables
-
-**Vercel:**
-| Variable | Value |
-|----------|-------|
-| `NEXT_PUBLIC_AGENT_WS_URL` | `wss://web-production-3b844.up.railway.app` |
-
-**Railway:**
-| Variable | Value |
-|----------|-------|
-| `ANTHROPIC_API_KEY` | Your Anthropic key |
-| `ANALYSIS_INTERVAL` | `30000` |
-| `CONTRACT_ADDRESS` | `5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump` |
-| `CREATOR_WALLET` | `FPrWHsHS2SVqSpCZrsdqfiND2un8d4rQN1tNQJ8febNs` |
-| `AGENT_ENABLED` | `true` (set to `false` to pause agent) |
-| `TRADING_ENABLED` | `true` (enables real trade execution) |
-| `MEMORY_ENABLED` | `true` (enables learning system) |
-| `FIRECRAWL_API_KEY` | Your Firecrawl key (for research tools) |
-| `SOLANA_PRIVATE_KEY` | Base58 wallet private key |
-| `SOLANA_RPC_URL` | Solana RPC endpoint (default: mainnet) |
-
-### Pausing the Agent
-To stop burning API tokens, set `AGENT_ENABLED=false` on Railway. Health check stays up but no Claude calls are made.
-
-## Mock Data Location
-All placeholder data is in `src/lib/mockData.ts`:
-- `mockThoughts` — Agent terminal messages (fallback when agent offline)
-- `mockTickerData` — Price ticker data
-- `CONTRACT_ADDRESS` — `5X61PKDGt6Fjg6hRxyFiaN61CDToHEeE2gJhDgL9pump`
-- `SOCIAL_LINKS` — Twitter (@ClaudeCapital), pump.fun, DEXScreener
-
-## Community Chat System (NEW - Session 3)
-
-Replaced VotingPanel with interactive ChatPanel for open dialogue with the bot.
-
-### How It Works
-1. Users send anonymous messages (auto-generated names like `swift_trader42`)
-2. Messages queue on the server
-3. Each analysis cycle (~30s), agent picks ~3 interesting messages to respond to
-4. Bot responses broadcast to all connected clients
-5. Chat history persisted (last 100 messages)
-
-### WebSocket Messages
-```typescript
-// Send a chat message
-{ type: 'chat_message', message: string, anonId: string, timestamp: number }
-
-// Receive chat messages (user or bot)
-{ type: 'chat_message', id: string, from: 'user' | 'bot', message: string, timestamp: number }
-
-// Chat history on connect
-{ type: 'chat_history', messages: ChatMessage[] }
-
-// Online count
-{ type: 'online_count', count: number }
-```
+Types: `analysis`, `decision`, `trade`, `info`, `alert`, `action`, `reflection`, `hypothesis`, `status`
 
 ---
 
-## Session 4 Completed
+## Previous Architecture (Archived)
 
-**What we did:**
-- Enhanced PortfolioChart with holdings breakdown, allocation bar, P&L display
-- Fixed Y2K color scheme (removed purple, use gold/navy/green palette)
-- Color-coded terminal output by thought type (trades=gold, tools=orange, etc.)
-- Added trade popup modal for dramatic notifications
-- Removed mock demo data - terminal starts clean, only real agent output
-- Fixed hardcoded SOL price - now uses real price from agent
-- Added position persistence to disk (survives restarts)
+The project previously had a full agent-service backend with:
+- Real Claude API integration
+- Jupiter swap execution
+- WebSocket thought streaming
+- Position management
+- Token discovery
 
----
-
-## TODO LIST FOR NEXT SESSION
-
-### High Priority
-1. **Enforce trading limits in CODE** - 15% max trade & 2 position limit currently only in prompt
-2. **Add WebSocket reconnection** - Frontend doesn't auto-reconnect on disconnect
-3. **Pull trade history from wallet** - Currently uses agent state, not actual on-chain transactions
-
-### Medium Priority
-4. **Add basic test suite** - Zero tests for trading tools
-5. **Add circuit breaker** - Auto-pause after 3 consecutive losses
-6. **Validate env vars on startup** - Fail fast if required config missing
-
-### Nice to Have
-7. **On-chain trade logging** - Store reasoning hashes on-chain for transparency
-8. **Rate limit WebSocket** - Anyone can spam chat messages currently
+This has been removed in favor of the theatrical mode. All backend code was deleted.
 
 ---
-
-## Next Session Starting Prompt
-
-```
-Continue working on Claude Investments ($ARA) - the AI trading agent memecoin site.
-
-CURRENT STATE:
-- Site: https://cc-lime-alpha.vercel.app
-- Agent: https://web-production-3b844.up.railway.app
-- Positions persist to disk (data/positions.json)
-- Real SOL price from CoinGecko (no more hardcoded * 140)
-- Terminal starts clean, no demo data
-
-PRIORITY TASKS (from TODO list):
-1. Enforce 15% max trade & 2 position limit in CODE (not just prompt)
-2. Add WebSocket reconnection logic to frontend
-3. Pull trade history from actual wallet transactions
-4. Add basic test suite for trading tools
-5. Add circuit breaker - auto-pause after 3 consecutive losses
-
-WHAT'S WORKING:
-- Portfolio shows holdings breakdown with P&L
-- Color-coded terminal output by thought type
-- Trade popup modal on buy/sell
-- Position persistence across restarts
-- Real SOL price for calculations
-
-AGENT WALLET:
-4fAYdSYPGkqUofFVTypCYauB3CJuQ7jXUNJHFnk3ug6q
-```
-
----
-*Last updated: Session 4 - Portfolio improvements, Y2K colors, trade popup, position persistence, real SOL price.*
+*Last updated: Theatrical mode conversion - removed agent-service, converted to scripted frontend.*
