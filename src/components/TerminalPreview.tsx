@@ -154,13 +154,14 @@ export function TerminalPreview() {
       <div style={{
         background: 'var(--bg-surface)',
         padding: '20px',
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: '16px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: '24px',
         borderTop: '1px solid var(--border-light)',
       }}>
         {/* Token Display */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: '150px' }}>
           <div style={{
             color: 'var(--text-muted)',
             fontSize: '10px',
@@ -191,7 +192,7 @@ export function TerminalPreview() {
         </div>
 
         {/* Contract */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: '150px' }}>
           <div style={{
             color: 'var(--text-muted)',
             fontSize: '10px',
@@ -201,34 +202,47 @@ export function TerminalPreview() {
           }}>
             Contract
           </div>
-          <div
-            onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
-            style={{
-              background: 'var(--bg-secondary)',
-              border: '1px solid var(--border-light)',
-              borderRadius: 'var(--radius-sm)',
+          {CONTRACT_ADDRESS.length > 0 ? (
+            <>
+              <div
+                onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+                style={{
+                  background: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-light)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '8px 12px',
+                  fontSize: '10px',
+                  fontFamily: 'Courier Prime, monospace',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+                title="Click to copy"
+              >
+                {CONTRACT_ADDRESS.slice(0, 8)}...{CONTRACT_ADDRESS.slice(-6)}
+              </div>
+              <button
+                onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+                className="btn btn-ghost btn-sm"
+                style={{ marginTop: '6px', fontSize: '11px' }}
+              >
+                Copy CA
+              </button>
+            </>
+          ) : (
+            <div style={{
               padding: '8px 12px',
-              fontSize: '10px',
-              fontFamily: 'Courier Prime, monospace',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            title="Click to copy"
-          >
-            {CONTRACT_ADDRESS.slice(0, 8)}...{CONTRACT_ADDRESS.slice(-6)}
-          </div>
-          <button
-            onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
-            className="btn btn-ghost btn-sm"
-            style={{ marginTop: '6px', fontSize: '11px' }}
-          >
-            Copy CA
-          </button>
+              fontSize: '11px',
+              color: 'var(--text-muted)',
+              fontStyle: 'italic',
+            }}>
+              Coming soon...
+            </div>
+          )}
         </div>
 
         {/* Buy CTA */}
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ textAlign: 'center', minWidth: '150px' }}>
           <div style={{
             color: 'var(--text-muted)',
             fontSize: '10px',
