@@ -290,10 +290,58 @@ a:hover {
 
 .ticker {
   background: var(--terminal-bg);
-  padding: 10px 0;
-  overflow: hidden;
-  white-space: nowrap;
+  padding: 12px 0;
+  position: relative;
   border-bottom: 1px solid var(--terminal-border);
+}
+
+.ticker-live-badge {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(45, 138, 78, 0.15);
+  border-radius: var(--radius-full);
+}
+
+.ticker-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--terminal-green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.ticker-live-dot[data-live="false"] {
+  background: var(--text-muted);
+  animation: none;
+}
+
+.ticker-live-text {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--terminal-green);
+}
+
+.ticker-live-text[data-live="false"] {
+  color: var(--text-muted);
+}
+
+.ticker-track {
+  overflow: hidden;
+  margin-left: 90px;
+}
+
+.ticker-content {
+  display: flex;
+  animation: scroll-left 40s linear infinite;
+  width: max-content;
 }
 
 @keyframes scroll-left {
@@ -301,18 +349,14 @@ a:hover {
   100% { transform: translateX(-50%); }
 }
 
-.ticker-content {
-  display: inline-flex;
-  animation: scroll-left 45s linear infinite;
-}
-
 .ticker-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 24px;
   font-family: 'Courier Prime', monospace;
-  font-size: 12px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .ticker-symbol {
@@ -324,12 +368,21 @@ a:hover {
   color: var(--terminal-text);
 }
 
-.ticker-positive {
+.ticker-change {
+  font-size: 12px;
+}
+
+.ticker-change.positive {
   color: var(--terminal-green);
 }
 
-.ticker-negative {
+.ticker-change.negative {
   color: var(--error);
+}
+
+.ticker-star {
+  color: var(--claude-terracotta);
+  font-size: 12px;
 }
 
 /* ============================================
