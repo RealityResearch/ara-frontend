@@ -1,46 +1,45 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAgentThoughts, ThoughtType } from '@/hooks/useAgentThoughts';
 import { SOCIAL_LINKS, CONTRACT_ADDRESS } from '@/lib/mockData';
 
-// Map thought types to colors
 function getThoughtColor(type: ThoughtType): string {
   const colors: Record<ThoughtType, string> = {
-    analysis: '#D4775C',   // Terracotta - thinking
-    trade: '#5C8A5C',      // Green - action
-    info: '#9A958C',       // Gray - info
-    decision: '#E8E5E0',   // Cream - decisions
-    alert: '#C45C5C',      // Red - alerts
-    reflection: '#5C7A8A', // Blue - reflection
-    hypothesis: '#D4A75C', // Gold - hypothesis
-    action: '#D4775C',     // Terracotta - action
-    status: '#6B6860',     // Dark gray - status
+    analysis: '#DA7756',   // Terracotta - thinking
+    trade: '#2D8A4E',      // Green - action
+    info: '#9C958D',       // Gray - info
+    decision: '#F5F1EA',   // Cream - decisions
+    alert: '#C9463D',      // Red - alerts
+    reflection: '#5B8FB9', // Blue - reflection
+    hypothesis: '#D4A574', // Gold - hypothesis
+    action: '#DA7756',     // Terracotta - action
+    status: '#6B635B',     // Dark gray - status
   };
-  return colors[type] || '#D4775C';
+  return colors[type] || '#DA7756';
 }
 
-function getThoughtPrefix(type: ThoughtType): string {
-  const prefixes: Record<ThoughtType, string> = {
-    analysis: 'ANLYS',
+function getThoughtLabel(type: ThoughtType): string {
+  const labels: Record<ThoughtType, string> = {
+    analysis: 'ANALYSIS',
     trade: 'TRADE',
     info: 'INFO',
-    decision: 'DCSN',
+    decision: 'DECISION',
     alert: 'ALERT',
-    reflection: 'RFLCT',
-    hypothesis: 'HYPTH',
-    action: 'ACTN',
-    status: 'STAT',
+    reflection: 'REFLECT',
+    hypothesis: 'THEORY',
+    action: 'ACTION',
+    status: 'STATUS',
   };
-  return prefixes[type] || 'MSG';
+  return labels[type] || 'MSG';
 }
 
 export function TerminalPreview() {
-  const { thoughts, isTyping, currentText, isConnected, connectionState, reconnect } = useAgentThoughts();
+  const { thoughts, isTyping, currentText, isConnected } = useAgentThoughts();
   const [currentTime, setCurrentTime] = useState<string>('--:--:--');
-  const recentThoughts = thoughts.slice(-12);
+  const terminalRef = useRef<HTMLDivElement>(null);
+  const recentThoughts = thoughts.slice(-15);
 
-  // Update time every second
   useEffect(() => {
     const updateTime = () => {
       setCurrentTime(new Date().toLocaleTimeString('en-US', {
@@ -55,293 +54,225 @@ export function TerminalPreview() {
     return () => clearInterval(interval);
   }, []);
 
+  // Auto-scroll terminal
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
+    }
+  }, [thoughts, currentText]);
+
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: '24px' }}>
-      {/* Header */}
-      <div style={{
-        background: '#1A1918',
-        padding: '12px 16px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        borderBottom: '1px solid #3A3836'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{
-            color: '#D4775C',
-            fontWeight: 'bold',
-            fontSize: '14px',
-            fontFamily: 'Courier New',
-            letterSpacing: '1px'
-          }}>
-            AGENT BRAIN
-          </span>
-          <span style={{ color: '#9A958C', fontSize: '11px', fontFamily: 'Courier New' }}>
-            CLAUDE-SONNET-4
-          </span>
+    <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+      {/* Terminal Section */}
+      <div className="terminal" style={{ borderRadius: 0 }}>
+        {/* Header */}
+        <div className="terminal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span className="terminal-title">AGENT TERMINAL</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>claude-sonnet-4</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ color: 'var(--terminal-green)', fontSize: '11px', fontFamily: 'Courier Prime, monospace' }}>
+              {currentTime}
+            </span>
+            <span className="badge badge-live" style={{ fontSize: '9px' }}>
+              {isConnected ? 'STREAMING' : 'CONNECTING'}
+            </span>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{
-            color: '#5C8A5C',
-            fontSize: '11px',
-            fontFamily: 'Courier New',
-            fontWeight: 'bold'
-          }}>
-            {currentTime}
-          </span>
-          <span style={{
-            background: isConnected ? '#5C8A5C' : '#C45C5C',
-            color: 'white',
-            padding: '3px 10px',
-            borderRadius: '4px',
-            fontSize: '10px',
-            fontWeight: 'bold',
-            textTransform: 'uppercase'
-          }}>
-            {isConnected ? 'STREAMING' : connectionState.toUpperCase()}
+
+        {/* Terminal Content */}
+        <div
+          ref={terminalRef}
+          className="terminal-content"
+          style={{ minHeight: '280px', maxHeight: '320px' }}
+        >
+          {/* Boot message */}
+          {recentThoughts.length === 0 && !isTyping && (
+            <div style={{ color: 'var(--terminal-accent)' }}>
+              <span style={{ color: 'var(--terminal-green)' }}>$</span> Initializing neural networks...
+              <span className="cursor-blink"></span>
+            </div>
+          )}
+
+          {/* Thoughts */}
+          {recentThoughts.map((thought, index) => {
+            const color = getThoughtColor(thought.type as ThoughtType);
+            const label = getThoughtLabel(thought.type as ThoughtType);
+            const isLatest = index === recentThoughts.length - 1;
+
+            return (
+              <div
+                key={index}
+                style={{
+                  marginBottom: '8px',
+                  opacity: isLatest ? 1 : 0.8,
+                }}
+              >
+                <span style={{ color: 'var(--text-muted)' }}>[{thought.timestamp}]</span>
+                <span style={{
+                  color: 'var(--terminal-accent)',
+                  marginLeft: '8px',
+                  fontWeight: '600',
+                  fontSize: '10px',
+                }}>{label}</span>
+                <span style={{ color: 'var(--terminal-border)', margin: '0 6px' }}>|</span>
+                <span style={{ color, wordBreak: 'break-word' }}>{thought.message}</span>
+              </div>
+            );
+          })}
+
+          {/* Currently typing */}
+          {isTyping && currentText && (
+            <div style={{ marginTop: '8px' }}>
+              <span style={{ color: 'var(--terminal-green)' }}>$</span>
+              <span style={{ color: 'var(--terminal-accent)', marginLeft: '8px' }}>{currentText}</span>
+              <span className="cursor-blink"></span>
+            </div>
+          )}
+        </div>
+
+        {/* Status Bar */}
+        <div style={{
+          background: 'var(--terminal-surface)',
+          padding: '8px 16px',
+          borderTop: '1px solid var(--terminal-border)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: '10px',
+          fontFamily: 'Courier Prime, monospace',
+        }}>
+          <span style={{ color: 'var(--text-muted)' }}>MODEL: claude-sonnet-4-20250514</span>
+          <span style={{ color: isConnected ? 'var(--terminal-green)' : 'var(--error)' }}>
+            {isConnected ? '● CONNECTED' : '○ CONNECTING'}
           </span>
         </div>
       </div>
 
-      {/* Two Column Layout - Stacks on mobile */}
-      <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-        {/* Left: Terminal Output */}
-        <div style={{ flex: '1 1 300px', background: '#1A1918', minWidth: 0 }}>
-          {/* Sub-header */}
+      {/* Info Panel */}
+      <div style={{
+        background: 'var(--bg-surface)',
+        padding: '20px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '16px',
+        borderTop: '1px solid var(--border-light)',
+      }}>
+        {/* Token Display */}
+        <div style={{ textAlign: 'center' }}>
           <div style={{
-            background: '#252321',
-            padding: '8px 12px',
-            borderBottom: '1px solid #3A3836',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <span style={{
-              color: '#D4775C',
-              fontSize: '10px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontFamily: 'Courier New'
-            }}>
-              Live Agent Thoughts
-            </span>
-            <span style={{ color: '#6B6860', fontSize: '10px', fontFamily: 'Courier New' }}>
-              {recentThoughts.length} msgs
-            </span>
-          </div>
-
-          {/* Terminal Output */}
-          <div style={{
-            background: '#1A1918',
-            height: '240px',
-            overflow: 'auto',
-            padding: '12px',
-            fontFamily: 'Courier New',
-            fontSize: '11px',
-            lineHeight: '1.6',
-          }}>
-            {/* Show initializing only when no thoughts and not typing */}
-            {recentThoughts.length === 0 && !isTyping && (
-              <div style={{ color: '#D4775C' }}>
-                <span style={{ color: '#5C8A5C' }}>{'>'}</span> Initializing neural networks...
-                <span className="cursor-blink" style={{ marginLeft: '4px' }}></span>
-              </div>
-            )}
-
-            {/* Show existing thoughts */}
-            {recentThoughts.map((thought, index) => {
-              const color = getThoughtColor(thought.type as ThoughtType);
-              const prefix = getThoughtPrefix(thought.type as ThoughtType);
-              const isLatest = index === recentThoughts.length - 1;
-              return (
-                <div key={index} style={{
-                  marginBottom: '8px',
-                  opacity: isLatest ? 1 : 0.85,
-                }}>
-                  <span style={{ color: '#6B6860' }}>[{thought.timestamp}]</span>
-                  <span style={{ color: '#D4775C', marginLeft: '8px', fontWeight: 'bold' }}>{prefix}</span>
-                  <span style={{ color: '#3A3836' }}> | </span>
-                  <span style={{ color, wordBreak: 'break-word' }}>{thought.message}</span>
-                </div>
-              );
-            })}
-
-            {/* Show currently typing thought */}
-            {isTyping && currentText && (
-              <div style={{ marginTop: recentThoughts.length > 0 ? '8px' : '0' }}>
-                <span style={{ color: '#5C8A5C' }}>{'>'}</span>
-                <span style={{ color: '#D4775C', marginLeft: '8px' }}>{currentText}</span>
-                <span className="cursor-blink" style={{ marginLeft: '2px' }}></span>
-              </div>
-            )}
-          </div>
-
-          {/* Status Bar */}
-          <div style={{
-            background: '#252321',
-            padding: '8px 12px',
-            borderTop: '1px solid #3A3836',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            color: 'var(--text-muted)',
             fontSize: '10px',
-            fontFamily: 'Courier New'
+            letterSpacing: '1px',
+            marginBottom: '6px',
+            textTransform: 'uppercase',
           }}>
-            <span style={{ color: '#6B6860' }}>MODEL: claude-sonnet-4-20250514</span>
-            <span style={{ color: isConnected ? '#5C8A5C' : '#C45C5C' }}>
-              {isConnected ? '● CONNECTED' : '○ ' + connectionState.toUpperCase()}
-            </span>
+            Token
+          </div>
+          <div style={{
+            color: 'var(--claude-terracotta)',
+            fontSize: '28px',
+            fontWeight: '600',
+            fontFamily: 'Playfair Display, serif',
+          }}>
+            $ARA
+          </div>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            marginTop: '6px',
+          }}>
+            <span className="live-dot" style={{ width: '5px', height: '5px' }}></span>
+            <span style={{ color: 'var(--success)', fontSize: '11px' }}>Live on Solana</span>
           </div>
         </div>
 
-        {/* Right: Info Panel - Full width on mobile */}
-        <div style={{
-          flex: '0 0 220px',
-          background: '#FFFFFF',
-          display: 'flex',
-          flexDirection: 'column',
-          borderLeft: '1px solid #E8E5E0',
-          minWidth: '220px',
-        }}>
-          {/* Token Display */}
+        {/* Contract */}
+        <div style={{ textAlign: 'center' }}>
           <div style={{
-            padding: '20px',
-            borderBottom: '1px solid #E8E5E0',
-            textAlign: 'center',
+            color: 'var(--text-muted)',
+            fontSize: '10px',
+            letterSpacing: '1px',
+            marginBottom: '6px',
+            textTransform: 'uppercase',
           }}>
-            <div style={{
-              color: '#9A958C',
+            Contract
+          </div>
+          <div
+            onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+            style={{
+              background: 'var(--bg-secondary)',
+              border: '1px solid var(--border-light)',
+              borderRadius: 'var(--radius-sm)',
+              padding: '8px 12px',
               fontSize: '10px',
-              letterSpacing: '1px',
-              marginBottom: '8px',
-              textTransform: 'uppercase'
-            }}>
-              Ticker
-            </div>
-            <div style={{
-              color: '#D4775C',
-              fontSize: '32px',
-              fontWeight: 'bold',
-              fontFamily: 'Georgia'
-            }}>
-              $ARA
-            </div>
-            <div style={{
-              color: '#5C8A5C',
-              fontSize: '11px',
-              marginTop: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px'
-            }}>
-              <span style={{
-                width: '6px',
-                height: '6px',
-                background: '#5C8A5C',
-                borderRadius: '50%'
-              }}></span>
-              Live on Solana
-            </div>
+              fontFamily: 'Courier Prime, monospace',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+            title="Click to copy"
+          >
+            {CONTRACT_ADDRESS.slice(0, 8)}...{CONTRACT_ADDRESS.slice(-6)}
           </div>
+          <button
+            onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
+            className="btn btn-ghost btn-sm"
+            style={{ marginTop: '6px', fontSize: '11px' }}
+          >
+            Copy CA
+          </button>
+        </div>
 
-          {/* Stats */}
-          <div style={{ padding: '12px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-            <div className="stat-box" style={{ padding: '12px' }}>
-              <div className="stat-label" style={{ fontSize: '9px' }}>Status</div>
-              <div style={{ color: '#5C8A5C', fontSize: '13px', fontWeight: 'bold', fontFamily: 'Courier New' }}>ACTIVE</div>
-            </div>
-            <div className="stat-box" style={{ padding: '12px' }}>
-              <div className="stat-label" style={{ fontSize: '9px' }}>Chain</div>
-              <div style={{ color: '#D4775C', fontSize: '13px', fontWeight: 'bold', fontFamily: 'Courier New' }}>SOL</div>
-            </div>
-          </div>
-
-          {/* Buy Button */}
-          <div style={{ padding: '12px 16px' }}>
-            <a href={SOCIAL_LINKS.pumpfun} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <button className="btn-primary" style={{
-                width: '100%',
-                padding: '12px',
-                fontSize: '14px',
-                fontWeight: '600',
-              }}>
-                Buy $ARA
-              </button>
-            </a>
-          </div>
-
-          {/* Contract Address */}
-          <div style={{ padding: '0 16px 16px' }}>
-            <div style={{
-              color: '#9A958C',
-              fontSize: '9px',
-              letterSpacing: '1px',
-              marginBottom: '6px',
-              textTransform: 'uppercase'
-            }}>
-              Contract
-            </div>
-            <div style={{
-              background: '#FAF9F6',
-              border: '1px solid #E8E5E0',
-              borderRadius: '6px',
-              padding: '8px',
-              fontSize: '9px',
-              color: '#3D3929',
-              wordBreak: 'break-all',
-              fontFamily: 'Courier New',
-            }}>
-              {CONTRACT_ADDRESS.slice(0, 20)}...
-            </div>
-            <button
-              onClick={() => navigator.clipboard.writeText(CONTRACT_ADDRESS)}
-              className="btn-secondary"
-              style={{
-                width: '100%',
-                marginTop: '8px',
-                padding: '8px',
-                fontSize: '11px',
-              }}
-            >
-              Copy CA
-            </button>
-          </div>
-
-          {/* Links */}
+        {/* Buy CTA */}
+        <div style={{ textAlign: 'center' }}>
           <div style={{
-            marginTop: 'auto',
-            padding: '12px',
-            borderTop: '1px solid #E8E5E0',
-            display: 'flex',
-            gap: '6px',
+            color: 'var(--text-muted)',
+            fontSize: '10px',
+            letterSpacing: '1px',
+            marginBottom: '6px',
+            textTransform: 'uppercase',
           }}>
-            <a
-              href={SOCIAL_LINKS.pumpfun}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
-            >
-              Pump
-            </a>
+            Trade
+          </div>
+          <a
+            href={SOCIAL_LINKS.pumpfun}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+            style={{
+              textDecoration: 'none',
+              width: '100%',
+              maxWidth: '160px',
+            }}
+          >
+            Buy $ARA
+          </a>
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            marginTop: '8px',
+            justifyContent: 'center',
+          }}>
             <a
               href={SOCIAL_LINKS.dexscreener}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
+              style={{ color: 'var(--text-muted)', fontSize: '11px' }}
             >
-              DEX
+              Chart
             </a>
+            <span style={{ color: 'var(--border-medium)' }}>|</span>
             <a
               href={SOCIAL_LINKS.twitter}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-secondary"
-              style={{ flex: 1, textAlign: 'center', textDecoration: 'none', padding: '6px', fontSize: '10px' }}
+              style={{ color: 'var(--text-muted)', fontSize: '11px' }}
             >
-              X
+              Twitter
             </a>
           </div>
         </div>

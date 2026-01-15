@@ -9,7 +9,6 @@ export function Ticker() {
   const [isLive, setIsLive] = useState(false);
   const prevPrices = useRef<Record<string, number>>({});
 
-  // Fetch live prices from API
   const fetchPrices = useCallback(async () => {
     try {
       const response = await fetch('/api/ticker');
@@ -17,7 +16,6 @@ export function Ticker() {
 
       const data: TickerItem[] = await response.json();
       if (Array.isArray(data) && data.length > 0) {
-        // Check for price changes and trigger flash
         data.forEach(item => {
           const prevPrice = prevPrices.current[item.symbol];
           if (prevPrice !== undefined && prevPrice !== item.price) {
@@ -35,11 +33,9 @@ export function Ticker() {
       }
     } catch (error) {
       console.error('Failed to fetch ticker prices:', error);
-      // Keep using mock data as fallback
     }
   }, []);
 
-  // Fetch on mount and every 15 seconds
   useEffect(() => {
     fetchPrices();
     const interval = setInterval(fetchPrices, 15000);
@@ -49,47 +45,69 @@ export function Ticker() {
   const tickerItems = [...prices, ...prices];
 
   return (
-    <div className="ticker-y2k" style={{ position: 'relative' }}>
+    <div className="ticker">
       {/* Live indicator */}
       <div style={{
         position: 'absolute',
-        left: '8px',
+        left: '12px',
         top: '50%',
         transform: 'translateY(-50%)',
-        background: isLive ? '#FF0000' : '#666666',
-        color: '#FFFFFF',
-        fontSize: '9px',
-        fontWeight: 'bold',
-        padding: '2px 6px',
         zIndex: 10,
-        border: `1px solid ${isLive ? '#CC0000' : '#444444'}`
+        display: 'flex',
+        alignItems: 'center',
+        gap: '6px',
+        padding: '4px 10px',
+        background: isLive ? 'rgba(45, 138, 78, 0.2)' : 'rgba(156, 149, 141, 0.2)',
+        borderRadius: 'var(--radius-full)',
       }}>
-        <span className="blink">●</span> {isLive ? 'LIVE' : 'DEMO'}
+        <span
+          className="live-dot"
+          style={{
+            width: '5px',
+            height: '5px',
+            background: isLive ? 'var(--terminal-green)' : 'var(--text-muted)',
+          }}
+        ></span>
+        <span style={{
+          color: isLive ? 'var(--terminal-green)' : 'var(--text-muted)',
+          fontSize: '9px',
+          fontWeight: '600',
+          letterSpacing: '0.5px',
+        }}>
+          {isLive ? 'LIVE' : 'DEMO'}
+        </span>
       </div>
 
-      <div className="ticker-y2k-scroll" style={{ display: 'flex', paddingLeft: '60px' }}>
+      {/* Scrolling content */}
+      <div className="ticker-content" style={{ paddingLeft: '80px' }}>
         {tickerItems.map((item, index) => (
           <span
             key={`${item.symbol}-${index}`}
-            className="ticker-y2k-item"
+            className="ticker-item"
             style={{
-              background: flash[item.symbol] === 'up' ? 'rgba(0, 255, 0, 0.3)' :
-                         flash[item.symbol] === 'down' ? 'rgba(255, 0, 0, 0.3)' : 'transparent',
-              transition: 'background 0.15s'
+              background: flash[item.symbol] === 'up'
+                ? 'rgba(74, 222, 128, 0.2)'
+                : flash[item.symbol] === 'down'
+                ? 'rgba(201, 70, 61, 0.2)'
+                : 'transparent',
+              transition: 'background 0.15s',
+              borderRadius: '4px',
+              padding: '4px 16px',
             }}
           >
-            <span style={{ color: '#FFCC00', fontWeight: 'bold' }}>{item.symbol}</span>
-            {' '}
-            <span style={{ color: '#FFFFFF' }}>${item.price < 1 ? item.price.toFixed(6) : item.price.toLocaleString()}</span>
-            {' '}
-            <span style={{
-              color: item.change >= 0 ? '#00FF00' : '#FF6666',
-              fontWeight: 'bold'
-            }}>
-              {item.change >= 0 ? '▲' : '▼'} {Math.abs(item.change).toFixed(2)}%
+            <span className="ticker-symbol">{item.symbol}</span>
+            <span className="ticker-price">
+              ${item.price < 1 ? item.price.toFixed(6) : item.price.toLocaleString()}
+            </span>
+            <span className={item.change >= 0 ? 'ticker-positive' : 'ticker-negative'}>
+              {item.change >= 0 ? '+' : ''}{item.change.toFixed(2)}%
             </span>
             {item.symbol === '$ARA' && (
-              <span className="blink" style={{ color: '#FF00FF', marginLeft: '4px' }}>★</span>
+              <span style={{
+                color: 'var(--claude-terracotta)',
+                marginLeft: '4px',
+                fontSize: '10px',
+              }}>★</span>
             )}
           </span>
         ))}

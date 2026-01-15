@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-// Static fake data for theatrical display
 const FAKE_BALANCE = {
   sol: 8.4237,
   usdValue: 1199.85,
@@ -14,7 +13,6 @@ const FAKE_POSITIONS = [
   { tokenSymbol: 'BONK', amount: 15420000, currentValue: 137.24, unrealizedPnlPercent: 12.4 },
 ];
 
-// Generate fake historical data for the chart
 function generateFakeHistory(): { timestamp: number; sol: number; usdValue: number }[] {
   const now = Date.now();
   const history = [];
@@ -24,12 +22,11 @@ function generateFakeHistory(): { timestamp: number; sol: number; usdValue: numb
     const variation = (Math.random() - 0.5) * 0.15;
     baseSol = Math.max(7.8, Math.min(8.8, baseSol + variation));
     history.push({
-      timestamp: now - i * 60000, // Every minute
+      timestamp: now - i * 60000,
       sol: baseSol,
       usdValue: baseSol * FAKE_SOL_PRICE,
     });
   }
-  // End at our static balance
   history[history.length - 1].sol = FAKE_BALANCE.sol;
   return history;
 }
@@ -41,42 +38,11 @@ function formatNumber(num: number, decimals: number = 2): string {
   });
 }
 
-// Bloomberg-style colors for allocation
-const ALLOC_COLORS: Record<string, string> = {
-  SOL: '#ff6600',
-  BONK: '#ffaa00',
-  WIF: '#00ff00',
-  POPCAT: '#ff3333',
-  JUP: '#3399ff',
-  ARA: '#ff8844',
-  DEFAULT: '#ffcc00',
-};
-
-function getAllocColor(symbol: string): string {
-  return ALLOC_COLORS[symbol.toUpperCase()] || ALLOC_COLORS.DEFAULT;
-}
-
 export function PortfolioChart() {
-  const [currentTime, setCurrentTime] = useState<string>('--:--:--');
   const [balanceHistory] = useState(generateFakeHistory);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const updateTime = () => {
-      setCurrentTime(new Date().toLocaleTimeString('en-US', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      }));
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Draw chart
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
@@ -87,15 +53,17 @@ export function PortfolioChart() {
 
     const rect = container.getBoundingClientRect();
     const width = rect.width;
-    const height = 80;
+    const height = 100;
 
     canvas.width = width;
     canvas.height = height;
 
-    ctx.fillStyle = '#000000';
+    // Background
+    ctx.fillStyle = '#FAF7F2';
     ctx.fillRect(0, 0, width, height);
 
-    ctx.strokeStyle = '#1a1a1a';
+    // Grid lines
+    ctx.strokeStyle = '#E8E4DD';
     ctx.lineWidth = 1;
     for (let i = 0; i < 4; i++) {
       const y = (i / 3) * height;
@@ -111,8 +79,9 @@ export function PortfolioChart() {
     const maxVal = Math.max(...values) * 1.02;
     const range = maxVal - minVal || 0.01;
 
+    // Line
     ctx.beginPath();
-    ctx.strokeStyle = '#ff6600';
+    ctx.strokeStyle = '#DA7756';
     ctx.lineWidth = 2;
 
     balanceHistory.forEach((point, index) => {
@@ -123,32 +92,32 @@ export function PortfolioChart() {
     });
     ctx.stroke();
 
+    // Gradient fill
     ctx.lineTo(width, height);
     ctx.lineTo(0, height);
     ctx.closePath();
     const gradient = ctx.createLinearGradient(0, 0, 0, height);
-    gradient.addColorStop(0, 'rgba(255, 102, 0, 0.3)');
-    gradient.addColorStop(1, 'rgba(255, 102, 0, 0)');
+    gradient.addColorStop(0, 'rgba(218, 119, 86, 0.2)');
+    gradient.addColorStop(1, 'rgba(218, 119, 86, 0)');
     ctx.fillStyle = gradient;
     ctx.fill();
 
+    // End dot
     if (balanceHistory.length > 0) {
       const lastPoint = balanceHistory[balanceHistory.length - 1];
       const lastX = width - 4;
       const lastY = height - ((lastPoint.sol - minVal) / range) * height;
       ctx.beginPath();
       ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#ffaa00';
+      ctx.fillStyle = '#DA7756';
       ctx.fill();
     }
   }, [balanceHistory]);
 
-  // Calculate values from static data
   const solValueUsd = FAKE_BALANCE.sol * FAKE_SOL_PRICE;
   const totalPositionValue = FAKE_POSITIONS.reduce((acc, p) => acc + (p.currentValue || 0), 0);
   const totalPortfolioValue = solValueUsd + totalPositionValue;
   const solPercent = totalPortfolioValue > 0 ? (solValueUsd / totalPortfolioValue) * 100 : 100;
-  const memecoinPercent = totalPortfolioValue > 0 ? (totalPositionValue / totalPortfolioValue) * 100 : 0;
 
   const changePercent = balanceHistory.length >= 2
     ? ((balanceHistory[balanceHistory.length - 1].sol - balanceHistory[0].sol) / balanceHistory[0].sol) * 100
@@ -156,215 +125,194 @@ export function PortfolioChart() {
   const isPositive = changePercent >= 0;
 
   return (
-    <div className="bb-terminal" style={{ marginBottom: '16px' }}>
+    <div className="card">
       {/* Header */}
-      <div className="bb-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span className="bb-brand" style={{ fontSize: '16px' }}>TREASURY</span>
-          <span style={{ color: '#ffaa00', fontSize: '12px' }}>CLAUDE INVESTMENTS</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span className="bb-time" style={{ fontSize: '12px' }}>{currentTime}</span>
-          <span className="bb-badge bb-badge-live" style={{ fontSize: '10px', padding: '2px 8px' }}>
-            LIVE
-          </span>
-        </div>
+      <div className="card-header" style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <span>Treasury Balance</span>
+        <span className="badge badge-live">Live</span>
       </div>
 
-      {/* TOTAL PORTFOLIO VALUE - Big and prominent */}
+      {/* Total Value */}
       <div style={{
-        background: 'linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%)',
-        padding: '20px',
+        padding: '24px',
         textAlign: 'center',
-        borderBottom: '2px solid #ff6600',
+        borderBottom: '1px solid var(--border-light)',
       }}>
-        <div style={{ color: '#888888', fontSize: '12px', letterSpacing: '2px', marginBottom: '8px' }}>
-          TOTAL PORTFOLIO VALUE
+        <div style={{
+          color: 'var(--text-muted)',
+          fontSize: '12px',
+          letterSpacing: '1px',
+          marginBottom: '8px',
+          textTransform: 'uppercase',
+        }}>
+          Total Portfolio Value
         </div>
         <div style={{
-          fontSize: '48px',
-          fontWeight: 'bold',
-          fontFamily: 'Courier New, monospace',
-          color: '#ffffff',
-          textShadow: '0 0 20px rgba(255, 102, 0, 0.5)',
+          fontSize: '42px',
+          fontWeight: '600',
+          fontFamily: 'Playfair Display, serif',
+          color: 'var(--text-primary)',
         }}>
           ${formatNumber(totalPortfolioValue)}
         </div>
-        <div style={{ marginTop: '8px', fontSize: '14px' }}>
-          <span style={{ color: '#ff6600' }}>SOL: ${formatNumber(solValueUsd)}</span>
-          <span style={{ color: '#444444', margin: '0 12px' }}>|</span>
-          <span style={{ color: '#ffaa00' }}>MEMECOINS: ${formatNumber(totalPositionValue)}</span>
+        <div style={{
+          marginTop: '8px',
+          fontSize: '14px',
+          color: 'var(--text-secondary)',
+        }}>
+          <span style={{ color: 'var(--claude-terracotta)' }}>{formatNumber(FAKE_BALANCE.sol, 4)} SOL</span>
+          <span style={{ margin: '0 8px', color: 'var(--border-medium)' }}>|</span>
+          <span>Positions: ${formatNumber(totalPositionValue)}</span>
         </div>
       </div>
 
-      {/* Stats Row */}
-      <div style={{ display: 'flex', gap: '2px', padding: '2px' }}>
-        {/* SOL Balance */}
-        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
-          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL BALANCE</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ff6600', fontFamily: 'Courier New' }}>
+      {/* Stats Grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '1px',
+        background: 'var(--border-light)',
+      }}>
+        <div style={{
+          background: 'var(--bg-surface)',
+          padding: '16px',
+          textAlign: 'center',
+        }}>
+          <div className="stat-label">SOL Balance</div>
+          <div className="stat-value" style={{ fontSize: '20px', color: 'var(--claude-terracotta)' }}>
             {formatNumber(FAKE_BALANCE.sol, 4)}
           </div>
-          <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
-            ${formatNumber(solValueUsd)} USD
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+            ${formatNumber(solValueUsd)}
           </div>
         </div>
 
-        {/* Memecoin Value */}
-        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
-          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>MEMECOIN VALUE</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#ffaa00', fontFamily: 'Courier New' }}>
-            ${formatNumber(totalPositionValue)}
-          </div>
-          <div style={{ fontSize: '12px', color: '#888888', marginTop: '4px' }}>
-            {FAKE_POSITIONS.length} POSITION{FAKE_POSITIONS.length !== 1 ? 'S' : ''}
-          </div>
-        </div>
-
-        {/* SOL Price */}
-        <div className="bb-stat-box" style={{ flex: 1, padding: '12px' }}>
-          <div style={{ color: '#888888', fontSize: '11px', letterSpacing: '1px', marginBottom: '4px' }}>SOL PRICE</div>
-          <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#00ff00', fontFamily: 'Courier New' }}>
+        <div style={{
+          background: 'var(--bg-surface)',
+          padding: '16px',
+          textAlign: 'center',
+        }}>
+          <div className="stat-label">SOL Price</div>
+          <div className="stat-value" style={{ fontSize: '20px' }}>
             ${formatNumber(FAKE_SOL_PRICE)}
           </div>
-          <div style={{ fontSize: '12px', marginTop: '4px' }} className={isPositive ? 'bb-positive' : 'bb-negative'}>
-            {isPositive ? '+' : ''}{formatNumber(changePercent)}% session
+          <div style={{
+            fontSize: '12px',
+            marginTop: '4px',
+            color: isPositive ? 'var(--success)' : 'var(--error)',
+          }}>
+            {isPositive ? '+' : ''}{formatNumber(changePercent)}%
+          </div>
+        </div>
+
+        <div style={{
+          background: 'var(--bg-surface)',
+          padding: '16px',
+          textAlign: 'center',
+        }}>
+          <div className="stat-label">Allocation</div>
+          <div className="stat-value" style={{ fontSize: '20px' }}>
+            {solPercent.toFixed(0)}%
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+            SOL
           </div>
         </div>
       </div>
 
-      {/* Allocation Bar */}
-      <div style={{ padding: '12px', background: '#0a0a0a' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ color: '#888888', fontSize: '12px', letterSpacing: '1px' }}>ALLOCATION</span>
-          <span style={{ color: '#888888', fontSize: '12px' }}>
-            <span style={{ color: '#ff6600' }}>SOL {solPercent.toFixed(0)}%</span>
-            {memecoinPercent > 0 && (
-              <>
-                <span style={{ margin: '0 8px' }}>|</span>
-                <span style={{ color: '#ffaa00' }}>MEME {memecoinPercent.toFixed(0)}%</span>
-              </>
-            )}
-          </span>
+      {/* Holdings */}
+      <div style={{ padding: '16px' }}>
+        <div style={{
+          color: 'var(--text-muted)',
+          fontSize: '11px',
+          letterSpacing: '0.5px',
+          marginBottom: '12px',
+          textTransform: 'uppercase',
+        }}>
+          Holdings
         </div>
-        <div className="bb-allocation-bar" style={{ height: '24px', borderRadius: '4px' }}>
-          <div
-            className="bb-allocation-segment"
-            style={{
-              width: `${solPercent}%`,
-              background: 'linear-gradient(180deg, #ff6600 0%, #cc4400 100%)',
-              fontSize: '11px',
-            }}
-          >
-            {solPercent > 20 ? `SOL` : ''}
-          </div>
-          {FAKE_POSITIONS.map((pos) => {
-            const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
-            if (posPercent < 1) return null;
-            return (
-              <div
-                key={pos.tokenSymbol}
-                className="bb-allocation-segment"
-                style={{
-                  width: `${posPercent}%`,
-                  background: `linear-gradient(180deg, ${getAllocColor(pos.tokenSymbol)} 0%, ${getAllocColor(pos.tokenSymbol)}88 100%)`,
-                  fontSize: '11px',
-                }}
-              >
-                {posPercent > 15 ? pos.tokenSymbol : ''}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Holdings Table */}
-      <div style={{ padding: '0 8px 8px' }}>
-        <table className="bb-table" style={{ fontSize: '12px' }}>
+        <table className="data-table">
           <thead>
             <tr>
-              <th style={{ fontSize: '11px', padding: '8px' }}>ASSET</th>
-              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>AMOUNT</th>
-              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>VALUE (USD)</th>
-              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>P&L</th>
-              <th style={{ textAlign: 'right', fontSize: '11px', padding: '8px' }}>ALLOC %</th>
+              <th>Asset</th>
+              <th style={{ textAlign: 'right' }}>Amount</th>
+              <th style={{ textAlign: 'right' }}>Value</th>
+              <th style={{ textAlign: 'right' }}>P&L</th>
             </tr>
           </thead>
           <tbody>
-            {/* SOL Row */}
-            <tr style={{ background: 'rgba(255, 102, 0, 0.1)' }}>
-              <td style={{ padding: '10px 8px' }}>
-                <span style={{ color: '#ff6600', fontWeight: 'bold', fontSize: '14px' }}>SOL</span>
-                <span style={{ color: '#666666', marginLeft: '8px', fontSize: '11px' }}>SOLANA</span>
+            <tr>
+              <td>
+                <span style={{ fontWeight: '600', color: 'var(--claude-terracotta)' }}>SOL</span>
+                <span style={{ color: 'var(--text-muted)', marginLeft: '8px', fontSize: '12px' }}>Solana</span>
               </td>
-              <td style={{ textAlign: 'right', fontFamily: 'Courier New', fontSize: '13px', padding: '10px 8px' }}>
+              <td style={{ textAlign: 'right', fontFamily: 'Courier Prime, monospace' }}>
                 {formatNumber(FAKE_BALANCE.sol, 4)}
               </td>
-              <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }}>
+              <td style={{ textAlign: 'right', fontWeight: '500' }}>
                 ${formatNumber(solValueUsd)}
               </td>
-              <td style={{ textAlign: 'right', color: '#666666', padding: '10px 8px' }}>--</td>
-              <td style={{ textAlign: 'right', color: '#ff6600', fontWeight: 'bold', padding: '10px 8px' }}>
-                {solPercent.toFixed(1)}%
-              </td>
+              <td style={{ textAlign: 'right', color: 'var(--text-muted)' }}>--</td>
             </tr>
-
-            {/* Token Positions */}
-            {FAKE_POSITIONS.map((pos) => {
-              const pnlPercent = pos.unrealizedPnlPercent ?? 0;
-              const posPercent = totalPortfolioValue > 0 ? ((pos.currentValue || 0) / totalPortfolioValue) * 100 : 0;
-              const posValue = pos.currentValue;
-              return (
-                <tr key={pos.tokenSymbol}>
-                  <td style={{ padding: '10px 8px' }}>
-                    <span style={{ color: getAllocColor(pos.tokenSymbol), fontWeight: 'bold', fontSize: '14px' }}>
-                      {pos.tokenSymbol}
-                    </span>
-                    <span style={{ color: '#666666', marginLeft: '8px', fontSize: '11px' }}>MEMECOIN</span>
-                  </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', fontSize: '13px', padding: '10px 8px' }}>
-                    {formatNumber(pos.amount, 0)}
-                  </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'Courier New', color: '#ffffff', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }}>
-                    ${formatNumber(posValue)}
-                  </td>
-                  <td style={{ textAlign: 'right', fontSize: '13px', fontWeight: 'bold', padding: '10px 8px' }} className={pnlPercent >= 0 ? 'bb-positive' : 'bb-negative'}>
-                    {pnlPercent >= 0 ? '+' : ''}{formatNumber(pnlPercent)}%
-                  </td>
-                  <td style={{ textAlign: 'right', color: '#ffaa00', fontWeight: 'bold', padding: '10px 8px' }}>
-                    {posPercent.toFixed(1)}%
-                  </td>
-                </tr>
-              );
-            })}
+            {FAKE_POSITIONS.map((pos) => (
+              <tr key={pos.tokenSymbol}>
+                <td>
+                  <span style={{ fontWeight: '600' }}>{pos.tokenSymbol}</span>
+                  <span style={{ color: 'var(--text-muted)', marginLeft: '8px', fontSize: '12px' }}>Memecoin</span>
+                </td>
+                <td style={{ textAlign: 'right', fontFamily: 'Courier Prime, monospace' }}>
+                  {formatNumber(pos.amount, 0)}
+                </td>
+                <td style={{ textAlign: 'right', fontWeight: '500' }}>
+                  ${formatNumber(pos.currentValue)}
+                </td>
+                <td style={{
+                  textAlign: 'right',
+                  fontWeight: '500',
+                  color: pos.unrealizedPnlPercent >= 0 ? 'var(--success)' : 'var(--error)',
+                }}>
+                  {pos.unrealizedPnlPercent >= 0 ? '+' : ''}{formatNumber(pos.unrealizedPnlPercent)}%
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
       {/* Chart */}
-      <div style={{ padding: '8px 12px', background: '#0a0a0a' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-          <span style={{ color: '#ffaa00', fontSize: '11px', letterSpacing: '1px' }}>SOL BALANCE CHART</span>
-          <span style={{ color: '#666666', fontSize: '11px' }}>{balanceHistory.length} DATA POINTS</span>
+      <div style={{ padding: '16px', borderTop: '1px solid var(--border-light)' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '12px',
+        }}>
+          <span style={{
+            color: 'var(--text-muted)',
+            fontSize: '11px',
+            letterSpacing: '0.5px',
+            textTransform: 'uppercase',
+          }}>
+            Balance History
+          </span>
+          <span style={{ color: 'var(--text-muted)', fontSize: '11px' }}>
+            {balanceHistory.length} points
+          </span>
         </div>
-        <div ref={containerRef} className="bb-chart-container" style={{ border: '1px solid #333' }}>
-          <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '80px' }} />
+        <div
+          ref={containerRef}
+          style={{
+            borderRadius: 'var(--radius-sm)',
+            overflow: 'hidden',
+            border: '1px solid var(--border-light)',
+          }}
+        >
+          <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100px' }} />
         </div>
-      </div>
-
-      {/* Function Keys */}
-      <div className="bb-function-keys">
-        <button className="bb-fkey"><span className="bb-fkey-label">F1</span>HELP</button>
-        <button className="bb-fkey"><span className="bb-fkey-label">F2</span>CHART</button>
-        <button className="bb-fkey"><span className="bb-fkey-label">F3</span>HISTORY</button>
-        <button className="bb-fkey" style={{ marginLeft: 'auto' }}><span className="bb-fkey-label">F10</span>MENU</button>
-      </div>
-
-      {/* Command Line */}
-      <div className="bb-command">
-        <span className="bb-prompt">{'>'}</span>
-        <span style={{ color: '#ff6600' }}>TREASURY GO</span>
-        <span className="bb-cursor"></span>
       </div>
     </div>
   );
