@@ -11,32 +11,89 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  // Show placeholder if no contract address
+  if (!contractAddress) {
+    return (
+      <div id="chart" style={{ marginBottom: '16px' }}>
+        <div className="bb-header">
+          LIVE CHART
+          <span className="bb-badge-pending">PENDING</span>
+        </div>
+        <div className="bb-panel" style={{
+          height: `${height}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          gap: '16px'
+        }}>
+          <div style={{
+            fontSize: '48px',
+            opacity: 0.3
+          }}>
+            📊
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              color: 'var(--bb-orange)',
+              fontSize: '14px',
+              fontWeight: 'bold',
+              marginBottom: '8px'
+            }}>
+              CHART AVAILABLE AFTER LAUNCH
+            </div>
+            <div style={{
+              color: 'var(--bb-text-dim)',
+              fontSize: '11px'
+            }}>
+              DEXScreener chart will appear here once $ARA is live on pump.fun
+            </div>
+          </div>
+          <div style={{
+            marginTop: '16px',
+            padding: '8px 16px',
+            border: '1px solid var(--bb-border)',
+            fontSize: '10px',
+            color: 'var(--bb-text-dim)'
+          }}>
+            Powered by DEXScreener
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // DEXScreener embed URL
   const embedUrl = `https://dexscreener.com/solana/${contractAddress}?embed=1&theme=dark&trades=0&info=0`;
 
   return (
     <div id="chart" style={{ marginBottom: '16px' }}>
       {/* Section Header */}
-      <div className="skeu-section-header">
+      <div className="bb-header">
         LIVE CHART
-        <span style={{ marginLeft: '8px', fontSize: '9px', color: '#66FF66' }}>
-          REAL-TIME
-        </span>
+        <span className="bb-badge-live">REAL-TIME</span>
       </div>
 
       {/* Chart Container */}
-      <div className="skeu-window" style={{ borderRadius: '0 0 8px 8px' }}>
+      <div className="bb-panel">
         {/* Chart Title Bar */}
-        <div className="skeu-window-titlebar">
-          <span>DEXScreener - {contractAddress.slice(0, 8)}...{contractAddress.slice(-4)}</span>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '8px 12px',
+          borderBottom: '1px solid var(--bb-border)',
+          fontSize: '11px'
+        }}>
+          <span style={{ color: 'var(--bb-orange)' }}>DEXScreener - {contractAddress.slice(0, 8)}...{contractAddress.slice(-4)}</span>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <span style={{ fontSize: '9px', color: '#99CCFF', fontWeight: 'normal' }}>Powered by DEXScreener</span>
+            <span style={{ fontSize: '9px', color: 'var(--bb-text-dim)' }}>Powered by DEXScreener</span>
             <a
               href={`https://dexscreener.com/solana/${contractAddress}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <button className="skeu-btn" style={{ padding: '2px 8px', fontSize: '9px' }}>
+              <button className="bb-btn" style={{ padding: '2px 8px', fontSize: '9px' }}>
                 Open
               </button>
             </a>
@@ -45,19 +102,19 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
 
         {/* Loading State */}
         {isLoading && !hasError && (
-          <div className="skeu-terminal" style={{
+          <div style={{
             height: `${height}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'Courier New, monospace',
-            fontSize: '12px',
-            borderRadius: 0
+            background: 'var(--bb-bg)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '12px'
           }}>
-            <div style={{ textAlign: 'center', color: '#00FF00' }}>
+            <div style={{ textAlign: 'center', color: 'var(--bb-green)' }}>
               <div className="spin" style={{ fontSize: '24px', marginBottom: '8px' }}>~</div>
               <div>Loading chart data...</div>
-              <div style={{ fontSize: '10px', color: '#666666', marginTop: '4px' }}>
+              <div style={{ fontSize: '10px', color: 'var(--bb-text-dim)', marginTop: '4px' }}>
                 Connecting to DEXScreener...
               </div>
             </div>
@@ -66,24 +123,24 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
 
         {/* Error State */}
         {hasError && (
-          <div className="skeu-terminal" style={{
+          <div style={{
             height: `${height}px`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'Courier New, monospace',
-            fontSize: '12px',
-            borderRadius: 0
+            background: 'var(--bb-bg)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '12px'
           }}>
-            <div style={{ textAlign: 'center', color: '#FF6666' }}>
+            <div style={{ textAlign: 'center', color: 'var(--bb-red)' }}>
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>!</div>
               <div>Chart unavailable</div>
-              <div style={{ fontSize: '10px', color: '#666666', marginTop: '4px' }}>
+              <div style={{ fontSize: '10px', color: 'var(--bb-text-dim)', marginTop: '4px' }}>
                 <a
                   href={`https://dexscreener.com/solana/${contractAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ color: '#6699FF' }}
+                  style={{ color: 'var(--bb-orange)' }}
                 >
                   View on DEXScreener
                 </a>
@@ -111,23 +168,24 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
         />
 
         {/* Chart Footer */}
-        <div className="skeu-metallic" style={{
+        <div style={{
           padding: '6px 12px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           fontSize: '9px',
-          borderRadius: 0
+          borderTop: '1px solid var(--bb-border)',
+          background: 'var(--bb-bg-secondary)'
         }}>
-          <div style={{ color: '#666666' }}>
-            <span style={{ color: '#00AA00' }}>*</span> Live data from DEXScreener
+          <div style={{ color: 'var(--bb-text-dim)' }}>
+            <span style={{ color: 'var(--bb-green)' }}>*</span> Live data from DEXScreener
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <a
               href={`https://birdeye.so/token/${contractAddress}?chain=solana`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#0066CC', textDecoration: 'none' }}
+              style={{ color: 'var(--bb-orange)', textDecoration: 'none' }}
             >
               Birdeye
             </a>
@@ -135,7 +193,7 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
               href={`https://solscan.io/token/${contractAddress}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#0066CC', textDecoration: 'none' }}
+              style={{ color: 'var(--bb-orange)', textDecoration: 'none' }}
             >
               Solscan
             </a>
@@ -143,7 +201,7 @@ export function ChartEmbed({ contractAddress, height = 400 }: ChartEmbedProps) {
               href={`https://pump.fun/coin/${contractAddress}`}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: '#0066CC', textDecoration: 'none' }}
+              style={{ color: 'var(--bb-orange)', textDecoration: 'none' }}
             >
               pump.fun
             </a>
