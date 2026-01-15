@@ -43,18 +43,18 @@ export default function Home() {
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       {/* Header */}
-      <header className="bg-surface" style={{
+      <header style={{
         borderBottom: '1px solid var(--border-light)',
         position: 'sticky',
         top: 0,
         zIndex: 50,
-        backdropFilter: 'blur(8px)',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        backdropFilter: 'blur(12px)',
+        backgroundColor: 'rgba(10, 10, 10, 0.9)',
       }}>
         <div style={{
           maxWidth: '1100px',
           margin: '0 auto',
-          padding: '12px 20px',
+          padding: '10px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -68,32 +68,27 @@ export default function Home() {
             />
             <span className="hide-mobile" style={{
               color: 'var(--text-muted)',
-              fontSize: '13px',
-              fontStyle: 'italic',
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
             }}>
-              The Future of Investing is Here
+              Automated Retirement Account
             </span>
           </div>
 
           {/* Right side */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {/* Live Status */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 12px',
-              background: 'var(--success-light)',
-              borderRadius: 'var(--radius-full)',
-            }}>
+            <div className="badge badge-live">
               <span className="live-dot"></span>
-              <span style={{ color: 'var(--success)', fontSize: '11px', fontWeight: '600' }}>LIVE</span>
+              <span>LIVE</span>
             </div>
 
             {/* Time - Desktop only */}
-            <span className="hide-mobile font-mono" style={{
-              color: 'var(--text-muted)',
+            <span className="hide-mobile" style={{
+              color: 'var(--accent)',
               fontSize: '12px',
+              fontFamily: 'Courier Prime, monospace',
             }}>
               {currentTime}
             </span>
@@ -104,7 +99,6 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
               className="hide-mobile btn btn-primary btn-sm"
-              style={{ textDecoration: 'none' }}
             >
               Buy $ARA
             </a>

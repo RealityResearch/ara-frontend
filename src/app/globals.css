@@ -1,48 +1,53 @@
 @import "tailwindcss";
 
 /* ============================================
-   CLAUDE BRAND DESIGN SYSTEM
-   Clean, minimal, sophisticated
+   BLOOMBERG TERMINAL DESIGN SYSTEM
+   Dark, data-dense, professional
    ============================================ */
 
 :root {
-  /* Claude/Anthropic Brand Colors */
-  --claude-terracotta: #DA7756;
-  --claude-terracotta-light: #E89B7F;
-  --claude-terracotta-dark: #C4644A;
+  /* Bloomberg Orange Accent */
+  --accent: #FF6600;
+  --accent-light: #FF8533;
+  --accent-dark: #CC5200;
+  --accent-glow: rgba(255, 102, 0, 0.3);
 
-  /* Backgrounds */
-  --bg-primary: #FAF7F2;
-  --bg-secondary: #F5F1EA;
-  --bg-surface: #FFFFFF;
+  /* Dark Backgrounds */
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #111111;
+  --bg-surface: #1A1A1A;
+  --bg-elevated: #222222;
 
   /* Text */
-  --text-primary: #1A1915;
-  --text-secondary: #6B635B;
-  --text-muted: #9C958D;
+  --text-primary: #E8E8E8;
+  --text-secondary: #A0A0A0;
+  --text-muted: #666666;
 
   /* Borders */
-  --border-light: #E8E4DD;
-  --border-medium: #D4CFC6;
+  --border-light: #2A2A2A;
+  --border-medium: #3A3A3A;
+  --border-bright: #444444;
 
   /* Status Colors */
-  --success: #2D8A4E;
-  --success-light: #E8F5ED;
-  --error: #C9463D;
-  --error-light: #FCEEED;
+  --success: #00D26A;
+  --success-dim: #00A854;
+  --error: #FF4444;
+  --error-dim: #CC3636;
+  --warning: #FFAA00;
 
-  /* Terminal (stays dark for contrast) */
-  --terminal-bg: #1A1915;
-  --terminal-surface: #252320;
-  --terminal-border: #3A3632;
-  --terminal-text: #F5F1EA;
-  --terminal-accent: #DA7756;
-  --terminal-green: #4ADE80;
+  /* Terminal specific */
+  --terminal-bg: #0D0D0D;
+  --terminal-surface: #151515;
+  --terminal-border: #2A2A2A;
+  --terminal-text: #E0E0E0;
+  --terminal-accent: #FF6600;
+  --terminal-green: #00D26A;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(26, 25, 21, 0.04);
-  --shadow-md: 0 4px 12px rgba(26, 25, 21, 0.08);
-  --shadow-lg: 0 8px 24px rgba(26, 25, 21, 0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 20px var(--accent-glow);
 
   /* Spacing */
   --space-xs: 4px;
@@ -52,10 +57,10 @@
   --space-xl: 32px;
   --space-2xl: 48px;
 
-  /* Border Radius */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  /* Border Radius - sharp for terminal look */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
   --radius-full: 9999px;
 }
 
@@ -70,37 +75,40 @@
 body {
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 15px;
-  line-height: 1.6;
+  font-family: 'Courier Prime', 'SF Mono', 'Consolas', monospace;
+  font-size: 14px;
+  line-height: 1.5;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings use Playfair Display */
+/* Headings - monospace for terminal feel */
 h1, h2, h3, h4, h5, h6, .font-display {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-weight: 600;
+  font-family: 'Courier Prime', monospace;
+  font-weight: 700;
   line-height: 1.3;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 /* Links */
 a {
-  color: var(--claude-terracotta);
+  color: var(--accent);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 a:hover {
-  color: var(--claude-terracotta-dark);
+  color: var(--accent-light);
+  text-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* Selection */
 ::selection {
-  background: var(--claude-terracotta-light);
-  color: var(--text-primary);
+  background: var(--accent);
+  color: var(--bg-primary);
 }
 
 /* ============================================
@@ -110,18 +118,19 @@ a:hover {
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-sm);
 }
 
 .card-header {
-  padding: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   border-bottom: 1px solid var(--border-light);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -140,48 +149,53 @@ a:hover {
   align-items: center;
   justify-content: center;
   gap: var(--space-sm);
-  padding: 10px 20px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 500;
+  padding: 8px 16px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.2s ease;
-  border: none;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
   text-decoration: none;
 }
 
 .btn-primary {
-  background: var(--claude-terracotta);
-  color: white;
+  background: var(--accent);
+  color: var(--bg-primary);
+  border-color: var(--accent);
 }
 
 .btn-primary:hover {
-  background: var(--claude-terracotta-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  background: var(--accent-light);
+  border-color: var(--accent-light);
+  box-shadow: var(--shadow-glow);
 }
 
 .btn-secondary {
-  background: var(--bg-surface);
+  background: transparent;
   color: var(--text-primary);
   border: 1px solid var(--border-medium);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-secondary);
-  border-color: var(--text-muted);
+  background: var(--bg-elevated);
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
-  padding: 8px 12px;
+  padding: 6px 10px;
+  border: none;
 }
 
 .btn-ghost:hover {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  background: var(--bg-elevated);
+  color: var(--accent);
 }
 
 .btn-sm {
@@ -202,27 +216,31 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
-  border-radius: var(--radius-full);
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
 }
 
 .badge-live {
-  background: var(--success-light);
+  background: rgba(0, 210, 106, 0.15);
   color: var(--success);
+  border-color: var(--success);
 }
 
 .badge-accent {
-  background: rgba(218, 119, 86, 0.12);
-  color: var(--claude-terracotta);
+  background: rgba(255, 102, 0, 0.15);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .badge-muted {
-  background: var(--bg-secondary);
+  background: var(--bg-elevated);
   color: var(--text-muted);
+  border-color: var(--border-medium);
 }
 
 /* ============================================
@@ -231,14 +249,14 @@ a:hover {
 
 .terminal {
   background: var(--terminal-bg);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--terminal-border);
+  border-radius: var(--radius-sm);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
 }
 
 .terminal-header {
   background: var(--terminal-surface);
-  padding: 12px 16px;
+  padding: 8px 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -247,25 +265,26 @@ a:hover {
 
 .terminal-title {
   color: var(--terminal-accent);
-  font-family: 'Courier Prime', 'Courier New', monospace;
-  font-size: 13px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .terminal-content {
   padding: var(--space-md);
-  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-family: 'Courier Prime', monospace;
   font-size: 12px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--terminal-text);
   min-height: 200px;
-  max-height: 320px;
+  max-height: 350px;
   overflow-y: auto;
 }
 
 .terminal-line {
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 /* Blinking cursor */
@@ -335,7 +354,7 @@ a:hover {
 }
 
 .stat-value-sm.accent {
-  color: var(--claude-terracotta);
+  color: var(--accent);
 }
 
 .stat-value-sm.success {
@@ -424,7 +443,7 @@ a:hover {
 
 .text-positive { color: var(--success) !important; }
 .text-negative { color: var(--error) !important; }
-.text-accent { color: var(--claude-terracotta) !important; }
+.text-accent { color: var(--accent) !important; }
 .text-muted { color: var(--text-muted) !important; }
 .text-secondary { color: var(--text-secondary) !important; }
 
@@ -469,27 +488,25 @@ a:hover {
    ============================================ */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 4px;
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-medium);
-  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--accent);
 }
 
 /* Terminal scrollbar */
 .terminal-content::-webkit-scrollbar-track {
-  background: var(--terminal-surface);
+  background: var(--terminal-bg);
 }
 
 .terminal-content::-webkit-scrollbar-thumb {
@@ -585,25 +602,25 @@ a:hover {
 
 .input {
   width: 100%;
-  padding: 10px 14px;
-  font-family: inherit;
-  font-size: 14px;
+  padding: 8px 12px;
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
   color: var(--text-primary);
-  background: var(--bg-surface);
+  background: var(--bg-secondary);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--claude-terracotta);
-  box-shadow: 0 0 0 3px rgba(218, 119, 86, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 .input-mono {
   font-family: 'Courier Prime', monospace;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 /* ============================================
@@ -696,7 +713,7 @@ a:hover {
 }
 
 .stat-value.accent {
-  color: var(--claude-terracotta);
+  color: var(--accent);
 }
 
 .stat-value.success {
@@ -712,7 +729,7 @@ a:hover {
    ============================================ */
 
 .how-banner {
-  background: linear-gradient(135deg, rgba(218, 119, 86, 0.1) 0%, rgba(218, 119, 86, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(255, 102, 0, 0.1) 0%, rgba(255, 102, 0, 0.02) 100%);
   border-bottom: 1px solid var(--border-light);
   padding: var(--space-lg);
   text-align: center;
@@ -749,16 +766,17 @@ a:hover {
 }
 
 .step-number {
-  width: 36px;
-  height: 36px;
-  background: var(--claude-terracotta);
+  width: 32px;
+  height: 32px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent);
   border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
-  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent);
   margin-right: var(--space-md);
   flex-shrink: 0;
 }
@@ -795,7 +813,7 @@ a:hover {
 }
 
 .feature-title {
-  color: var(--claude-terracotta);
+  color: var(--accent);
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
@@ -870,7 +888,7 @@ a:hover {
   border-radius: var(--radius-sm);
   font-family: 'Courier Prime', monospace;
   font-size: 13px;
-  color: var(--claude-terracotta);
+  color: var(--accent);
   padding: 10px;
   margin-bottom: 12px;
   text-align: center;
