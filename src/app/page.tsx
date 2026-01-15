@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Ticker } from '@/components/Ticker';
 import { TerminalPreview } from '@/components/TerminalPreview';
 import { PortfolioChart } from '@/components/PortfolioChart';
 import { PerformanceMetrics } from '@/components/PerformanceMetrics';
@@ -112,9 +111,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* Ticker */}
-      <Ticker />
 
       {/* Mobile CTA Bar */}
       <div className="show-mobile" style={{
