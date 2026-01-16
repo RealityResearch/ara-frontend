@@ -154,7 +154,7 @@ export function PortfolioChart() {
         <div style={{
           fontSize: '42px',
           fontWeight: '600',
-          fontFamily: 'Playfair Display, serif',
+          fontFamily: 'Copernicus, serif',
           color: 'var(--text-primary)',
         }}>
           ${formatNumber(totalPortfolioValue)}

@@ -175,7 +175,7 @@ export function TerminalPreview() {
             color: 'var(--claude-terracotta)',
             fontSize: '28px',
             fontWeight: '600',
-            fontFamily: 'Playfair Display, serif',
+            fontFamily: 'Copernicus, serif',
           }}>
             $ARA
           </div>

@@ -1,6 +1,58 @@
 @import "tailwindcss";
 
 /* ============================================
+   COPERNICUS TRIAL FONT
+   ============================================ */
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-Book-BF66160450c2e92.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-BookItalic-BF661604511b981.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-Medium-BF66160450d988d.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-Semibold-BF66160451692c7.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-Bold-BF6616045097aac.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Copernicus';
+  src: url('/fonts/CopernicusTrial-BoldItalic-BF6616045093ed8.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ============================================
    BLOOMBERG TERMINAL DESIGN SYSTEM
    Dark, data-dense, professional
    ============================================ */
@@ -413,7 +465,7 @@ a:hover {
 }
 
 .section-title {
-  font-family: 'Playfair Display', serif;
+  font-family: 'Copernicus', serif;
   font-size: 20px;
   font-weight: 600;
   color: var(--text-primary);
@@ -448,7 +500,7 @@ a:hover {
 .text-secondary { color: var(--text-secondary) !important; }
 
 .font-mono { font-family: 'Courier Prime', monospace; }
-.font-display { font-family: 'Playfair Display', serif; }
+.font-display { font-family: 'Copernicus', serif; }
 
 .bg-primary { background: var(--bg-primary); }
 .bg-secondary { background: var(--bg-secondary); }
