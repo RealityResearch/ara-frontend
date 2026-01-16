@@ -62,7 +62,7 @@ export default function Home() {
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <img
-              src="/logos/claude-investments.png"
+              src="/logos/cc-logo.png"
               alt="Claude Investments"
               style={{ height: '28px', width: 'auto' }}
             />
