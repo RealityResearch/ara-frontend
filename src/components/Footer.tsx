@@ -50,7 +50,7 @@ export function Footer() {
           {/* Logo Column */}
           <div>
             <img
-              src="/logos/claude-investments.png"
+              src="/logos/cc-logo.png"
               alt="Claude Investments"
               style={{ height: '32px', width: 'auto', marginBottom: '12px' }}
             />
